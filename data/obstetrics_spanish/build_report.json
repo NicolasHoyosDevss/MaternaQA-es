@@ -1,0 +1,38 @@
+{
+  "input": "C:\\Users\\nicoh\\OneDrive\\Dev\\Proyecto Investigacion\\PEFT\\medical-peft\\data\\obstetrics_spanish\\clean_pages.jsonl",
+  "chunks_output": "C:\\Users\\nicoh\\OneDrive\\Dev\\Proyecto Investigacion\\PEFT\\medical-peft\\data\\obstetrics_spanish\\chunks.jsonl",
+  "train_output": "C:\\Users\\nicoh\\OneDrive\\Dev\\Proyecto Investigacion\\PEFT\\medical-peft\\data\\obstetrics_spanish\\train_lm.jsonl",
+  "validation_output": "C:\\Users\\nicoh\\OneDrive\\Dev\\Proyecto Investigacion\\PEFT\\medical-peft\\data\\obstetrics_spanish\\validation_lm.jsonl",
+  "clean_pages_read": 1930,
+  "kept_pages_read": 1779,
+  "candidate_chunks": 1246,
+  "accepted_chunks_before_dedupe": 951,
+  "final_chunks": 951,
+  "train_records": 856,
+  "validation_records": 95,
+  "rejected_chunk_reasons": {
+    "admin_or_contact_text": 12,
+    "low_clinical_score": 25,
+    "numeric_or_table_heavy": 16,
+    "reference_heavy": 197,
+    "too_short": 45
+  },
+  "chunks_by_pdf": {
+    "18-vol-822.pdf": 30,
+    "CAP09.pdf": 25,
+    "GAP_Control prenatal del embarazo normal_6105.pdf": 14,
+    "GINECOLOGÍA-Y-OBSTETRICIA.pdf": 109,
+    "Manual-Obstetricia-y-Ginecologia-2024_compressed.pdf": 512,
+    "Protocolo Atencion Obstetrica.pdf": 81,
+    "Protocolo-de-Atencion-Clinica-integral-al-embarazo-parto-y-postparto-2.pdf": 41,
+    "RECOM_obstetricia_web.pdf": 23,
+    "S0716864011704321.pdf": 9,
+    "S071686402300007X.pdf": 2,
+    "S0716864024000324.pdf": 6,
+    "S071686402500046X.pdf": 4,
+    "usingunindicatorsqa-sp.pdf": 16,
+    "vol-842-1.pdf": 37,
+    "vol831-1.pdf": 42
+  },
+  "average_token_estimate": 901.36
+}

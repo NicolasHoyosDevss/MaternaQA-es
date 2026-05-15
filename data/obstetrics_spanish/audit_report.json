@@ -1,0 +1,1006 @@
+{
+  "raw_pages_path": "C:\\Users\\nicoh\\OneDrive\\Dev\\Proyecto Investigacion\\PEFT\\medical-peft\\data\\obstetrics_spanish\\raw_pages.jsonl",
+  "clean_pages_path": "C:\\Users\\nicoh\\OneDrive\\Dev\\Proyecto Investigacion\\PEFT\\medical-peft\\data\\obstetrics_spanish\\clean_pages.jsonl",
+  "chunks_path": "C:\\Users\\nicoh\\OneDrive\\Dev\\Proyecto Investigacion\\PEFT\\medical-peft\\data\\obstetrics_spanish\\chunks.jsonl",
+  "train_path": "C:\\Users\\nicoh\\OneDrive\\Dev\\Proyecto Investigacion\\PEFT\\medical-peft\\data\\obstetrics_spanish\\train_lm.jsonl",
+  "validation_path": "C:\\Users\\nicoh\\OneDrive\\Dev\\Proyecto Investigacion\\PEFT\\medical-peft\\data\\obstetrics_spanish\\validation_lm.jsonl",
+  "pdfs_processed": 17,
+  "pages_total": 1930,
+  "pages_kept": 1779,
+  "pages_discarded": 151,
+  "pages_needing_ocr": 47,
+  "drop_reasons": {
+    "corrupt_extraction": 20,
+    "fragmented_text": 9,
+    "index_or_table_of_contents": 5,
+    "needs_ocr": 47,
+    "non_clinical_section": 13,
+    "reference_heavy": 41,
+    "too_short": 16
+  },
+  "chunks_generated": 951,
+  "train_records": 856,
+  "validation_records": 95,
+  "distribution_by_pdf": {
+    "18-vol-822.pdf": 30,
+    "CAP09.pdf": 25,
+    "GAP_Control prenatal del embarazo normal_6105.pdf": 14,
+    "GINECOLOGÍA-Y-OBSTETRICIA.pdf": 109,
+    "Manual-Obstetricia-y-Ginecologia-2024_compressed.pdf": 512,
+    "Protocolo Atencion Obstetrica.pdf": 81,
+    "Protocolo-de-Atencion-Clinica-integral-al-embarazo-parto-y-postparto-2.pdf": 41,
+    "RECOM_obstetricia_web.pdf": 23,
+    "S0716864011704321.pdf": 9,
+    "S071686402300007X.pdf": 2,
+    "S0716864024000324.pdf": 6,
+    "S071686402500046X.pdf": 4,
+    "usingunindicatorsqa-sp.pdf": 16,
+    "vol-842-1.pdf": 37,
+    "vol831-1.pdf": 42
+  },
+  "average_chunk_tokens": 901.36,
+  "lm_validation_errors": {
+    "train": [],
+    "validation": []
+  },
+  "accepted_examples": [
+    {
+      "chunk_id": "18_vol_822_00001",
+      "source_pdf": "18-vol-822.pdf",
+      "pages": [
+        9,
+        16
+      ],
+      "text_preview": "TRABAJOS ORIGINALES Rev Obstet Ginecol Venez. 2022; 82 (2): 145-151. Calcio sérico, grosor cortical del segundo metacarpiano y síntomas en la menopausia Andreina Fernández-Ramírez,1 Jorly Mejía-Montilla,1 Nadia Reyna-Villasmil,1 Duly Torres-Cepeda,2 Eduardo Reyna-Villasmil.2 RESUMEN Objetivo: Establecer la asociación entre las concentraciones de calcio sérico, el grosor cortical del segundo metacarpiano y los síntomas en la menopausia. Métodos: Estudio transversal y prospectivo que incluyó a mujeres menopáusicas con edad entre 50 y 70 años, que asistieron a la consulta de Ginecología y Obstetricia del Hospital Central “Dr. Urquinaona”, Maracaibo, Venezuela. Se evaluaron las característica..."
+    },
+    {
+      "chunk_id": "18_vol_822_00002",
+      "source_pdf": "18-vol-822.pdf",
+      "pages": [
+        16,
+        31
+      ],
+      "text_preview": "Objetivo: Comparar la efectividad y seguridad de la fijación unilateral de los ligamentos sacroespinosos contra la fijación bilateral, para el tratamiento del prolapso apical poshisterectomía. Métodos: Ensayo clínico, aleatorizado, controlado, no enmascarado, en 96 mujeres con prolapso de cúpula vaginal, divididas en dos grupos: «A»: n=50, se les realizó técnica de fijación unilateral al ligamento sacro espinoso; «B»: n=46, se utilizó técnica de fijación bilateral; entre 2009 y 2015, en una clínica de alta complejidad (Armenia, Colombia). Resultados: La edad promedio fue 69 ± 4,83 años. El intervalo medio de seguimiento posterior a la cirugía fue 54 meses. La fijación unilateral demanda u..."
+    },
+    {
+      "chunk_id": "18_vol_822_00003",
+      "source_pdf": "18-vol-822.pdf",
+      "pages": [
+        17,
+        19
+      ],
+      "text_preview": "F J ESPITIA-DE LA HOZ longitud total de la vagina, por encima del plano del himen (2). El objetivo de este estudio fue evaluar la efectividad y seguridad, así como la incidencia de complicaciones entre las pacientes sometidas a fijación unilateral de los ligamentos sacroespinosos contra la fijación bilateral para el tratamiento del prolapso apical poshisterectomía, en mujeres que fueron intervenidas quirúrgicamente en la Clínica La Sagrada Familia, en la ciudad de Armenia. El prolapso de la cúpula vaginal no es una condición común, solo ocurre en alrededor del 1 % de las mujeres sometidas a histerectomías, sin embargo, la incidencia está en aumento (cinco veces), gracias a la extendida lo..."
+    },
+    {
+      "chunk_id": "18_vol_822_00004",
+      "source_pdf": "18-vol-822.pdf",
+      "pages": [
+        18,
+        20
+      ],
+      "text_preview": "COMPARACIÓN DE LA EFECTIVIDAD Y SEGURIDAD DE LA FIJACIÓN SACROESPINOSA UNILATERAL VERSUS BILATERAL, EN EL TRATAMIENTO DEL PROLAPSO DE LA CÚPULA VAGINAL distal del cérvix, o a la cicatriz de la cúpula en la mujer histerectomizada (como es el caso de las pacientes incluidas en el estudio), mientras que el tvl, es la profundidad máxima en cm de la vagina. sacroespinosos, en el tratamiento del prolapso de la cúpula vaginal poshisterectomía. Así como evaluar, a largo plazo, los resultados anatómicos (POP-Q), funcionales y de satisfacción, en las pacientes operadas. Entre los criterios de inclusión se tuvieron en cuenta mujeres con prolapso de cúpula vaginal estadio III y IV que aceptaron parti..."
+    },
+    {
+      "chunk_id": "18_vol_822_00005",
+      "source_pdf": "18-vol-822.pdf",
+      "pages": [
+        19,
+        21,
+        23
+      ],
+      "text_preview": "Las pacientes no conocieron a que técnica fueron asignadas, ya que, para mantener el desconocimiento de la técnica aplicada, se simuló la maniobra quirúrgica en ambos lados de la paciente a través del sham treatment. El seguimiento posoperatorio se protocolizó igual para todas las pacientes: se utilizaron analgésicos/ antiinflamatorio por vía EV (ketorolaco, 30 mg cada 8 horas) durante 24 horas, y se aplicó tramadol, 50 mg vía subcutánea (SC), cada 12 horas, cuando la analgesia fue insuficiente. La sonda vesical y la gasa vaginal se retiraron a las 12 horas del posoperatorio, tiempo en el cual se recomendó el inicio de la deambulación. La anticoagulación profiláctica se hizo con enoxapari..."
+    },
+    {
+      "chunk_id": "18_vol_822_00006",
+      "source_pdf": "18-vol-822.pdf",
+      "pages": [
+        20,
+        24
+      ],
+      "text_preview": "de 115 mujeres, que fueron aleatorizadas entre enero de 2009 a diciembre de 2015 (Figura 1). Las características basales de las 115 pacientes fueron similares a las del resto de las mujeres del estudio. En el grupo «A» (n=58), cuatro pacientes y en el grupo «B» (n=57), tres pacientes, fueron excluidas antes de la cirugía porque se negaron a recibir transfusión sanguínea ante la eventualidad de su uso. En cinco pacientes hubo la necesidad de realizar tratamiento para prolapso rectal (tres del grupo «B» y dos del grupo «A»). Una paciente del grupo «A» y tres del grupo «B» decidieron utilizar pesario. Una paciente del grupo «A» y dos del grupo «B» rechazaron la intervención quirúrgica propue..."
+    },
+    {
+      "chunk_id": "18_vol_822_00007",
+      "source_pdf": "18-vol-822.pdf",
+      "pages": [
+        31,
+        43
+      ],
+      "text_preview": "Objetivo: Determinar la frecuencia de malformaciones congénitas diagnosticadas por ecografía prenatal, en la Unidad de Perinatología “Dr. Freddy Guevara Zuloaga” del Hospital Universitario de Caracas, Venezuela, en el período comprendido entre el 1 de enero de 2015 y el 31 de diciembre de 2020. Métodos: Estudio retrospectivo, descriptivo, transversal. Se revisaron los registros estadísticos de la Unidad, con una población de 56 712 y se incluyeron 1844 pacientes con diagnóstico ecográfico de malformación congénita, se excluyeron aquellas con marcadores ecográficos de cromosomopatías de primer y segundo trimestre, síndromes cromosómicos y no cromosómicos y los embarazos múltiples y sus pat..."
+    },
+    {
+      "chunk_id": "18_vol_822_00008",
+      "source_pdf": "18-vol-822.pdf",
+      "pages": [
+        33,
+        35
+      ],
+      "text_preview": "PREVALENCIA DE MALFORMACIONES CONGÉNITAS EN LA UNIDAD DE PERINATOLOGÍA DEL HOSPITAL UNIVERSITARIO DE CARACAS En tal sentido, los factores ambientales, como la exposición materna a determinados plaguicidas y otros productos químicos, así como a ciertos medicamentos, al alcohol, el tabaco, los medicamentos psicoactivos y la radiación durante el embarazo, pueden aumentar el riesgo de que el feto o el neonato sufra anomalías congénitas (10). forma, se podrán tratar a tiempo y su manejo será el más adecuado para lograr un embarazo satisfactorio y óptimo, garantizando el bienestar tanto para la madre como para el feto. También se podrá formar un equipo multidisciplinario que trate a la gestante..."
+    },
+    {
+      "chunk_id": "18_vol_822_00009",
+      "source_pdf": "18-vol-822.pdf",
+      "pages": [
+        43,
+        53
+      ],
+      "text_preview": "SUMMARY Objective: To evaluate the outpatient activities of high obstetric risk during the COVID-19 pandemic. Methods: Retrospective, descriptive review of epidemiological, clinical/paraclinical factors and treatment of 102 medical records from the High Obstetric Risk clinic of the Jesús María Casal Ramos Araure/Acarigua University Hospital from March 11, 2020 to March 11, 2021. Results: In the year, 346 controls were carried out, 244 successive controls, 23% adolescents, 19% elderly and 58% of reproductive age; 77% with some degree of formal education; 57% of the municipality of Araure, the most common reason for referral in 25% want not to reproduce and 23% in previous cesarean sections..."
+    },
+    {
+      "chunk_id": "18_vol_822_00010",
+      "source_pdf": "18-vol-822.pdf",
+      "pages": [
+        45,
+        47,
+        49
+      ],
+      "text_preview": "UNIVERSITARIO JESÚS MARÍA CASAL RAMOS: UNA NECESIDAD DURANTE PANDEMIA Los detalles de los antecedentes se presentan en la tabla 1. Tabla 2. Antecedentes personales Antecedente personal Frecuencia F= 102 % Los antecedentes personales más frecuentemente reportados por las usuarias fueron las cardiopatías, con 13 casos (13 %): 6 (50 %) hipertensiva, 4 (25 %) valvulopatías aórticas, 2 (12,5 %) enfermedad nodo sinusal y 1 (7 %) valvulopatía mitral; los demás antecedentes personales, se presentan en la tabla 2. Cardiopatía Hipertensiva Aórtica Arritmia Mitral VPH La tabla 3 muestra los antecedentes ginecológicos. La edad de la menarquia en años promedio ± DE fue de 11,59 ± 2,55; la sexarquia oc..."
+    }
+  ],
+  "discarded_page_examples": [
+    {
+      "source_pdf": "18-vol-822.pdf",
+      "page": 12,
+      "drop_reason": "fragmented_text",
+      "text_preview": "A FERNÁNDEZ-RAMÍREZ ET AL. Tabla 2. Distribución de las participantes por síntomas n (%) n = 54 n (%) n = 54 Vulva y vagina Uretra y vejiga Mal olor 4 (7,4) Poliaquiria 20 (37,0) Dispareunia 2 (3,7) Incontinencia de esfuerzo 15 (27,8) Leucorrea 2 (3,7) Disuria 9 (16,7) Prurito 1 (1,9) Urgencia miccional 6 (11,1) Piel y mucosas Síntomas psiquiátricos Resequedad 54 (100,0) Cefalea 38 (70,4) Pérdida de cabello 45 (83,3) Nerviosismo 29 (53,7) Pelo seco 37 (68,5) Insomnio 22 (40,8) Boca seca 25 (47,3) Pigmentación focal 24 (44,4) Hirsutismo 15 (27,8) Síntomas cardiovasculares Síntomas mamarios Palpitaciones 24 (44,4) Disminución del tamaño 58 (100,0) Dolor torácico 10 (18,5) Pérdida de consist..."
+    },
+    {
+      "source_pdf": "18-vol-822.pdf",
+      "page": 22,
+      "drop_reason": "fragmented_text",
+      "text_preview": "COMPARACIÓN DE LA EFECTIVIDAD Y SEGURIDAD DE LA FIJACIÓN SACROESPINOSA UNILATERAL VERSUS BILATERAL, EN EL TRATAMIENTO DEL PROLAPSO DE LA CÚPULA VAGINAL Tabla 1. Características basales de las pacientes sometidas a cirugía para corrección de prolapso de cúpula vaginal Fijación unilateral Fijación bilateral (Grupo A) (Grupo B) p n= 50 n= 46 Edad: Media ± DE (rango) 66 ± 10,26 (51–93) 63 ± 9,75 (48–87) 0,309 Paridad: Media ± DE 6,48 ± 2,4 6,27 ± 2,7 0,549 IMC: Media 29,64 28,59 0,924 n (%) n (%) Origen Rural 18 (36) 14 (30,04) 0,603 Urbana 32 (64) 32 (69,56) 0,846 Histerectomía abdominal 9 (18) 7 (15,21) 0,765 Histerectomía vaginal 41 (82) 39 (84,78) 0,747 Hormonoterapia tópica 36 (72) 26 (5..."
+    },
+    {
+      "source_pdf": "18-vol-822.pdf",
+      "page": 28,
+      "drop_reason": "reference_heavy",
+      "text_preview": "COMPARACIÓN DE LA EFECTIVIDAD Y SEGURIDAD DE LA FIJACIÓN SACROESPINOSA UNILATERAL VERSUS BILATERAL, EN EL TRATAMIENTO DEL PROLAPSO DE LA CÚPULA VAGINAL comparativa de estas dos técnicas quirúrgicas no fue un objetivo de la presente investigación, se considera adecuado hacer una breve mención, por relacionarse de forma directa con los resultados. Al señor José Francisco Espitia Hernández (“Pacho” Espitia), mi padre y maestro de la vida, tanto por sus asesorías, como por ayudarme en mis proyectos más importantes. A los 12 meses, fue evidente que se obtuvieron resultados óptimos en un alto porcentaje que sobrepasa el 90 % de satisfacción, en ambos grupos, el cual se mantiene en el tiempo des..."
+    },
+    {
+      "source_pdf": "18-vol-822.pdf",
+      "page": 29,
+      "drop_reason": "reference_heavy",
+      "text_preview": "F J ESPITIA-DE LA HOZ 8. Petros PE. Vault prolapse II: Restoration of dynamic vaginal supports by infracoccygeal sacropexy, an axial day-case vaginal procedure. Int Urogynecol J Pelvic Floor Dysfunct. 2001; 12(5):296-303. doi: 10.1007/ 9. vaginal vault suspension: long-term anatomic and functional evaluation. Obstet Gynecol. 2001; 98(2):199-204. 10. Espitia-De La Hoz FJ, Orozco-Santiago L, Orozco- 1422. 17. Bump RC, Mattiasson A, Bø K, Brubaker LP, of terminology of female pelvic organ prolapse and pelvic floor dysfunction. Am J Obstet Gynecol. 1996; 175(1):10-17. 18. Weber AM, Abrams P, Brubaker L, Cundiff G, Davis G, Dmochowski RR, et al. The standardization of terminology for researche..."
+    },
+    {
+      "source_pdf": "18-vol-822.pdf",
+      "page": 30,
+      "drop_reason": "reference_heavy",
+      "text_preview": "COMPARACIÓN DE LA EFECTIVIDAD Y SEGURIDAD DE LA FIJACIÓN SACROESPINOSA UNILATERAL VERSUS BILATERAL, EN EL TRATAMIENTO DEL PROLAPSO DE LA CÚPULA VAGINAL 26. Espitia-De La Hoz FJ. Complicaciones del uso del 33. Faber VJ, van der Vaart HC, Heggelman BG, pesario con soporte y sin soporte en el prolapso genital completo. MÉD UIS. 2015; 28(3):309-315. 27. Crafoord K, Sydsjö A, Johansson T, Brynhildsen J, Schraffordt Koops SE. Serious complication 1 year after sacrospinous ligament fixation. Int Urogynecol 34. Visco AG, Brubaker L, Nygaard I, Richter HE, Cundiff Kjølhede P. Factors associated with symptoms of pelvic floor dysfunction six years after primary operation of genital prolapse. Acta Ob..."
+    },
+    {
+      "source_pdf": "18-vol-822.pdf",
+      "page": 39,
+      "drop_reason": "fragmented_text",
+      "text_preview": "PREVALENCIA DE MALFORMACIONES CONGÉNITAS EN LA UNIDAD DE PERINATOLOGÍA DEL HOSPITAL UNIVERSITARIO DE CARACAS Tabla 7. Distribución de casos de malformaciones congénitas de cara y cuello por año de ocurrencia Años Total Patologías n (%) Queilopalatosquisis 7 (18) 5 (13) 10 (25) 9 (23) 7 (18) 2 (5) Higroma quístico 4 (18) 5 (23) 4 (18) 7 (32) 2 (9) Dacriocistocele 2 (50) 1 (25) 1 (25) Micrognatia 2 (67) 1 (33) Queiloquisis 1 (33) 1 (33) 1 (33) Otras 1 (5) 5 (24) 9 (43) 1 (5) 5 (24) χ2 = 78,1044 (p = 0,001) Tabla 8. Distribución de casos de malformaciones congénitas de tórax y pulmonar por año de ocurrencia Años Patologías n (%) Total Hernia diafragmática izquierda 11 (26) 8 (19) 6 (14) 7 (1..."
+    },
+    {
+      "source_pdf": "18-vol-822.pdf",
+      "page": 42,
+      "drop_reason": "reference_heavy",
+      "text_preview": "M CASTRO GONZÁLEZ ET AL. 5. Registry of Congenital Anomalies of Argentina. Arch Argent Pediatr. 2013; 111(6):484-494. doi: 10.5546/ aap.2013.484 6. V, Valdés R, Luna D, et al. Diagnóstico prenatal de malformaciones congénitas y alteraciones cromosómicas: resultado de la experiencia CIMAF - Hospital Dr. Sótero Del Río. Rev Chil Obstet Ginecol [Internet]. 2020 [consultado 20 de noviembre de 2021]; 85(4):358–365. Disponible en: 7. anomalías congénitas en América Latina y el Caribe: presente y futuro. Rev Panam Salud Publica. 2019; 43:e44. 8. malformaciones congénitas. Rev Peru Investig Matern Perinat. 2019; 8(4):30-40. 9. Ministerio del Poder Popular para la Salud. República Bolivariana de V..."
+    },
+    {
+      "source_pdf": "18-vol-822.pdf",
+      "page": 69,
+      "drop_reason": "reference_heavy",
+      "text_preview": "R AJAKAIDA 4. en plaquetas . Herramienta versátil de la medicina regenerativa? Cir Cir [Internet]. 2013 [consultado 28 de agosto de 2017]; 81(1):74-82. Disponible en: pdf 5. Fernandez R. Plasma rico en plaquetas: aplicaciones en dermatología. Actas dermosifiliogr [Internet]. 2015 [consultado 15 de agosto de 2017]; 106(2):104- 111. Disponible en: 6. C. Long-term non-hormonal treatment of vaginal dryness. Clin Pract Sex [Internet]. 1992 [consultado 26 de agosto de 2017]; 8(8-9):3–8. Disponible en: Non-Hormonal_Treatment_of_Vaginal_Dryness.pdf 7. impact of the preparation rich in growth factors (PRGF) in different medical fields. Biomaterials. biomaterials.2007.06.037. 8. of platelet-rich pl..."
+    },
+    {
+      "source_pdf": "18-vol-822.pdf",
+      "page": 73,
+      "drop_reason": "fragmented_text",
+      "text_preview": "A LIÑAN-BERMUDEZ ET AL. Tabla 2. Tiempo de atención del primer control del puerperio en mujeres de zona urbana y rural Lugar de residencia Tiempo de atención del primer control del puerperio Ambos grupos p Urbana Rural n % n % n % No recibió atención 1,3 8,9 2,9 Menos de 4 horas 78,9 75,2 78,1 4 a 23 horas 18,5 12,9 17,3 2 días 1,4 1,1 < 0,001 3 a 41 días 0,4 1,6 0,6 Tabla 3. Persona que realizó el primer control del puerperio en mujeres de zona urbana y rural Lugar de residencia Persona que realizó el primer control del puerperio Ambos grupos p Urbana Rural n % n % n % No recibió atención 1,3 8,9 2,9 Médico 45,2 27,3 41,3 Obstetra 24,5 35,1 26,8 Enfermera 26,9 24,2 26,3 < 0,001 Otro trab..."
+    },
+    {
+      "source_pdf": "18-vol-822.pdf",
+      "page": 87,
+      "drop_reason": "reference_heavy",
+      "text_preview": "HERPES VIRUS SIMPLE TIPO 2 ¿FACTOR Y/O COFACTOR EN EL CÁNCER DEL CUELLO UTERINO? REVISIÓN NARRATIVA DE LA LITERATURA 10. McGeoch DJ, Rixon FJ, Davison AJ. Topics in en: detailed.htm. 21. Caldeira TD, Gonçalves CV, Oliveira GR, Fonseca herpesvirus genomics and evolution. Virus Res. 2006; 117(1):90-104. 11. Herpes simplex virus [Internet]. Wikipedia. La TV, Gonçalves R, Amaral CT, et al. Prevalence of herpes simplex virus type 2 and risk factors associated with this infection in women in southern Brazil. Rev Inst Med Trop Sao Paulo. 2013; 55(5):315-321. 22. James C, Harfouche M, Welton NJ, Turner KM, Abu- biblioteca libre; [consultado 12 de agosto de 2020]. Disponible en: simplex_virus 12...."
+    }
+  ],
+  "manual_review_samples_by_pdf": {
+    "18-vol-822.pdf": [
+      {
+        "chunk_id": "18_vol_822_00021",
+        "pages": [
+          92,
+          106
+        ],
+        "section": "REVISIONES",
+        "token_estimate": 1112,
+        "clinical_score": 39,
+        "text_preview": "SUMMARY Fetal programming assumes that pregnancy is the period of greatest susceptibility to acquire changes in the cell nucleus as an adaptive response to the presence of certain morbid processes, which, if maintained over time, will be expressed as pathologies in the child, adolescent or adult such as obesity, dyslipidemia, metabolic syndrome, high blood pressure, ischemic heart disease, metabolic diseases such as type 2 diabetes mellitus, psychiatric diseases such as schizophrenia, anxiety, bipolarity, depression, and other neurological diseases such as autism, epilepsy, Alzheimer, and Parkinson’s disease. The objective was to analyze situations to be considered during the preconceptio..."
+      },
+      {
+        "chunk_id": "18_vol_822_00004",
+        "pages": [
+          18,
+          20
+        ],
+        "section": "COMPARACIÓN DE LA EFECTIVIDAD Y SEGURIDAD DE LA FIJACIÓN SACROESPINOSA",
+        "token_estimate": 1071,
+        "clinical_score": 7,
+        "text_preview": "COMPARACIÓN DE LA EFECTIVIDAD Y SEGURIDAD DE LA FIJACIÓN SACROESPINOSA UNILATERAL VERSUS BILATERAL, EN EL TRATAMIENTO DEL PROLAPSO DE LA CÚPULA VAGINAL distal del cérvix, o a la cicatriz de la cúpula en la mujer histerectomizada (como es el caso de las pacientes incluidas en el estudio), mientras que el tvl, es la profundidad máxima en cm de la vagina. sacroespinosos, en el tratamiento del prolapso de la cúpula vaginal poshisterectomía. Así como evaluar, a largo plazo, los resultados anatómicos (POP-Q), funcionales y de satisfacción, en las pacientes operadas. Entre los criterios de inclusión se tuvieron en cuenta mujeres con prolapso de cúpula vaginal estadio III y IV que aceptaron parti..."
+      },
+      {
+        "chunk_id": "18_vol_822_00001",
+        "pages": [
+          9,
+          16
+        ],
+        "section": "TRABAJOS ORIGINALES",
+        "token_estimate": 929,
+        "clinical_score": 16,
+        "text_preview": "TRABAJOS ORIGINALES Rev Obstet Ginecol Venez. 2022; 82 (2): 145-151. Calcio sérico, grosor cortical del segundo metacarpiano y síntomas en la menopausia Andreina Fernández-Ramírez,1 Jorly Mejía-Montilla,1 Nadia Reyna-Villasmil,1 Duly Torres-Cepeda,2 Eduardo Reyna-Villasmil.2 RESUMEN Objetivo: Establecer la asociación entre las concentraciones de calcio sérico, el grosor cortical del segundo metacarpiano y los síntomas en la menopausia. Métodos: Estudio transversal y prospectivo que incluyó a mujeres menopáusicas con edad entre 50 y 70 años, que asistieron a la consulta de Ginecología y Obstetricia del Hospital Central “Dr. Urquinaona”, Maracaibo, Venezuela. Se evaluaron las característica..."
+      },
+      {
+        "chunk_id": "18_vol_822_00024",
+        "pages": [
+          100,
+          102
+        ],
+        "section": "ETAPA FETAL DE LA PROGRAMACIÓN.",
+        "token_estimate": 1183,
+        "clinical_score": 30,
+        "text_preview": "En el segundo trimestre temprano, el tallo cerebral madura de manera rápida ampliando el rango de movimientos fetales. Los fetos son muy activos observándose complejidad de movimientos desde las 15 semanas hasta el término del embarazo. Dichos patrones son perceptibles por la madre según su sensibilidad individual, pero en líneas generales se acepta que la mayoría de las embarazadas deben sentir los movimientos fetales en la semana 24. Por ecografía, desde la semana 14 se observan movimientos complejos, movimientos oculares y patrones de movimiento facial que van desde la simple deglución hasta patrones complejos de confort y disconfort, facies tristes, sonrisas, bostezos hacia la mitad d..."
+      },
+      {
+        "chunk_id": "18_vol_822_00009",
+        "pages": [
+          43,
+          53
+        ],
+        "section": "TRABAJOS ORIGINALES",
+        "token_estimate": 909,
+        "clinical_score": 27,
+        "text_preview": "SUMMARY Objective: To evaluate the outpatient activities of high obstetric risk during the COVID-19 pandemic. Methods: Retrospective, descriptive review of epidemiological, clinical/paraclinical factors and treatment of 102 medical records from the High Obstetric Risk clinic of the Jesús María Casal Ramos Araure/Acarigua University Hospital from March 11, 2020 to March 11, 2021. Results: In the year, 346 controls were carried out, 244 successive controls, 23% adolescents, 19% elderly and 58% of reproductive age; 77% with some degree of formal education; 57% of the municipality of Araure, the most common reason for referral in 25% want not to reproduce and 23% in previous cesarean sections..."
+      }
+    ],
+    "CAP09.pdf": [
+      {
+        "chunk_id": "cap09_00008",
+        "pages": [
+          12,
+          13
+        ],
+        "section": "4) Ultrasonidos.",
+        "token_estimate": 982,
+        "clinical_score": 26,
+        "text_preview": "Hipertensión gestacional Es la hipertensión que se desarrolla tardíamente en el embarazo (sin signos de preeclampsia) y desaparece tras el parto. Habitualmente, las mujeres que desarrollan esta enfermedad son obesas o bien tienen un historial familiar de hipertensión. Debe prestarse atención a la detección de aumentos de proteínas en orina y ácido úrico, creatinina o BUN en suero, dado que éstos permanecen normales en la hipertensión gestacional y se elevan en la preeclampsia. Los betabloqueantes o alfametildopa suelen ser eficaces en la reducción de la presión arterial. 3.1.6. Amenaza de parto prematuro(25) Decir que un parto es prematuro implica aceptar que la gestación se ha interrumpi..."
+      },
+      {
+        "chunk_id": "cap09_00005",
+        "pages": [
+          9,
+          10
+        ],
+        "section": "4) Ultrasonidos.",
+        "token_estimate": 1183,
+        "clinical_score": 25,
+        "text_preview": "4) Ultrasonidos. 5) Aspiración de líquido rectouterino por punción vaginal. La presencia de sangre puede indicar rotura de la trompa de Falopio. PATOLOGÍA OBSTÉTRICA 3.1. Estados patológicos inducidos por el embarazo El tratamiento del embarazo ectópico dependerá del tamaño del embrión y de si existe rotura de las trompas de Falopio. En todos los casos, el embarazo debe interrumpirse. Si el embrión tiene tamaño menor de 2 cm y los niveles de hCG son menores de 1000mlU/ml se utilizará el metotrexato. Una alternativa, es la eliminación del embrión mediante la realización de una salpingostomía. La tercera opción es realizar una laparoscopia. Si existe rotura de la trompa, se realizará una la..."
+      },
+      {
+        "chunk_id": "cap09_00024",
+        "pages": [
+          31,
+          32,
+          33
+        ],
+        "section": "5.6. Oncología ginecológica",
+        "token_estimate": 1164,
+        "clinical_score": 17,
+        "text_preview": "– acetato de medroxiprogesterona 150 mg por vía intramuscular profunda cada 3 meses. Su eficacia es superior al 99%. Los tratamientos a largo plazo se han asociado a una pérdida de la masa corporal ósea. Por ello se aconseja a estas mujeres que realicen ejercicio físico regularmente y que la ingesta de calcio sea la adecuada. – implantes subdérmicos de levonorgestrel con una liberación constante del progestágeno durante 5 años. La concentración plasmática de levonorgestrel es relativamente baja por lo que los efectos secundarios son prácticamente inexistentes. Ninguno de ellos es efectivo al 100%, y el riesgo de embarazo depende del mecanismo de acción, del cumplimiento o del buen uso de..."
+      },
+      {
+        "chunk_id": "cap09_00004",
+        "pages": [
+          7,
+          8
+        ],
+        "section": "SEGURIDAD DE FÁRMACOS DURANTE EL",
+        "token_estimate": 1191,
+        "clinical_score": 9,
+        "text_preview": "Vía de administración Para que el fármaco pueda pasar a la leche es necesario que esté presente en el torrente sanguíneo.La aplicación tópica o inhalatoria de fármacos para conseguir un efecto local, en principio, no representará problemas para el neonato. Biodisponibilidad oral del fármaco El pH gástrico y la actividad enzimática son determinantes en la absorción del fármaco en el neonato. La permeabilidad gástrica está incrementada,y el tránsito intestinal disminuido, por lo que, fármacos que normalmente no son absorbidos por vía oral pueden serlo en el neonato. Distribución El fármaco cuando se ha absorbido da lugar a unas concentraciones plasmáticas máximas y mínimas. La difusión a la..."
+      },
+      {
+        "chunk_id": "cap09_00022",
+        "pages": [
+          29,
+          30
+        ],
+        "section": "5.6. Oncología ginecológica",
+        "token_estimate": 1199,
+        "clinical_score": 17,
+        "text_preview": "– Terapia hormonal. En pacientes cuya vida no está inmediatamente amenzada por el avance del cáncer.Se administra tamoxifeno (20 mg/día) hasta que se produce la recidiva tumoral.También se emplean los inhibidores de la aromatasa: anastrozol (1 mg/día) y letrozol (2,5 mg/día) con una muy buena respuesta en mujeres postmenopáusicas(56,57).Como segunda o tercera opción se emplea el acetato de megestrol (40 mg cuatro veces al día).Agentes de cuarta línea son la fluoximesterona (10 mg cuatro veces al día) o el dietiletilbestrol (5 mg tres veces al día). – Quimioterapia. En pacientes con enfermedad que amenace la vida o con fracaso al tratamiento hormonal. Los agentes únicos más efectivos son l..."
+      }
+    ],
+    "GAP_Control prenatal del embarazo normal_6105.pdf": [
+      {
+        "chunk_id": "gap_control_prenatal_del_embarazo_normal_6105_00012",
+        "pages": [
+          12,
+          13
+        ],
+        "section": "16 kg. La ganancia de peso durante la gestación tiende a",
+        "token_estimate": 1161,
+        "clinical_score": 30,
+        "text_preview": "En España la Dirección General de Salud Pública del Ministerio de Sanidad y Consumo aconseja que la mujer sin el antecedente de un embarazo afectado por un DTN que planifica una gestación debe tomar 0,4 mg/día de ácido fólico, mientras que aquella con el antecedente de un embarazo afectado por un DTN debe tomar 4 mg/día de ácido fólico, en ambos casos desde al menos un mes antes de la gestación y durante los tres primeros meses del embarazo, además de una dieta con alimentos ricos en ácido fólico (NE=Ia-A) (38). Es muy importante que su administración sea preconcepcional y diaria, dado que no existe una reducción apreciable del riesgo cuando el suplemento se toma de forma irregu..."
+      },
+      {
+        "chunk_id": "gap_control_prenatal_del_embarazo_normal_6105_00009",
+        "pages": [
+          10
+        ],
+        "section": "1. Identificar el número de embriones",
+        "token_estimate": 283,
+        "clinical_score": 9,
+        "text_preview": "En todas las mujeres en edad reproductiva debería ser evaluado el cumplimiento de su calendario vacunal histórico previo al inicio de la gestación, idealmente en la consulta preconcepcional (28) (NE=IV-C). Las vacunas con virus vivos o atenuados están en general contraindicadas y no deben ser administradas durante la gestación (NE=III-B): sarampión, rubéola, parotiditis, varicela, poliomielitis (vacuna tipo Sabin). Tras la vacunación de una mujer con virus vivos o atenuados, debe transcurrir un periodo mínimo de 4 semanas antes de iniciar su embarazo (NE=IV-C). La vacunación accidental durante el embarazo no justifica la interrupción del mismo. Debe recomendarse la vacunación de r..."
+      },
+      {
+        "chunk_id": "gap_control_prenatal_del_embarazo_normal_6105_00002",
+        "pages": [
+          3
+        ],
+        "section": "P R O G R E S O S D E",
+        "token_estimate": 558,
+        "clinical_score": 17,
+        "text_preview": "La exploración física está destinada a identificar los signos de enfermedad sistémica o ginecológica, y, en función de las condiciones de cada centro, debe incluir la medida del peso y talla maternos con el fin de establecer el índice de masa corporal (IMC), una toma de tensión arterial y una exploración genital y mamaria (en determinadas circunstancias, si fuera necesario). III. Pruebas complementarias Su selección debe ser individual en función de los hallazgos obtenidos en la historia clínica, en la exploración física, así como de la prevalencia de determinadas enfermedades en la población: III.A. Recomendadas en todas las mujeres: –– Algunas pueden agravarse por el embarazo (..."
+      },
+      {
+        "chunk_id": "gap_control_prenatal_del_embarazo_normal_6105_00010",
+        "pages": [
+          11,
+          12
+        ],
+        "section": "16 kg. La ganancia de peso durante la gestación tiende a",
+        "token_estimate": 1153,
+        "clinical_score": 20,
+        "text_preview": "La profilaxis de la anemia ferropénica durante el embarazo se basa en asegurar el aporte de 30 mg de hierro elemental al día en el embarazo en las gestaciones únicas y 60 mg/día en las gestaciones múltiples. Durante la lactancia el aporte debe ser de 15 mg/día durante la lactancia. Se recomienda realizar una dieta equilibrada con alimentos ricos en hierro (carne de vacuno, pollo, pavo o cerdo, pescado, verduras –espinacas y acelgas–, legumbres –lentejas–, frutos secos y cereales fortificados), junto con el consumo de suplementos de hierro oral a dosis bajas a partir de la 20ª semana de gestación en las mujeres en que se comprueba que existen unas reservas inadecuadas de hierro. En gest..."
+      },
+      {
+        "chunk_id": "gap_control_prenatal_del_embarazo_normal_6105_00007",
+        "pages": [
+          8,
+          9
+        ],
+        "section": "1. Identificar el número de embriones",
+        "token_estimate": 1198,
+        "clinical_score": 24,
+        "text_preview": "Tabla IV. Objetivos de la exploración ecográfica Edad gestacional Ecografía del primer trimestre: 11+0-13+6 semanas (ver Guía de Asistencia Práctica [GAP] \"Exploración ecográfica del primer trimestre\" [16]) 1. Identificar el número de embriones 2. En el caso de gestación múltiple, diagnóstico de cigosidad 3. Identificación del latido cardiaco embrionario 4. Estimación de la edad de gestación según la longitud céfalo nalgas (LCN) 5. Detección y medida de la translucencia nucal (marcador de cromosomopatía fetal) 6. Observación de la morfología embrionaria 7. Identificar la existencia de patología uterina y de los anejos Objetivos Edad gestacional Ecografía del segundo trimestre:..."
+      }
+    ],
+    "GINECOLOGÍA-Y-OBSTETRICIA.pdf": [
+      {
+        "chunk_id": "ginecologia_y_obstetricia_00005",
+        "pages": [
+          17,
+          18
+        ],
+        "section": "Tema 1 - Embarazo normal y patología obstétrica",
+        "token_estimate": 1198,
+        "clinical_score": 22,
+        "text_preview": "Tema 1 - Embarazo normal y patología obstétrica INTERÉS CLÍNICO NIVELES GESTACIÓN ACCIÓN FISIOLÓGICA - Luteotrófica - Función biológica similar LH - FSH-like - Tirotrófica Detectable tras implantación Aumenta en el primer trimestre (máximo 10-14 s) y luego disminuye Diagnóstico de embarazo: - 3 s: sangre - 5 s: orina Patología obstétrica: - ↑: mola, gemelares, cromosomopatías, GONADO- TROPINA CORIÓNICA HUMANA tumores - ↓: abortos y ectópicos - Seguimiento ectópicos (HCG) - Nulo - En relación con masa placentaria - Asegura suministro de glucosa fetal - Prepara las glándulas mamarias para Aumenta durante la gestación LACTÓGENO PLACENTARIO (meseta 34-36 s) Pico máximo 24-28 s lactancia - Acc..."
+      },
+      {
+        "chunk_id": "ginecologia_y_obstetricia_00004",
+        "pages": [
+          16
+        ],
+        "section": "40. Se utiliza como indicador de la función placentaria.",
+        "token_estimate": 1047,
+        "clinical_score": 19,
+        "text_preview": "- Estrógenos. Su concentración aumenta progresivamente hasta la semana 40. Se utiliza como indicador de la función placentaria. La dehidroepiandrosterona-sulfato (DHEAS) es sintetizada en Lactógeno las suprarrenales fetales a partir del colesterol fetal procedente de la madre. Posteriormente sufre una hidroxilación en el hígado fetal por la 16-alfa-hidroxilasa y pasa a la placenta para ser sulfatada y aromatizada convirtiéndose en estriol. El estriol es el estrógeno más importante durante la gesta- ción. Deriva de precursores fetales que son metabolizados por la placenta: sus niveles reflejan el funcionamiento de la unidad fetoplacentaria y se utiliza por ello como indicador del bienestar..."
+      },
+      {
+        "chunk_id": "ginecologia_y_obstetricia_00012",
+        "pages": [
+          27,
+          28
+        ],
+        "section": "Tema 4",
+        "token_estimate": 1182,
+        "clinical_score": 21,
+        "text_preview": "Tema 4 Control del bienestar fetal El objetivo de las pruebas de bienestar fetal anteparto es la identificación de fetos con riesgo de su pérdida mediante una valoración seriada que permita adoptar las medidas apropiadas para prevenir un daño irreversible. Sin embargo, las evidencias de que su uso disminuya la muerte fetal son escasas debido a la subjetividad en su interpretación y al hecho de que la mayor parte de los procesos corresponden a hechos agudos no detectables. Sus indicaciones son por tanto relativas y se recomiendan en gestaciones en las que el riesgo de pérdida fetal anteparto esté incrementado, comenzando no antes de la semana 40 en las gestaciones de bajo riesgo. En los em..."
+      },
+      {
+        "chunk_id": "ginecologia_y_obstetricia_00028",
+        "pages": [
+          48
+        ],
+        "section": "Tema 9",
+        "token_estimate": 916,
+        "clinical_score": 17,
+        "text_preview": "Tema 9 Patología médica durante la gestación Tratamiento 9.1. Aparato digestivo Una vez realizado el diagnóstico de apendicitis aguda se deberá programar la apendicetomía lo más pronto posible, independientemente de la edad gestacional. Hiperemesis gravídica Definición En el tratamiento de la apendicitis aguda en cualquier trimestre de la gestación, se recomienda el manejo laparoscópico como técnica de elección. Se trata de una situación de vómitos intensos y continuos que impiden la alimentación de la gestante, ocasionando trastornos en el equilibrio hidroelectrolítico, deshidratación, pérdida del 5 % o más de su peso e incluso, en estados avanzados, trastornos neurológicos (encefalopatí..."
+      },
+      {
+        "chunk_id": "ginecologia_y_obstetricia_00030",
+        "pages": [
+          50
+        ],
+        "section": "Tema 9 - Patología médica durante la gestación",
+        "token_estimate": 284,
+        "clinical_score": 14,
+        "text_preview": "Positivo Negativo No realizado Tratamiento Se debe administrar isoniacida, piridoxina, rifampicina y etambutol o espiramicina (tratamiento estándar de la población general, dado que los beneficios superan los riesgos). Evitar siempre la estreptomicina porque puede producir sordera congénita. RPM >18 horas No profilaxis Pretérmino Fiebre intraparto Sí No La profilaxis antituberculosa con isoniacida no está indicada, puede posponerse hasta después del parto. Ampicilina iv intraparto a la madre No profilaxis Estreptococo grupo B SGB = Estreptococo del grupo B; RPM = rotura prematura de membranas. Entre un 15-30 % de las mujeres son portadoras rectales o genitourinarias de estreptococo, trans..."
+      }
+    ],
+    "Manual-Obstetricia-y-Ginecologia-2024_compressed.pdf": [
+      {
+        "chunk_id": "manual_obstetricia_y_ginecologia_2024_compressed_00028",
+        "pages": [
+          41,
+          42
+        ],
+        "section": "4. Involución",
+        "token_estimate": 1126,
+        "clinical_score": 17,
+        "text_preview": "Las contracciones uterinas permiten la expulsión del feto y la placenta desde la cavidad uterina. Durante el período de estimulación, el cuello uterino se dilata y se acorta (“borramiento”) de modo pasivo a medida que el feto sale a través de él. 4. Involución: Es la fase de recuperación de la fisiología uterina posparto. Este proceso se completa dentro de 6 semanas (42 días) posparto. Puntos de Control en el Determinismo del Parto Existen tres puntos de control encargados de regular la duración del embarazo. El primero es la generación y mantención de la quiescencia miometrial. Un segundo momento relevante es el inicio de la activación y el tercero, el inicio del trabajo de parto. Fallas..."
+      },
+      {
+        "chunk_id": "manual_obstetricia_y_ginecologia_2024_compressed_00204",
+        "pages": [
+          300,
+          301,
+          302
+        ],
+        "section": "2.",
+        "token_estimate": 1157,
+        "clinical_score": 26,
+        "text_preview": "Fisiopatología Como se mencionó al comienzo de este capítulo, durante el embarazo, a expensas de las hormonas placentarias (principalmente lactógeno placentario), se produce resistencia a la insulina, lo que la mujer debe compensar aumentando la producción de insulina. Las pacientes predispuestas a desarrollar DMG tienen una alteración metabólica posreceptor de insulina, serán incapaces de responder a la resistencia de insulina periférica aumentada, desarrollan un déficit relativo de insulina, lo que clínicamente corresponde a la DMG. Las mujeres con DMG presentan hiperglicemia e hiperinsulinemia, esto produce a su vez hiperglicemia e hiperinsulinemia fetal. La hiperinsulinemia fetal es l..."
+      },
+      {
+        "chunk_id": "manual_obstetricia_y_ginecologia_2024_compressed_00430",
+        "pages": [
+          678,
+          679
+        ],
+        "section": "INCONTINENCIA URINARIA DE ESFUERZO (IOE)",
+        "token_estimate": 1066,
+        "clinical_score": 13,
+        "text_preview": "INCONTINENCIA URINARIA DE ESFUERZO (IOE) Da cuenta de un 30% de las incontinencias de orina. Generalmente se presenta en la cuarta década de la vida y los principales factores predisponentes son: - Multiparidad (especialmente más de 2 partos) - Incremento de la edad - Obesidad - EPOC (especialmente por tabaco) - Menopausia Esta incontinencia se debe a una disfunción del soporte de la uretra y una alteración del esfínter uretral o deficiencia intrínseca del esfínter. En la mayoría de las pacientes se observa una mezcla de ambos problemas, predominando la disfunción del soporte en edades más tempranas, cercanas a la cuarta década de vida, incrementando y haciéndose más importante la deficie..."
+      },
+      {
+        "chunk_id": "manual_obstetricia_y_ginecologia_2024_compressed_00226",
+        "pages": [
+          340
+        ],
+        "section": "Capítulo 31.",
+        "token_estimate": 597,
+        "clinical_score": 16,
+        "text_preview": "Capítulo 31. EMBARAZO MÚLTIPLE Conceptos generales Un embarazo múltiple corresponde al desarrollo simultáneo en el útero de dos o más fetos (Figura 1). La mayoría de las veces el embarazo múltiple es producto de una ovulación simultánea de dos o más ovocitos, los cuales son fecundados por distintos espermatozoides, resultando en un embarazo múltiple bicigótico. Con menor frecuencia es el resultado de un ovulo fecundado que se divide, dando origen a un embarazo múltiple monocigótico. Los embarazos múltiples pueden originarse naturalmente, sin embargo, hoy en día su frecuencia ha aumentado de la mano de las técnicas de fertilización asistida. Las complicaciones maternas durante el embarazo..."
+      },
+      {
+        "chunk_id": "manual_obstetricia_y_ginecologia_2024_compressed_00460",
+        "pages": [
+          726
+        ],
+        "section": "LESIONES PRECURSORAS DEL CÁNCER DE CUELLO UTERINO",
+        "token_estimate": 1043,
+        "clinical_score": 8,
+        "text_preview": "LESIONES PRECURSORAS DEL CÁNCER DE CUELLO UTERINO El desarrollo del cáncer de cuello uterino ocurre en varias etapas, originadas en la infección por el Virus Papiloma Humano (VPH). La mayoría de los casos de infección por VPH son eliminados por el sistema inmune del individuo, sin intervención médica. Sin embargo, en algunos casos la alteración persiste y progresa, a través de cambios moleculares y celulares, dando origen a las lesiones precursoras del cáncer cervicouterino. La mayoría de los casos de lesiones precursoras permanecen estables y desaparecen, pero existe un pequeño porcentaje de casos que progresan a cáncer (microinvasor primero e invasor posteriormente). Los VPH pertenecen..."
+      }
+    ],
+    "Protocolo Atencion Obstetrica.pdf": [
+      {
+        "chunk_id": "protocolo_atencion_obstetrica_00076",
+        "pages": [
+          165
+        ],
+        "section": "Capítulo 23",
+        "token_estimate": 324,
+        "clinical_score": 13,
+        "text_preview": "mente betalactámico. Si en 24-48 horas no hay respuesta clínica satisfac­ toria se debe asociar un segundo antibiótico macrólido o cefalosporina de tercera generación. El tratamiento se debe cumplir por 10-14 días. e. Considerar ingreso a UCI en caso de manifestaciones de insuficiencia res­ piratoria. f. La neumonía NO es indicación de interrumpir la gestación a menos que se presente un sufrimiento fetal agudo o hay riesgo de muerte materna. Procedimientos con familiares Se debe informar a los familiares acerca de la situación de la paciente y del pronóstico así como de los riesgos del tratamiento médico. Deben colaborar con la detección temprana de signos de alerta, para el inmediato tra..."
+      },
+      {
+        "chunk_id": "protocolo_atencion_obstetrica_00036",
+        "pages": [
+          80
+        ],
+        "section": "2. Complicados: todos los demás.",
+        "token_estimate": 364,
+        "clinical_score": 15,
+        "text_preview": "Hemorragia pos parto: desgarro del canal del parto De acuerdo a su severidad, se clasifican en: 1. No complicados: incluyen los perineales grado I y II, y los desgarros vulvares. 2. Complicados: todos los demás. Criterios diagnósticos El diagnóstico es netamente clínico con visualización directa de la lesión. La ins­ pección del canal del parto debe ser obligatoria después de todo parto instrumental. Procedimientos clínicos y paraclínicos Debe realizarse evaluación clínica y revisión sistemática del cuello uterino, los fondos de saco y paredes vaginales, y la vulva con el instrumental adecuado. Se debe solicitar hematología completa y perfil de coagulación. Diagnóstico diferencial Como cu..."
+      },
+      {
+        "chunk_id": "protocolo_atencion_obstetrica_00001",
+        "pages": [
+          7,
+          8,
+          9
+        ],
+        "section": "Capítulo 1",
+        "token_estimate": 1194,
+        "clinical_score": 37,
+        "text_preview": "Capítulo 1 CONSULTA PRENATAL FASE 1. EVALUACIÓN INICIAL Definición Conjunto de acciones médicas asistenciales y educativas con fines preventi­ vos, diagnósticos y curativas, programadas por el equipo de salud con el objetivo de controlar la evolución del embarazo y obtener una adecuada preparación para el parto, con la finalidad de disminuir los riesgos de este proceso fisiológico. La evaluación debe ser precoz, periódica, integral y de amplia cobertura. Control clínico Primera visita: Se realiza anamnesis y evaluación general, estimación de la edad de gestación y fecha probable de parto. Se solicitan exámenes de rutina. Anamnesis Datos personales, nombre y apellido, edad, estado civil, n..."
+      },
+      {
+        "chunk_id": "protocolo_atencion_obstetrica_00021",
+        "pages": [
+          49,
+          50,
+          187
+        ],
+        "section": "Capítulo 6",
+        "token_estimate": 1005,
+        "clinical_score": 21,
+        "text_preview": "ZZ Etopósido 150 mg/m2 en solución vía intravenosa durante 30 minutos. ZZ Cisplatino 25 mg/m2 en solución vía intravenosa y 20 mmol de KCl durante 4 horas. Día 8: ZZ Etopósido 100 mg/m2 durante 30 minutos, vía intravenosa ZZ MTX 300 mg/m2 vía intravenosa en 500 mL suero salino en 12 horas. ZZ Actinomicina D 0,5 mg/m2 vía intravenosa. ZZ Ácido folínico, 15 mg vía oral o intramuscular cada 12 horas por 4 dosis des­ pués de 24 horas de la dosis inicial de MTX. Estos esquemas o cualquier nuevo esquema de poliquimioterapia, deben dis­ cutirse en equipo multidisciplinario de: oncólogos, obstetras, patólogos, psicó­ logos, trabajadoras sociales, enfermeras, en centros especializados en ETG. El u..."
+      },
+      {
+        "chunk_id": "protocolo_atencion_obstetrica_00055",
+        "pages": [
+          122,
+          123,
+          124
+        ],
+        "section": "Capítulo 19",
+        "token_estimate": 1194,
+        "clinical_score": 16,
+        "text_preview": "Capítulo 19 INFECCIÓN Y DEHISCENCIA DE LA HERIDA OBSTÉTRICA (EPISIORRAFIA Y CESÁREA) FASE 1: EVALUACIÓN INICIAL Definición Dado que la piel está normalmente colonizada por microorganismos que pueden causar infección, el concepto de infección de la herida obstétrica requie­ re la presencia de signos clínicos y síntomas de flogosis, más que la pura eviden­ cia microbiológica. Generalmente afecta los tejidos superficiales pero también puede involucrar planos profundos y órganos y espacios manipulados durante el procedimiento. Suelen desarrollarse en los primeros 30 días de la intervención, más frecuentemente entre el quinto y décimo día de pos operatorio. Clasificación 1. Infección superfici..."
+      }
+    ],
+    "Protocolo-de-Atencion-Clinica-integral-al-embarazo-parto-y-postparto-2.pdf": [
+      {
+        "chunk_id": "protocolo_de_atencion_clinica_integral_al_embarazo_parto_y_postparto_2_00022",
+        "pages": [
+          63,
+          64,
+          65
+        ],
+        "section": "9. Complicaciones durante el expulsivo. En las siguientes situaciones es",
+        "token_estimate": 1163,
+        "clinical_score": 26,
+        "text_preview": "- Cuando aparecen los ángulos de los omóplatos se permitirá a la mujer pujar. En ocasiones bastará con los pujos maternos para conseguir la expulsión de los hombros. Si en dos o tres pujos no se logra el resultado esperado, se deberá usar la maniobra de Bracht (esta maniobra tiene la ventaja de que sirve al mismo tiempo para el desprendimiento de hombros y cabeza y no requiere la introducción de la mano en la vagina). Mientras un ayudante comprime la cabeza fetal en dirección a la pelvis. El profesional en gineco-obstetricia tomará al feto por el tronco y los muslos, se levanta al feto sin tirar y se lo hará girar en torno al pubis materno y en dirección al vientre materno. - Si no fuese..."
+      },
+      {
+        "chunk_id": "protocolo_de_atencion_clinica_integral_al_embarazo_parto_y_postparto_2_00018",
+        "pages": [
+          52,
+          53
+        ],
+        "section": "TABLA #14. ESCALA DE BISHOP",
+        "token_estimate": 751,
+        "clinical_score": 30,
+        "text_preview": "El objetivo de la atención durante el periodo de borramiento y dilatación consiste en brindar cuidados que permitan prevenir, identificar y tratar oportunamente factores de riesgo y signos de alarma en la gestante, para así asegurar el bienestar materno, fetal y del recién nacido. 1. Información a la embarazada. Los profesionales en salud deben brindar la información a la usuaria, sobre la labor de parto y parto, reforzando la información que debió haber recibido desde el Control Prenatal y en el curso de preparación psicofísica para el parto. Se deben enfatizar lo siguientes contenidos: - Información sobre el trabajo de parto ( clara, precisa e inclusiva, adecuada interculturalmente de s..."
+      },
+      {
+        "chunk_id": "protocolo_de_atencion_clinica_integral_al_embarazo_parto_y_postparto_2_00010",
+        "pages": [
+          30,
+          31,
+          32
+        ],
+        "section": "TABLA #4. ASPECTOS A CONSIDERAR EN LA HISTORIA CLÍNICA",
+        "token_estimate": 1194,
+        "clinical_score": 29,
+        "text_preview": "Objetivos Específicos Actividades Propuestas Confirmar el embarazo Realización de exámenes de laboratorio clínicos y análisis bioquímicos y estudios de gabinete para diagnosticar embarazo. Se debe realizar un US para confirmar la edad gestacional al momento de la captación, siempre que la FUR no sea confiable y/o exista discordancia clínico-cronológica. Atención calificada de la usuaria Fomentar el reconocimiento, empoderamiento, enfoque de derechos, género y autonomía de las usuarias durante su proceso de embarazo, parto y posparto. US obstétrico El US obstétrico (si las unidades de referencia cuentan con el recurso) debe de realizarse en el I trimestre –idealmente entre las 11 y 13.6 se..."
+      },
+      {
+        "chunk_id": "protocolo_de_atencion_clinica_integral_al_embarazo_parto_y_postparto_2_00014",
+        "pages": [
+          40,
+          41
+        ],
+        "section": "1. La usuaria embarazada consultará a la Unidad de Emergencias Gineco",
+        "token_estimate": 864,
+        "clinical_score": 31,
+        "text_preview": "Página 38 de 128 1. La usuaria embarazada consultará a la Unidad de Emergencias Gineco- obstétricas del Servicio de Emergencias, por lo que se consideran síntomas de trabajo de parto, tales como, percepción de contracciones uterinas dolorosas, pérdida de mucosidad, líquido o sangre a través de los genitales. 2. Los profesionales de medicina o enfermería, se presentarán con calidez y el profesional a cargo entrevistará a la usuaria de forma respetuosa y empática, brindando una atención humanizada, practicando la escucha activa. Llamará a la usuaria por su nombre e identificará el interés de la usuaria, inquietudes y necesidades emocionales considerando su momento de vida y contexto. 3. En..."
+      },
+      {
+        "chunk_id": "protocolo_de_atencion_clinica_integral_al_embarazo_parto_y_postparto_2_00007",
+        "pages": [
+          15,
+          16,
+          17
+        ],
+        "section": "2. Definiciones",
+        "token_estimate": 1194,
+        "clinical_score": 23,
+        "text_preview": "Curso de Vida3: Se aplica para estudiar los riesgos físicos y sociales presentes durante la gestación, la niñez, la adolescencia, la edad adulta joven y la edad madura que afectan al riesgo de contraer enfermedades crónicas y a los resultados de salud en fases posteriores de la vida. Vale la pena reconocer la importancia de adoptar un enfoque de la salud, sistémico e integral, que abarque la totalidad del curso vital, donde lo que se atienda o se deje de atender en cada curso de vida, tendrá implicaciones en la salud y nivel de bienestar y vida de la madre y el neonato en el futuro cercano. Riesgo3: Es la probabilidad de que las personas, grupos o comunidades padezcan enfermedades o daños..."
+      }
+    ],
+    "RECOM_obstetricia_web.pdf": [
+      {
+        "chunk_id": "recom_obstetricia_web_00003",
+        "pages": [
+          12
+        ],
+        "section": "12 semanas o en",
+        "token_estimate": 550,
+        "clinical_score": 22,
+        "text_preview": "Cuadro 1. Actividades a realizar durante el Control Prenatal con enfoque de riesgo: Consulta Actividades Primera (en las primeras 12 semanas o en cuanto se reconoce como embarazada) a) Elaboración de historia clínica, valoración del riesgo obstétrico y establecimiento del diagnóstico integral; b) Identificación de signos y síntomas de alarma (cefalea, edemas, sangrados, signos de infección de vías urinarias y vaginales), así como estado de salud del feto; c) Medición y registro de peso, talla, crecimiento uterino, y presión arterial, así como interpretación y valoración; d) Determinación de biometría hemática completa, glucemia y VDRL (en la primera consulta; en las subsecuentes dependien..."
+      },
+      {
+        "chunk_id": "recom_obstetricia_web_00013",
+        "pages": [
+          35,
+          36
+        ],
+        "section": "II. ANÁLISIS DE LAS QUEJAS DE LA CONAMED",
+        "token_estimate": 1006,
+        "clinical_score": 20,
+        "text_preview": "Las complicaciones más frecuentes de los embarazos fueron puerperio patológico 64 (7.6%), sufrimiento fetal y/o asfixia perinatal 43 (5.1%), óbito fetal 34 (4.0%), embarazo ectópico 29 (3.4%) enfermedades hipertensivas (preeclampsia y eclampsia) 18 (2.1%) y hemorragias de origen placentario (desprendimiento prematuro, acretismo y placenta previa) 17 (2.0%). Se atendieron 406 nacimientos por cesárea (46.9%; 8 fueron gemelares), 315 por parto (37.2%) y cinco mediante aplicación de fórceps (0.6%). Las inconformidades ocurrieron durante la atención del parto en 354 casos (41.7%), durante el tratamiento quirúrgico 198 (23.3%), durante el tratamiento médico 83 (9.8%), durante el diagnóstico 65..."
+      },
+      {
+        "chunk_id": "recom_obstetricia_web_00004",
+        "pages": [
+          13,
+          14
+        ],
+        "section": "IMC <17 o >30 (inicio del",
+        "token_estimate": 1198,
+        "clinical_score": 43,
+        "text_preview": "Cuadro 2. Semáforo del riesgo prenatal. Riesgo Reproductivo Antecedentes previos al embarazo Riesgo obstétrico Complicaciones durante el embarazo - Edad <15 años o >40 años - Talla <1.44 metros - IMC <17 o >30 (inicio del embarazo) - Nivel socioeconómico muy bajo - Analfabeta o no habla español - Enfermedades crónicas: HAS, DM, cardiopatías, endocrinopatías, etc. - Antecedentes obstétricos: - Paciente >28 SDG sin CP previo - Paciente con embarazo >41 SDG - Embarazo múltiple - Complicaciones del presente embarazo: - Hipertensión arterial >160/110mmHg - Hemorragia obstétrica activa - Dolor abdominal intenso y constante - Dolor en epigastrio o CSD (en barra) - Cefalea intensa - Acúfenos, fos..."
+      },
+      {
+        "chunk_id": "recom_obstetricia_web_00012",
+        "pages": [
+          31,
+          32
+        ],
+        "section": "PRÁCTICAS DAÑINAS",
+        "token_estimate": 472,
+        "clinical_score": 8,
+        "text_preview": "En materia internacional, rigen esta labor varios instrumentos internacionales de derechos humanos, entre los que destacan el apartado 1 del artículo 25 de la Declaración Universal de los Derechos Humanos, que señala que toda persona tiene derecho a un nivel de vida adecuado que le asegure, así como a su familia, la salud y el bienestar y en especial la alimentación, el vestido, la vivienda, la asistencia médica y los servicios sociales necesarios; el artículo 12 del toda persona al disfrute del más alto nivel posible de salud física y mental, y refiere que los Estados deben adoptar medidas para asegurar la plena efectividad de este derecho; y el artículo 10 del Protocolo Adicional a la C..."
+      },
+      {
+        "chunk_id": "recom_obstetricia_web_00020",
+        "pages": [
+          46
+        ],
+        "section": "3. Documentar toda la atención obstétrica.",
+        "token_estimate": 242,
+        "clinical_score": 10,
+        "text_preview": "3. Documentar toda la atención obstétrica. a) Documentar debidamente el evento obstétrico en el expediente clínico y anotar siempre el nombre completo y firma de todos los profesionales de la salud que participaron en la atención de la paciente. b) Anotar claramente en el expediente clínico el razonamiento clínico que sustente la indicación del uso de oxitocina durante la atención obstétrica. c) Señalar claramente la dosificación del medicamento, verificando los Cinco Correctos: paciente, medicamento, vía, dosis y duración. d) Documentar los factores de riesgo del binomio. e) Elaborar el partograma de manera completa y adecuada, para la correcta interpretación de la curva de Friedman. 4...."
+      }
+    ],
+    "S0716864011704321.pdf": [
+      {
+        "chunk_id": "s0716864011704321_00005",
+        "pages": [
+          11,
+          12
+        ],
+        "section": "TABLA 6. DOSIS DE RADIACIÓN Y EFECTO FETAL",
+        "token_estimate": 1171,
+        "clinical_score": 30,
+        "text_preview": "Clínica: El inicio de los síntomas ocurre más frecuentemente durante el trabajo de parto y durante el parto mismo, o inmediatamente después del parto. Los hallazgos clínicos más frecuentes son el inicio abrupto y fulminante de hipotensión por shock cardiogénico, hipoxemia por insuﬁciencia respiratoria y coagulación intravascular diseminada. La hipoxemia causa alrededor del 50% de las muertes que ocurren en la primera hora. El sangrado prolongado de los sitios de punción o de los sitios quirúrgicos son la manifestación más frecuente del trastorno de coagulación. En pacientes bajo terapia anticoagulante que presentan trabajo de parto, no existe contraindicación de parto vaginal, si bien se..."
+      },
+      {
+        "chunk_id": "s0716864011704321_00001",
+        "pages": [
+          1,
+          2
+        ],
+        "section": "URGENCIAS EN OBSTETRICIA",
+        "token_estimate": 1172,
+        "clinical_score": 34,
+        "text_preview": "URGENCIAS EN OBSTETRICIA EMERGENCIES IN OBSTETRICS DR. ENRIQUE OYARZÚN E. (1), DR. JUAN PEDRO KUSANOVIC P. (2) 1. Profesor Titular. División Obstetricia y Ginecología. Facultad de Medicina. Pontificia Universidad Católica de Chile. 2. Profesor Asistente. División Obstetricia y Ginecología. Facultad de Medicina. Pontiﬁcia Universidad Católica de Chile. Servicio Obstetricia y Ginecología. Hospital Sótero del Río. RESUMEN Tradicionalmente, el embarazo es considerado un evento ﬁsiológico. Sin embargo, cerca de un 20% de las embarazadas desarrolla patologías obstétricas que se asocian a mortalidad materna y perinatal. A nivel mundial, cada año medio millón de mujeres fallece durante el embaraz..."
+      },
+      {
+        "chunk_id": "s0716864011704321_00006",
+        "pages": [
+          12,
+          13
+        ],
+        "section": "TABLA 6. DOSIS DE RADIACIÓN Y EFECTO FETAL",
+        "token_estimate": 1188,
+        "clinical_score": 20,
+        "text_preview": "Rubin: causa aducción del hombro fetal de modo que los hombros se desplacen desde el diámetro anteroposterior de la pelvis, permitiendo que el hombro posterior entre a la pelvis. Con anestesia adecuada, el operador introduce una mano en la vagina, por detrás del hombro posterior y lo rota hacia anterior, hacia la cara fetal. Alternativamente se puede intentar el desplazamiento del hombro anterior, si éste está más accesible. Fisiopatología: El diámetro biacromial del feto entra a la pelvis normalmente en un ángulo oblicuo, con el hombro posterior por delante del anterior, y rotando a la posición antero-posterior al ﬁnal cuando el polo cefálico ha hecho la rotación externa. En ese momento..."
+      },
+      {
+        "chunk_id": "s0716864011704321_00004",
+        "pages": [
+          9
+        ],
+        "section": "DIAGNÓSTICO DIFERENCIAL",
+        "token_estimate": 939,
+        "clinical_score": 31,
+        "text_preview": "DIAGNÓSTICO DIFERENCIAL Las convulsiones eclámpticas son indistinguibles de otras convulsiones tónico-clónicas generalizadas. Otros cuadros clinicos a considerar en el diagnóstico diferencial son: s฀!CCIDENTE฀VASCULAR฀ENCEFÉLICO s฀%NCEFALOPATÓA฀HIPERTENSIVA s฀4UMOR฀DEL฀SISTEMA฀NERVIOSO฀CENTRAL s฀4RASTORNOS฀METABØLICOS฀O฀INFECCIOSOS s฀0ÞRPURA฀TROMBOCITOPÏNICO฀TROMBØTICO s฀%PILEPSIA s฀6ASCULITIS฀CEREBRAL TABLA 5. COMPLICACIONES DE ECLAMPSIA COMPLICACIONES FRECUENCIA, % Desprendimiento placenta 7 a 10 Coagulación intravascular diseminada 7 a 11 Edema pulmonar agudo 3 a 5 Insuﬁciencia renal aguda 5 a 9 Neumonía por aspiración 2 a 3 Paro cardio respiratorio 2 a 5 El ABC (airway, breathing, cir..."
+      },
+      {
+        "chunk_id": "s0716864011704321_00009",
+        "pages": [
+          16
+        ],
+        "section": "71.฀,EWIS฀'฀4HE฀#ONlDENTIAL฀%NQUIRY฀INTO฀-ATERNAL฀AND฀#HILD฀(EALTH฀",
+        "token_estimate": 211,
+        "clinical_score": 10,
+        "text_preview": "71.฀,EWIS฀'฀4HE฀#ONlDENTIAL฀%NQUIRY฀INTO฀-ATERNAL฀AND฀#HILD฀(EALTH฀ 75. #UMMINS฀2/฀(AZINSKI฀-&฀:ELOP฀#-฀#ARDIAC฀ARREST฀ASSOCIATED฀WITH฀ #%-!#( ฀3AVING฀-OTHERS฀,IVES฀2EVIEWING฀-ATERNAL฀$EATHS฀TO฀MAKE฀ PREGNANCY฀)N฀!#,3฀THE฀REFERENCE฀TEXTBOOK฀#UMMINS฀2/฀(AZINSKI฀-&฀ &IELD฀*฀%DS ฀!(!฀$ALLAS฀฀0 Maternal Deaths in the United Kingdom. RCOG Press. 2007. 76. DePace, NL, Betesh, JS, Kotler, MN. 'Postmortem' cesarean section with 72.฀(ILL฀##฀0ICKINPAUGH฀*฀4RAUMA฀AND฀SURGICAL฀EMERGENCIES฀IN฀THE฀OBSTETRIC฀ recovery of both mother and offspring. JAMA 1982; 248:971. patient. Surg Clin North Am 2008; 88:421. 77. Katz, V, Balderston, K, DeFreest, M. Perimortem cesarean delivery: were 73. Zelop, CM, Grime..."
+      }
+    ],
+    "S071686402300007X.pdf": [
+      {
+        "chunk_id": "s071686402300007x_00001",
+        "pages": [
+          2
+        ],
+        "section": "INTRODUCCIÓN",
+        "token_estimate": 1124,
+        "clinical_score": 22,
+        "text_preview": "INTRODUCCIÓN Los resultados en salud materna se miden principalmente por un indicador negativo como lo es la razón de mortalidad materna (RMM). Este indicador mide el riesgo de muerte de una mujer en relación con el embarazo a través de un cociente que divide el número de muertes maternas entre el número de nacidos vivos en un lugar y período determinado y a esa cifra resultante se la multiplica por un coeficiente que por convención suele ser 100.000. Refleja también la capacidad de los sistemas de salud para prevenir y abordar de manera efectiva las complicaciones que ocurren durante el embarazo y el parto1. terna Extremadamente Grave (MMEG). Actualmente, ambos términos NMM y MMEG son us..."
+      },
+      {
+        "chunk_id": "s071686402300007x_00002",
+        "pages": [
+          4,
+          5
+        ],
+        "section": "INTRODUCCIÓN",
+        "token_estimate": 1129,
+        "clinical_score": 24,
+        "text_preview": "En aquellos países en donde los sistemas de vigilancia funcionan mejor, estos casos son seguidos hasta el año para tener una correcta idea de si las mujeres con MMEG no terminaron transformándose en una muerte materna tardía. Se entiende por muerte materna tardía, la muerte de una mujer por causas maternas directas o indirectas que se produce a partir del día 43 y el año de terminado del embarazo10. La caracterización de la MMEG no es indispensable para el clínico al momento de ofrecer la asistencia, pero su aplicación a través de la identificación de los casos, la información recabada mediante auditorías, la aplicación del modelo de seguridad y el ciclo de mejora continua institucional,..."
+      }
+    ],
+    "S0716864024000324.pdf": [
+      {
+        "chunk_id": "s0716864024000324_00001",
+        "pages": [
+          2,
+          3
+        ],
+        "section": "INTRODUCCIÓN",
+        "token_estimate": 1190,
+        "clinical_score": 18,
+        "text_preview": "INTRODUCCIÓN El asma bronquial es una comorbilidad prevalente en el embarazo que puede evolucionar con deterioro de la enfermedad respiratoria en el transcurso de la gestación y complicarse con resultados perinatales adversos que afecten la unidad materno-fetal. A menudo estas complicaciones se deben a que la madre sufre de asma mal controlada durante el embarazo como también a la ocurrencia de episodios de asma aguda (conocida como exacerbaciones o crisis asmáticas). Las exacerbaciones de asma se asocian con alteraciones en la función placentaria e impactan en el desarrollo y crecimiento fetal. Estudios de seguimiento de hijos de madres asmáticas han revelado que estos niños tienen mayor..."
+      },
+      {
+        "chunk_id": "s0716864024000324_00005",
+        "pages": [
+          7
+        ],
+        "section": "INTRODUCCIÓN",
+        "token_estimate": 698,
+        "clinical_score": 16,
+        "text_preview": "El uso de medicamentos biológicos con anticuerpos monoclonales se recomienda para el manejo de pacientes con asma grave atendidos en centros de mayor complejidad y en manos de un equipo multidisciplinario. Estudios muestran que la exposición fetal a los anticuerpos monoclonales aumenta en el segundo y tercer trimestre de la gestación. En el embarazo, la evidencia muestra que el uso de omalizumab (anti-IgE) es probablemente seguro (evidencia tipo B1), según estudios de la cohorte Xolair Pregnancy Registry; luego de numerosos reportes de casos realizados desde que la Food and Drug Administration de Estados Unidos aprobó su uso el año 2007. Existe evidencia que muestra que los resultados de..."
+      },
+      {
+        "chunk_id": "s0716864024000324_00003",
+        "pages": [
+          5,
+          6
+        ],
+        "section": "INTRODUCCIÓN",
+        "token_estimate": 1132,
+        "clinical_score": 15,
+        "text_preview": "La falta de adherencia a la terapia con CSI en el embarazo es frecuente y decae hasta menos del 30% de las pacientes en el primer trimestre. Las razones principales reportadas por las pacientes son la falta de información y temor por la seguridad farmacológica en embarazo y durante la lactancia29. Es fundamental entregar educación a las pacientes en edad fértil y en embarazadas para evitar el abandono de la terapia antiinflamatoria con CSI. Además de la presencia de síntomas y la medición de los flujos espiratorios, la evaluación de biomarcadores de inflamación tipo 2 de la vía aérea también es de ayuda en el diagnóstico en embarazo. Se ha observado que la asociación clínica de eosinófilo..."
+      },
+      {
+        "chunk_id": "s0716864024000324_00004",
+        "pages": [
+          6,
+          7
+        ],
+        "section": "INTRODUCCIÓN",
+        "token_estimate": 1164,
+        "clinical_score": 18,
+        "text_preview": "TERAPIA FARMACOLÓGICA EN ASMA Y EMBARAZO El manejo farmacológico es fundamental en estas pacientes. Las guías y recomendaciones internacionales de asma refuerzan con claridad que el tratamiento del asma no difiere en mujeres embarazadas, por lo que la seguridad y la eficacia de la terapia debe ser recalcada incluso desde antes de la gestación. En caso de introducir medicamentos nuevos en la paciente ya embarazada se debe evaluar el perfil de seguridad y en acuerdo con la paciente34. El uso de broncodilatadores en embarazo no debe ser utilizados en forma aislada, pues no tienen efecto antiinflamatorio. Por el contrario, existe evidencia del efecto deletéreo como terapia de primera línea32...."
+      },
+      {
+        "chunk_id": "s0716864024000324_00002",
+        "pages": [
+          4,
+          5
+        ],
+        "section": "INTRODUCCIÓN",
+        "token_estimate": 1182,
+        "clinical_score": 25,
+        "text_preview": "POSIBLES MECANISMOS DEL IMPACTO DEL ASMA EN EL CURSO DEL EMBARAZO Actualmente se conocen algunos posibles mecanismos del efecto del asma sobre el desarrollo del embarazo. Se han estudiado los posibles mecanismos fisiopatológicos intrauterinos responsables de la alteración del desarrollo fetal en mujeres afectadas por asma. La mayoría de los estudios sugieren que los efectos del asma en sí (y no el uso de corticoide inhalado durante el embarazo) es lo que tendría el mayor impacto sobre desarrollo fetal. Hay estudios interesantes que describen diferencias específicas según el sexo del hijo en el proceso de adaptación fetoplacentaria en las pacientes con asma. Un estudio del 2003 demostró qu..."
+      }
+    ],
+    "S071686402500046X.pdf": [
+      {
+        "chunk_id": "s071686402500046x_00002",
+        "pages": [
+          2
+        ],
+        "section": "REVISTA MÉDICA CLÍNICA LAS CONDES",
+        "token_estimate": 1071,
+        "clinical_score": 11,
+        "text_preview": "the last decade there has been a significant increase in national and international initiatives the last decade there has been a significant increase in national and international initiatives that promote the validation of perinatal grief and its support. The objective of this article that promote the validation of perinatal grief and its support. The objective of this article is to provide a review of the evidence regarding perinatal grief and its impact on mental is to provide a review of the evidence regarding perinatal grief and its impact on mental health, considering its definition and approach throughout history and current proposals health, considering its definition and approach..."
+      },
+      {
+        "chunk_id": "s071686402500046x_00003",
+        "pages": [
+          3,
+          4
+        ],
+        "section": "REVISTA MÉDICA CLÍNICA LAS CONDES",
+        "token_estimate": 1036,
+        "clinical_score": 8,
+        "text_preview": "En 1982, Kirkley-Best y Kellner critican los estudios previos por sus errores metodológicos y denominan al duelo perinatal como “un duelo olvidado”, recomendando incluir a los padres en el manejo de una muerte perinatal, incentivándolos a ver y tomar en brazos a su bebé fallecido, y a participar en grupos de apoyo25. Los avances en la atención perinatal 26 en torno a la comprensión de las implicancias del vínculo madre-bebé durante el embarazo27,28 y el reconocimiento del dolor de las madres por la pérdida de un hijo en gestación29, aparecen de forma progresiva en los años siguientes hasta reconocerse las particularidades del duelo perinatal. El duelo perinatal genera un impacto emocional..."
+      },
+      {
+        "chunk_id": "s071686402500046x_00001",
+        "pages": [
+          2,
+          3
+        ],
+        "section": "REVISTA MÉDICA CLÍNICA LAS CONDES",
+        "token_estimate": 1184,
+        "clinical_score": 19,
+        "text_preview": "PREVALENCIA DEL DUELO PERINATAL E IMPACTO EN LA SALUD MENTAL A nivel internacional, se estima que entre un 12% y 27% de los embarazos conocidos terminan en una pérdida gestacional en personas entre 25 y 29 años14,15, aumentando a casi al 75% en personas gestantes mayores de 45 años16. La mortalidad perinatal reportada en Chile es menor en comparación con otros países de la región, asociado a los avances en medicina y en las rutinas de cuidado, reportándose una tasa de mortalidad neonatal en el año 2019 de 4,8 muertes menores de 28 días por cada 1000 Históricamente, se ha descrito una falta de comprensión en el entorno familiar, social y de los equipos de salud, posicionándose como un “due..."
+      },
+      {
+        "chunk_id": "s071686402500046x_00004",
+        "pages": [
+          4,
+          5
+        ],
+        "section": "REVISTA MÉDICA CLÍNICA LAS CONDES",
+        "token_estimate": 1067,
+        "clinical_score": 10,
+        "text_preview": "ORIENTACIONES PARA EL ACOMPAÑAMIENTO EN DUELO PERINATAL A partir de la sistematización de los protocolos para el manejo del duelo perinatal se han definido cinco elementos centrales: creación de recuerdos, buena comunicación, toma de decisiones compartida, entrega de apoyo social y emocional, y brindar una respuesta organizacional43. La creación de recuerdos se refiere a la entrega de objetos significativos como el brazalete, certificado de nacimiento, fotografías, manta, mechón de pelo, huellas de pies o manos, entre otros elementos significativos que tienen el objetivo de construir memorias tangibles del bebé fallecido. A raíz de esto, muchos centros de salud han considerado incorporar..."
+      }
+    ],
+    "usingunindicatorsqa-sp.pdf": [
+      {
+        "chunk_id": "usingunindicatorsqa_sp_00008",
+        "pages": [
+          16
+        ],
+        "section": "3. ¿CÓMO DEFINIMOS LAS COMPLICACIONES OBSTÉTRICAS GRAVES Y",
+        "token_estimate": 508,
+        "clinical_score": 17,
+        "text_preview": "Recopilar los datos de las complicaciones no se efectúa de modo tan directo. Los registros del establecimiento por lo general no tienen un lugar para anotar las complicaciones obstétricas, en cuyo caso se debe añadir una columna para anotar esta información. Los hospitales y administradores de proyectos deben resistir la tentación de crear un registro nuevo, aparte, dedicado a las complicaciones obstétricas u otros datos de los Indicadores de Proceso de la ONU. Es más útil que el establecimiento mejore y revitalice los registros existentes, y no crear más trabajo administrativo para los muy ocupados clínicos. Las mujeres con complicaciones pueden ser atendidas en el cuarto de labor o en e..."
+      },
+      {
+        "chunk_id": "usingunindicatorsqa_sp_00013",
+        "pages": [
+          29,
+          30
+        ],
+        "section": "11. ¿CÓMO RECOPILAMOS DATOS SOBRE LAS COMPLICACIONES DEL ABORTO?",
+        "token_estimate": 1109,
+        "clinical_score": 18,
+        "text_preview": "11. ¿CÓMO RECOPILAMOS DATOS SOBRE LAS COMPLICACIONES DEL ABORTO? Hay varios asuntos muy importantes concernientes a la recopilación de datos sobre las complicaciones del aborto. Primero, los abortos (y los embarazos extrauterinos), por definición, ocurren en la etapa temprana o mediana del embarazo, en contraste con las complicaciones del parto o del período postparto. Los datos de estas complicaciones pueden perderse a menos que se hagan esfuerzos para recopilar datos del registro colocado en el pabellón donde estas mujeres son atendidas (por ejemplo, en el Pabellón de Mujeres o en el de Ginecología). Es evidente que recopilar datos de un registro de nacimientos o del registro de admisio..."
+      },
+      {
+        "chunk_id": "usingunindicatorsqa_sp_00005",
+        "pages": [
+          8,
+          9
+        ],
+        "section": "3. ¿CÓMO DEFINIMOS LAS COMPLICACIONES OBSTÉTRICAS GRAVES Y",
+        "token_estimate": 1133,
+        "clinical_score": 32,
+        "text_preview": "Y el Indicador 6 nos dice algo sobre la calidad del servicio, en respuesta a la pregunta de si los establecimientos salvan la vida de las mujeres. Si un planificador de salud pública o un administrador de establecimiento sabe que existe suficiente cobertura a la población, las mujeres con complicaciones obstétricas llegan hasta los servicios que las pueden librar de la muerte y la discapacidad, y los establecimientos funcionan lo suficientemente bien para salvar vidas, entonces, él o ella puede estar confiado(a) de que las muertes maternas en el país se están evitando. 3. ¿CÓMO DEFINIMOS LAS COMPLICACIONES OBSTÉTRICAS GRAVES Y DIRECTAS? La definición de la OMS de la muerte materna es: “mu..."
+      },
+      {
+        "chunk_id": "usingunindicatorsqa_sp_00002",
+        "pages": [
+          5
+        ],
+        "section": "1. ¿POR QUÉ SE ELABORARON LOS INDICADORES DE PROCESO DE LA ONU?",
+        "token_estimate": 627,
+        "clinical_score": 23,
+        "text_preview": "1. ¿POR QUÉ SE ELABORARON LOS INDICADORES DE PROCESO DE LA ONU? La mayoría de las muertes maternas se deben a causas obstétricas directas, como son hemorragia postparto, sepsis y complicaciones del aborto. Las complicaciones obstétricas indirectas –enfermedades agravadas por el embarazo, tales como anemia, malaria, tuberculosis, VIH/SIDA y varias afecciones crónicas— van en aumento en algunas partes del mundo, y dan cuenta de un gran incremento en la proporción de muertes maternas. Existe ahora un consenso internacional para hacer más seguros el embarazo y el parto, que incluye el asegurar que las mujeres con complicaciones obstétricas reciban oportunamente la atención médica necesaria. L..."
+      },
+      {
+        "chunk_id": "usingunindicatorsqa_sp_00004",
+        "pages": [
+          7
+        ],
+        "section": "1. Cantidad disponible de",
+        "token_estimate": 383,
+        "clinical_score": 6,
+        "text_preview": "Cuadro 1: Los seis Indicadores de Proceso de la ONU y los niveles recomendados Indicador de Proceso de las Naciones Unidas Definición Nivel Recomendado 1. Cantidad disponible de servicios COEm Número de establecimientos que suministran COEm Mínimo: 1 establecimiento completo de COEm por cada 500,000 personas Mínimo: 4 establecimientos COEm básicos por cada 500,000 personas 2. Distribución geográfica de los establecimientos COEm Mínimo: 100% de las zonas subnacionales tienen el número mínimo aceptable de establecimientos COEm básicos y completos 3. Proporción de todos los nacimientos en establecimientos COEm Establecimientos que suministran COEm bien distribuidos al nivel subnacional4 Prop..."
+      }
+    ],
+    "vol-842-1.pdf": [
+      {
+        "chunk_id": "vol_842_1_00007",
+        "pages": [
+          18,
+          20,
+          22
+        ],
+        "section": "PREDICCIÓN DE LA VALORACIÓN DEL RECIÉN NACIDO SEGÚN EL ESTADO NUTRICIONAL MATERNO",
+        "token_estimate": 1188,
+        "clinical_score": 12,
+        "text_preview": "PREDICCIÓN DE LA VALORACIÓN DEL RECIÉN NACIDO SEGÚN EL ESTADO NUTRICIONAL MATERNO: MODELO BASADO EN ÁRBOLES DE DECISIÓN de gestación, a término de 37 a < 42 semanas de gestación y postérmino de 42 semanas o más), peso al nacer (bajo peso < 2500 gramos, peso adecuado 2500 a 3999 gramos y macrosomía de 4000 gramos o más), peso y talla al nacer para la EG (mayor a percentil 90: grande para la edad gestacional (GEG); entre el percentil 10 y 90: adecuado para la edad gestacional (AEG), y debajo del percentil 10: pequeño para la edad gestacional (PEG) (1, 21, 22). puntuación APGAR al minuto de 4 a 6 se asoció con mayor ganancia de peso gestacional (p = 0,029). Respecto a la ganancia de peso ges..."
+      },
+      {
+        "chunk_id": "vol_842_1_00025",
+        "pages": [
+          88,
+          89
+        ],
+        "section": "REVISIÓN NARRATIVA",
+        "token_estimate": 1188,
+        "clinical_score": 19,
+        "text_preview": "REVISIÓN NARRATIVA Rev Obstet Ginecol Venez. 2024; 84 (2): 185-204. Cribado prenatal de aneuploidías mediante análisis de ácido desoxirribonucleíco libre total circulante en plasma materno. Revisión narrativa. Alisandra Morales de Machín1, Enrique Machín Cáceres2. RESUMEN La prueba prenatal no invasiva es un método de cribado de aneuploidías fetales y de resultar con riesgo alto debe ser confirmado a través de prueba genética diagnóstica. Es la prueba de detección más sensible y específica para las aneuploidías fetales comunes y minimiza la realización de técnicas invasivas, solo para las gestantes con riesgo elevado. Se debe realizar asesoramiento genético pre- y poscribado. Este estudio..."
+      },
+      {
+        "chunk_id": "vol_842_1_00018",
+        "pages": [
+          62,
+          64
+        ],
+        "section": "ESTUDIO COMPARATIVO DE GUÍAS DE ATENCIÓN PRENATAL EN LATINOAMÉRICA",
+        "token_estimate": 1151,
+        "clinical_score": 25,
+        "text_preview": "Entre 14 y 20 sem. 1era atención En 1era atención En 1era atención Si En la 1era atención (antes de las 12 sem.) No refiere Si, mensual No refiere Sí No refiere IgM < 12 sem. IgG el 1er examen < 20 sem., 2do examen > 20 sem. De acuerdo a normas del programa de cáncer En todas las atencio-nes En 1era atención No refiere Solo en caso de estado febril Una tableta de 5 mg al día, todo el embarazo En 1era atención En el momento de la inscrip-ción No refiere En 1era atención En 1era atención En el momento de la inscrip-ción 5 mg por vía oral al día hasta las 12 sem. 1era atención En 1era atención y en el 3er trimestre (28-32 sem.) En todas las atencio-nes En 1era atención No refiere En 1era ate..."
+      },
+      {
+        "chunk_id": "vol_842_1_00030",
+        "pages": [
+          93,
+          94
+        ],
+        "section": "CRIBADO PRENATAL DE ANEUPLOIDÍAS MEDIANTE ANÁLISIS DE ÁCIDO DESOXIRRIBONUCLEÍCO LIBRE",
+        "token_estimate": 1186,
+        "clinical_score": 11,
+        "text_preview": "El método de secuenciación de ácidos nucleicos diseñado por Sanger (método de terminadores dideoxi) (44), que usa los cuatro nucleótidos modificados con la ausencia del extremo 3’OH, grupo esencial para la polimerización por la ADNpolimerasa, conocidos como dideoxi nucleótidos (ddA, ddC, ddG y ddT), es uno de los más utilizado. En la secuenciación Sanger, un fragmento de ADN que va a ser secuenciado se usa como plantilla para la síntesis de ADN cebado por un nucleótido corto, y la ADNpolimerasa sigue la secuencia de la plantilla, ampliando el cebador e incorporando nucleótidos. Para obtener información de la secuencia, en primer lugar, se añaden a las reacciones de secuenciación análogos..."
+      },
+      {
+        "chunk_id": "vol_842_1_00024",
+        "pages": [
+          83,
+          85
+        ],
+        "section": "DISMENORREA, UN DOLOR QUE INCAPACITA",
+        "token_estimate": 1182,
+        "clinical_score": 19,
+        "text_preview": "(flujo abundante y/o duración > 7 días), peso (índice de masa corporal (IMC) < 20 Kg/m2) y hábitos (consumo de café y tabaquismo). Otros factores de riesgo que se asocian son los de tipo psicológico (ansiedad, depresión, estrés), como abuso sexual y el síndrome premenstrual (11). Dentro de los factores protectores se encuentran el uso de anticonceptivos hormonales, la paridad, el ejercicio y una dieta rica en frutas, verduras y alimentos altos en omega 3. El mecanismo por el cual se desarrolla la dismenorrea primaria es la sobreproducción de prostaglandinas y leucotrienos (6), los cuales aumentan durante la fase lútea, en la que la progesterona disminuye, lo cual induce el desprendimiento..."
+      }
+    ],
+    "vol831-1.pdf": [
+      {
+        "chunk_id": "vol831_1_00011",
+        "pages": [
+          33,
+          40
+        ],
+        "section": "TRABAJOS ORIGINALES",
+        "token_estimate": 1198,
+        "clinical_score": 13,
+        "text_preview": "Palabras clave: Virus del papiloma humano. Coinfección. Genotipo. Carcinoma cervical. Patología. Papillomavirus genotypes in women from the Peruvian jungle with a positive visual inspection with acetic acid SUMMARY Objective: The objective of this study was to determine the distribution of papillomavirus types in women with a confirmatory diagnosis with visual inspection with acetic acid (VIA). Methods: Women with positive cytology for intraepithelial lesion were included. Papillomavirus genotypes were analyzed using the Xpert® HPV system (GXHPV-CE-10) in conjunction with pathological cytology analysis of cervical tissue samples. Results: A prevalence of human papillomavirus infection of..."
+      },
+      {
+        "chunk_id": "vol831_1_00024",
+        "pages": [
+          62
+        ],
+        "section": "RESULTADOS",
+        "token_estimate": 692,
+        "clinical_score": 9,
+        "text_preview": "RESULTADOS Del mismo modo, dan cuenta de acciones directas de violencia psicológica o física sobre sus cuerpos, incluidos los comentarios impertinentes con respecto al físico de la consultante, la medicalización excesiva o uso de procedimientos intencionalmente dolorosos. La escena: relatos de violencia ginecológica Casi todas aquellas prácticas que se han descrito más arriba como violencia ginecológica son reportadas por las participantes del estudio. Si bien el objetivo de este trabajo no es abundar en ellas, parece necesario referirse brevemente a las mismas en tanto constituyen el escenario que permite comprender el tipo de consecuencias que ha tenido en sus vidas. De este modo, las a..."
+      },
+      {
+        "chunk_id": "vol831_1_00023",
+        "pages": [
+          61,
+          63
+        ],
+        "section": "IMPACTO Y CONSECUENCIAS DE LA VIOLENCIA GINECOLÓGICA EN LA VIDA DE LAS MUJERES",
+        "token_estimate": 1170,
+        "clinical_score": 11,
+        "text_preview": "IMPACTO Y CONSECUENCIAS DE LA VIOLENCIA GINECOLÓGICA EN LA VIDA DE LAS MUJERES trata de respuestas breves de entre una y diez líneas de extensión y sobre las cuales se detectaron 116 formas activas (reducción de palabras mediante proceso de lematización (20) o reducción de palabras principales a sus raíces, lo que genera un diccionario de palabras principales co-ocurrentes en los enunciados de un texto). Del mismo modo, las diferentes formas de una palabra fueron reducidas a la forma más común que permitiese categorizarlas y las jergas fueron transformadas al adjetivo más cercano posible. El objetivo de estas transformaciones es que aquellas palabras que tenían claramente el mismo sentido..."
+      },
+      {
+        "chunk_id": "vol831_1_00014",
+        "pages": [
+          40,
+          51,
+          59
+        ],
+        "section": "TRABAJOS ORIGINALES",
+        "token_estimate": 1072,
+        "clinical_score": 18,
+        "text_preview": "Los trastornos de la fertilidad pueden deberse a alteraciones que afectan el funcionamiento correcto de los órganos reproductivos, tanto femeninos como masculinos; se ha descrito que el factor femenino es el Forma de citar este artículo: Segura Bannatyne LD, Pérez-Wulff JA. Comparación de hallazgos histeroscópicos vs. Histerosalpingográficos en pacientes sometidas a tratamiento de fertilidad. Rev Obstet Ginecol Venez. 2023; 83(1): 35-45. TRABAJOS ORIGINALES Rev Obstet Ginecol Venez. 2023; 83 (1): 46-53. Lóbulo hepático derecho fetal: nomograma por percentiles* Diana Cegarra Meza,1 Albani Aular Barrios,2 Alexandra Rivero Fraute.3 RESUMEN Objetivo: Diseñar un nomograma por percentiles de la..."
+      },
+      {
+        "chunk_id": "vol831_1_00018",
+        "pages": [
+          44,
+          46,
+          48
+        ],
+        "section": "COMPARACIÓN DE HALLAZGOS HISTEROSCÓPICOS VS. HISTEROSALPINGOGRÁFICOS",
+        "token_estimate": 1182,
+        "clinical_score": 12,
+        "text_preview": "Útero unicorne 0,7 Inmunológica 0,7 Útero didelfo 0,7 Útero bicorne 0,7 COMPARACIÓN DE HALLAZGOS HISTEROSCÓPICOS VS. HISTEROSALPINGOGRÁFICOS EN PACIENTES SOMETIDAS A TRATAMIENTO DE FERTILIDAD DISCUSIÓN Con relación a las técnicas de fertilidad para lograr la implantación, en este grupo de pacientes se le practicó la fertilización in vitro (FIV) al 50,4%, tomando en cuenta que es el método empleado con más frecuencia en la actualidad para cualquier condición desfavorable para la interacción del óvulo con el espermatozoide, como las lesiones y obstrucción en las trompas, las alteraciones del cuello uterino, variaciones de la ovulación, endometriosis, alteraciones de los espermatozoides, inf..."
+      }
+    ]
+  }
+}

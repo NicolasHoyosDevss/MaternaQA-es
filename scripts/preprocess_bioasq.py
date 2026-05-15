@@ -9,6 +9,7 @@ from tqdm import tqdm
 
 from common import (
     build_chat_example,
+    clean_assistant_for_sft,
     dedupe_by_pair,
     ensure_clean_non_empty,
     load_records_from_path,
@@ -29,14 +30,31 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--use-local-first", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--include-snippets", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--max-snippets", type=int, default=3)
+    parser.add_argument("--max-ideal-parts", type=int, default=8)
     return parser.parse_args()
 
 
-def normalize_ideal_answer(value: Any) -> str:
+def _normalize_for_dedupe(value: str) -> str:
+    value = value.lower()
+    value = " ".join(value.split())
+    return "".join(ch for ch in value if ch.isalnum() or ch.isspace()).strip()
+
+
+def normalize_ideal_answer(value: Any, max_parts: int) -> str:
     if isinstance(value, list):
         cleaned = [ensure_clean_non_empty(v) for v in value]
         cleaned = [v for v in cleaned if v]
-        return "\n\n".join(cleaned)
+        deduped: List[str] = []
+        seen = set()
+        for part in cleaned:
+            norm = _normalize_for_dedupe(part)
+            if not norm or norm in seen:
+                continue
+            seen.add(norm)
+            deduped.append(part)
+            if len(deduped) >= max_parts:
+                break
+        return "\n\n".join(deduped)
     return ensure_clean_non_empty(value)
 
 
@@ -66,9 +84,14 @@ def build_user_message(body: str, snippets: List[str]) -> str:
     return f"Context:\n{context}\n\nQuestion:\n{body}"
 
 
-def extract_fields(record: Dict[str, Any], include_snippets: bool, max_snippets: int) -> tuple[str, str]:
+def extract_fields(
+    record: Dict[str, Any],
+    include_snippets: bool,
+    max_snippets: int,
+    max_ideal_parts: int,
+) -> tuple[str, str]:
     body = ensure_clean_non_empty(record.get("body") or record.get("question"))
-    answer = normalize_ideal_answer(record.get("ideal_answer") or record.get("answer"))
+    answer = normalize_ideal_answer(record.get("ideal_answer") or record.get("answer"), max_parts=max_ideal_parts)
 
     snippets = extract_snippets(record, max_snippets=max_snippets) if include_snippets else []
     user_message = build_user_message(body, snippets)
@@ -108,10 +131,11 @@ def main() -> None:
             record,
             include_snippets=args.include_snippets,
             max_snippets=args.max_snippets,
+            max_ideal_parts=args.max_ideal_parts,
         )
 
         user_message = ensure_clean_non_empty(user_message)
-        answer = ensure_clean_non_empty(answer)
+        answer = clean_assistant_for_sft(answer, user_text=user_message, source="bioasq")
 
         if not user_message or not answer:
             dropped += 1

@@ -1,0 +1,140 @@
+from __future__ import annotations
+
+import argparse
+import subprocess
+import sys
+from pathlib import Path
+from typing import List
+
+from obstetrics_lm_utils import default_data_dir, project_root
+
+
+def parse_args() -> argparse.Namespace:
+    root = project_root()
+    data_dir = default_data_dir()
+    parser = argparse.ArgumentParser(
+        description=(
+            "Run the full Spanish obstetrics LM corpus pipeline. "
+            "Add PDFs to the input directory, run this script, and the final JSONL files are rebuilt."
+        )
+    )
+    parser.add_argument("--input-dir", type=Path, default=root / "obstetrics" / "spanish")
+    parser.add_argument("--data-dir", type=Path, default=data_dir)
+    parser.add_argument("--recursive", action=argparse.BooleanOptionalAction, default=False)
+    parser.add_argument("--validation-ratio", type=float, default=0.10)
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--min-clinical-score", type=int, default=5)
+    parser.add_argument("--min-tokens", type=int, default=500)
+    parser.add_argument("--max-tokens", type=int, default=1200)
+    parser.add_argument("--overlap-tokens", type=int, default=80)
+    parser.add_argument("--samples-per-pdf", type=int, default=5)
+    return parser.parse_args()
+
+
+def run_step(label: str, command: List[str]) -> None:
+    print(f"\n== {label} ==", flush=True)
+    print(" ".join(command), flush=True)
+    subprocess.run(command, cwd=project_root(), check=True)
+
+
+def main() -> None:
+    args = parse_args()
+    data_dir = args.data_dir
+    raw_pages = data_dir / "raw_pages.jsonl"
+    inventory = data_dir / "inventory.json"
+    clean_pages = data_dir / "clean_pages.jsonl"
+    cleaning_report = data_dir / "cleaning_report.json"
+    chunks = data_dir / "chunks.jsonl"
+    train = data_dir / "train_lm.jsonl"
+    validation = data_dir / "validation_lm.jsonl"
+    build_report = data_dir / "build_report.json"
+    audit_report = data_dir / "audit_report.json"
+
+    run_step(
+        "Extract PDFs",
+        [
+            sys.executable,
+            "scripts/extract_obstetrics_pdfs.py",
+            "--input-dir",
+            str(args.input_dir),
+            "--output",
+            str(raw_pages),
+            "--inventory-output",
+            str(inventory),
+            "--recursive" if args.recursive else "--no-recursive",
+        ],
+    )
+    run_step(
+        "Clean Pages",
+        [
+            sys.executable,
+            "scripts/clean_obstetrics_text.py",
+            "--input",
+            str(raw_pages),
+            "--output",
+            str(clean_pages),
+            "--report-output",
+            str(cleaning_report),
+        ],
+    )
+    run_step(
+        "Build LM Dataset",
+        [
+            sys.executable,
+            "scripts/build_obstetrics_lm_dataset.py",
+            "--input",
+            str(clean_pages),
+            "--chunks-output",
+            str(chunks),
+            "--train-output",
+            str(train),
+            "--validation-output",
+            str(validation),
+            "--build-report-output",
+            str(build_report),
+            "--validation-ratio",
+            str(args.validation_ratio),
+            "--seed",
+            str(args.seed),
+            "--min-clinical-score",
+            str(args.min_clinical_score),
+            "--min-tokens",
+            str(args.min_tokens),
+            "--max-tokens",
+            str(args.max_tokens),
+            "--overlap-tokens",
+            str(args.overlap_tokens),
+        ],
+    )
+    run_step(
+        "Audit Dataset",
+        [
+            sys.executable,
+            "scripts/audit_obstetrics_dataset.py",
+            "--raw-pages",
+            str(raw_pages),
+            "--clean-pages",
+            str(clean_pages),
+            "--chunks",
+            str(chunks),
+            "--train",
+            str(train),
+            "--validation",
+            str(validation),
+            "--output",
+            str(audit_report),
+            "--samples-per-pdf",
+            str(args.samples_per_pdf),
+            "--seed",
+            str(args.seed),
+        ],
+    )
+
+    print("\nPipeline complete.", flush=True)
+    print(f"Train JSONL: {train}", flush=True)
+    print(f"Validation JSONL: {validation}", flush=True)
+    print(f"Audit report: {audit_report}", flush=True)
+
+
+if __name__ == "__main__":
+    main()

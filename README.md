@@ -90,6 +90,14 @@ You can override dataset identifiers via CLI flags:
 - Shared fixed system prompt across all sources.
 - UTF-8 JSONL output.
 - Cleans control characters and excessive whitespace.
+- Cleans unusual Unicode separators (`U+2028` / `U+2029`).
+- Removes common MedQuAD boilerplate (HPO/Medline helper text and table headers).
+- Removes duplicate/repeated assistant sentences.
+- Removes common inline HTML tags and URLs in assistant text.
+- Truncates assistant responses by source for token efficiency:
+  - MedQuAD: max 260 words
+  - BioASQ: max 320 words
+  - PubMedQA: max 180 words
 - Removes empty question/answer pairs.
 - Deduplicates by `(user_content, assistant_content, source)`.
 - Deterministic behavior with default seed `42`.
@@ -140,9 +148,10 @@ Important args:
 - `--output data/processed/bioasq_chat.jsonl`
 - `--include-snippets` / `--no-include-snippets`
 - `--max-snippets 3`
+- `--max-ideal-parts 8`
 - `--seed 42`
 
-`ideal_answer` lists are concatenated into one assistant response.
+`ideal_answer` lists are deduplicated and capped by `--max-ideal-parts` before joining.
 When snippets are enabled, up to 3 snippets are prepended in `Context:`.
 
 ### 4) Preprocess PubMedQA (`pqa_labeled`)

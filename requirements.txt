@@ -2,3 +2,5 @@
 pandas==2.3.3
 jsonlines==4.0.0
 tqdm==4.67.1
+pymupdf==1.26.6
+pdfplumber==0.11.7

@@ -9,6 +9,7 @@ from tqdm import tqdm
 
 from common import (
     build_chat_example,
+    clean_assistant_for_sft,
     dedupe_by_pair,
     ensure_clean_non_empty,
     load_records_from_path,
@@ -90,7 +91,7 @@ def main() -> None:
     for record in tqdm(raw_records, desc="Processing PubMedQA"):
         question, user_message, answer = extract_fields(record)
         user_message = ensure_clean_non_empty(user_message)
-        answer = ensure_clean_non_empty(answer)
+        answer = clean_assistant_for_sft(answer, user_text=question, source="pubmedqa")
 
         if not question or not answer or not user_message:
             dropped += 1

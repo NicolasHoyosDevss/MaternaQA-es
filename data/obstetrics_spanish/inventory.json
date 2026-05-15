@@ -1,0 +1,159 @@
+{
+  "pdf_count": 17,
+  "page_count": 1930,
+  "pdfs": [
+    {
+      "pdf_id": "18_vol_822",
+      "source_pdf": "18-vol-822.pdf",
+      "source_path": "obstetrics\\spanish\\18-vol-822.pdf",
+      "file_size": 3130785,
+      "page_count": 147,
+      "fallback_pages": 0,
+      "needs_ocr_pages": 0
+    },
+    {
+      "pdf_id": "cap09",
+      "source_pdf": "CAP09.pdf",
+      "source_path": "obstetrics\\spanish\\CAP09.pdf",
+      "file_size": 277956,
+      "page_count": 37,
+      "fallback_pages": 0,
+      "needs_ocr_pages": 0
+    },
+    {
+      "pdf_id": "gap_control_prenatal_del_embarazo_normal_6105",
+      "source_pdf": "GAP_Control prenatal del embarazo normal_6105.pdf",
+      "source_path": "obstetrics\\spanish\\GAP_Control prenatal del embarazo normal_6105.pdf",
+      "file_size": 453431,
+      "page_count": 18,
+      "fallback_pages": 0,
+      "needs_ocr_pages": 0
+    },
+    {
+      "pdf_id": "ginecologia_y_obstetricia",
+      "source_pdf": "GINECOLOGÍA-Y-OBSTETRICIA.pdf",
+      "source_path": "obstetrics\\spanish\\GINECOLOGÍA-Y-OBSTETRICIA.pdf",
+      "file_size": 11730247,
+      "page_count": 148,
+      "fallback_pages": 0,
+      "needs_ocr_pages": 8
+    },
+    {
+      "pdf_id": "manual_obstetricia_y_ginecologia_2024_compressed",
+      "source_pdf": "Manual-Obstetricia-y-Ginecologia-2024_compressed.pdf",
+      "source_path": "obstetrics\\spanish\\Manual-Obstetricia-y-Ginecologia-2024_compressed.pdf",
+      "file_size": 19152930,
+      "page_count": 810,
+      "fallback_pages": 1,
+      "needs_ocr_pages": 0
+    },
+    {
+      "pdf_id": "obstetrical_risk_management_playbook_ashrm",
+      "source_pdf": "Obstetrical Risk Management Playbook _ ASHRM.pdf",
+      "source_path": "obstetrics\\spanish\\Obstetrical Risk Management Playbook _ ASHRM.pdf",
+      "file_size": 32653489,
+      "page_count": 31,
+      "fallback_pages": 0,
+      "needs_ocr_pages": 31
+    },
+    {
+      "pdf_id": "protocolo_atencion_obstetrica",
+      "source_pdf": "Protocolo Atencion Obstetrica.pdf",
+      "source_path": "obstetrics\\spanish\\Protocolo Atencion Obstetrica.pdf",
+      "file_size": 2057451,
+      "page_count": 192,
+      "fallback_pages": 0,
+      "needs_ocr_pages": 1
+    },
+    {
+      "pdf_id": "protocolo_de_atencion_clinica_integral_al_embarazo_parto_y_postparto_2",
+      "source_pdf": "Protocolo-de-Atencion-Clinica-integral-al-embarazo-parto-y-postparto-2.pdf",
+      "source_path": "obstetrics\\spanish\\Protocolo-de-Atencion-Clinica-integral-al-embarazo-parto-y-postparto-2.pdf",
+      "file_size": 2279457,
+      "page_count": 129,
+      "fallback_pages": 0,
+      "needs_ocr_pages": 0
+    },
+    {
+      "pdf_id": "recom_obstetricia_web",
+      "source_pdf": "RECOM_obstetricia_web.pdf",
+      "source_path": "obstetrics\\spanish\\RECOM_obstetricia_web.pdf",
+      "file_size": 3999765,
+      "page_count": 62,
+      "fallback_pages": 2,
+      "needs_ocr_pages": 7
+    },
+    {
+      "pdf_id": "s0304501310004589",
+      "source_pdf": "S0304501310004589.pdf",
+      "source_path": "obstetrics\\spanish\\S0304501310004589.pdf",
+      "file_size": 332082,
+      "page_count": 20,
+      "fallback_pages": 0,
+      "needs_ocr_pages": 0
+    },
+    {
+      "pdf_id": "s0716864011704321",
+      "source_pdf": "S0716864011704321.pdf",
+      "source_path": "obstetrics\\spanish\\S0716864011704321.pdf",
+      "file_size": 147479,
+      "page_count": 16,
+      "fallback_pages": 0,
+      "needs_ocr_pages": 0
+    },
+    {
+      "pdf_id": "s071686402300007x",
+      "source_pdf": "S071686402300007X.pdf",
+      "source_path": "obstetrics\\spanish\\S071686402300007X.pdf",
+      "file_size": 160353,
+      "page_count": 7,
+      "fallback_pages": 0,
+      "needs_ocr_pages": 0
+    },
+    {
+      "pdf_id": "s0716864024000324",
+      "source_pdf": "S0716864024000324.pdf",
+      "source_path": "obstetrics\\spanish\\S0716864024000324.pdf",
+      "file_size": 139626,
+      "page_count": 11,
+      "fallback_pages": 0,
+      "needs_ocr_pages": 0
+    },
+    {
+      "pdf_id": "s071686402500046x",
+      "source_pdf": "S071686402500046X.pdf",
+      "source_path": "obstetrics\\spanish\\S071686402500046X.pdf",
+      "file_size": 127459,
+      "page_count": 7,
+      "fallback_pages": 0,
+      "needs_ocr_pages": 0
+    },
+    {
+      "pdf_id": "usingunindicatorsqa_sp",
+      "source_pdf": "usingunindicatorsqa-sp.pdf",
+      "source_path": "obstetrics\\spanish\\usingunindicatorsqa-sp.pdf",
+      "file_size": 204521,
+      "page_count": 37,
+      "fallback_pages": 0,
+      "needs_ocr_pages": 0
+    },
+    {
+      "pdf_id": "vol_842_1",
+      "source_pdf": "vol-842-1.pdf",
+      "source_path": "obstetrics\\spanish\\vol-842-1.pdf",
+      "file_size": 2970659,
+      "page_count": 126,
+      "fallback_pages": 0,
+      "needs_ocr_pages": 0
+    },
+    {
+      "pdf_id": "vol831_1",
+      "source_pdf": "vol831-1.pdf",
+      "source_path": "obstetrics\\spanish\\vol831-1.pdf",
+      "file_size": 1803454,
+      "page_count": 132,
+      "fallback_pages": 0,
+      "needs_ocr_pages": 0
+    }
+  ]
+}

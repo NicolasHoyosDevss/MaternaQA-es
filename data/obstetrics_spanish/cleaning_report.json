@@ -1,0 +1,103 @@
+{
+  "input": "C:\\Users\\nicoh\\OneDrive\\Dev\\Proyecto Investigacion\\PEFT\\medical-peft\\data\\obstetrics_spanish\\raw_pages.jsonl",
+  "output": "C:\\Users\\nicoh\\OneDrive\\Dev\\Proyecto Investigacion\\PEFT\\medical-peft\\data\\obstetrics_spanish\\clean_pages.jsonl",
+  "total_pages": 1930,
+  "written_pages": 1930,
+  "kept_pages": 1779,
+  "dropped_pages": 151,
+  "drop_reasons": {
+    "corrupt_extraction": 20,
+    "fragmented_text": 9,
+    "index_or_table_of_contents": 5,
+    "needs_ocr": 47,
+    "non_clinical_section": 13,
+    "reference_heavy": 41,
+    "too_short": 16
+  },
+  "kept_by_pdf": {
+    "18-vol-822.pdf": 130,
+    "CAP09.pdf": 36,
+    "GAP_Control prenatal del embarazo normal_6105.pdf": 18,
+    "GINECOLOGÍA-Y-OBSTETRICIA.pdf": 137,
+    "Manual-Obstetricia-y-Ginecologia-2024_compressed.pdf": 802,
+    "Protocolo Atencion Obstetrica.pdf": 175,
+    "Protocolo-de-Atencion-Clinica-integral-al-embarazo-parto-y-postparto-2.pdf": 121,
+    "RECOM_obstetricia_web.pdf": 50,
+    "S0716864011704321.pdf": 16,
+    "S071686402300007X.pdf": 7,
+    "S0716864024000324.pdf": 11,
+    "S071686402500046X.pdf": 7,
+    "usingunindicatorsqa-sp.pdf": 35,
+    "vol-842-1.pdf": 115,
+    "vol831-1.pdf": 119
+  },
+  "repeated_lines_by_pdf": {
+    "18-vol-822.pdf": [
+      "Rev Obstet Ginecol Venez",
+      "Vol. 82, Nº 2,  abril 2022."
+    ],
+    "CAP09.pdf": [
+      "FARMACIA HOSPITALARIA",
+      "OBSTETRICIA Y GINECOLOGÍA"
+    ],
+    "GAP_Control prenatal del embarazo normal_6105.pdf": [
+      "Control prenatal del embarazo normal",
+      "Prog Obstet Ginecol 2018;61(5):510-527",
+      "Sociedad Española de Ginecología y Obstetricia"
+    ],
+    "GINECOLOGÍA-Y-OBSTETRICIA.pdf": [
+      "Manual ENARM · Ginecología y Obstetricia"
+    ],
+    "Manual-Obstetricia-y-Ginecologia-2024_compressed.pdf": [
+      "Manual de Obstetricia y Ginecología.   Dr. Jorge A Carvajal y Dra. Karen F García. Decimoquinta Edición. 2024."
+    ],
+    "Obstetrical Risk Management Playbook _ ASHRM.pdf": [
+      "12/5/26, 11:23 p.m.",
+      "Obstetrical Risk Management Playbook | ASHRM",
+      "https://www.ashrm.org/obstetrical-risk-management-playbook"
+    ],
+    "Protocolo Atencion Obstetrica.pdf": [
+      "Protocolos de atención. Cuidados prenatales y atención obstétrica de emergencia"
+    ],
+    "Protocolo-de-Atencion-Clinica-integral-al-embarazo-parto-y-postparto-2.pdf": [
+      "CAJA COSTARRICENSE DE SEGURO SOCIAL",
+      "CÓDIGO.PAC.GM.DDSS.AAIP.260121",
+      "EMBARAZO, PARTO Y POSPARTO EN LA RED DE SERVICIOS DE SALUD",
+      "GERENCIA DIVISIÓN MÉDICA",
+      "PROTOCOLO CLÍNICO DE ATENCIÓN INTEGRAL"
+    ],
+    "RECOM_obstetricia_web.pdf": [
+      "atención obstétrica"
+    ],
+    "S0304501310004589.pdf": [
+      "R³\"fg\"nc\"Jcdcpc.\"3;2\"Dclq\"*4:258+\"Ocftkf0\"G/ockn<\"ugiqBugiq0gu\"̃\"Vgn0<\";3\"572\";:\"38\"̃\"Hcz<\";3\"572\";:\"3:",
+      "Uqekgfcf\"Gurc‚qnc\"fg\"Ikpgeqnqi‡c\"{\"Qduvgvtkekc"
+    ],
+    "S0716864011704321.pdf": [
+      "Manejo:",
+      "[REV. MED. CLIN. CONDES - 2011; 22(3) 316-331]",
+      "[URGENCIAS EN OBSTETRICIA - DR. ENRIQUE OYARZÚN E.  Y COL.]"
+    ],
+    "S071686402300007X.pdf": [
+      "[Morbilidad Materna Extremadamente Grave: un paso clave para reducir la muerte materna - De Mucio y cols.]",
+      "[REV. MED. CLIN. CONDES - 2023; 34(1) 26-32]"
+    ],
+    "S0716864024000324.pdf": [
+      "[Asma y embarazo: fisiopatología, diagnóstico y manejo farmacológico - Paulina Barría]",
+      "[REV. MED. CLIN. CONDES - 2024; 35(3-4) 221-231]"
+    ],
+    "S071686402500046X.pdf": [
+      "[Duelo perinatal, salud mental y la importancia del acompañamiento psicológico - Francisca Cortés-Cataldo y cols.]",
+      "[REV. MED. CLIN. CONDES - 2025; 36(3) 221-227]"
+    ],
+    "usingunindicatorsqa-sp.pdf": [],
+    "vol-842-1.pdf": [
+      "Rev Obstet Ginecol Venez",
+      "Vol. 84, Nº 2,  junio 2024."
+    ],
+    "vol831-1.pdf": [
+      "Rev Obstet Ginecol Venez",
+      "Vol. 83, Nº 1,  enero 2023."
+    ]
+  }
+}

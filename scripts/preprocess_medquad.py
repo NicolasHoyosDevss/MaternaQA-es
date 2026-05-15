@@ -9,6 +9,7 @@ from tqdm import tqdm
 
 from common import (
     build_chat_example,
+    clean_assistant_for_sft,
     dedupe_by_pair,
     ensure_clean_non_empty,
     find_first_non_empty,
@@ -64,7 +65,7 @@ def main() -> None:
     for record in tqdm(raw_records, desc="Processing MedQuAD"):
         question, answer = extract_qa(record)
         question = ensure_clean_non_empty(question)
-        answer = ensure_clean_non_empty(answer)
+        answer = clean_assistant_for_sft(answer, user_text=question, source="medquad")
 
         if not question or not answer:
             dropped += 1

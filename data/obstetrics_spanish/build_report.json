@@ -1,27 +1,30 @@
 {
-  "input": "C:\\Users\\nicoh\\OneDrive\\Dev\\Proyecto Investigacion\\PEFT\\medical-peft\\data\\obstetrics_spanish\\clean_pages.jsonl",
-  "chunks_output": "C:\\Users\\nicoh\\OneDrive\\Dev\\Proyecto Investigacion\\PEFT\\medical-peft\\data\\obstetrics_spanish\\chunks.jsonl",
-  "train_output": "C:\\Users\\nicoh\\OneDrive\\Dev\\Proyecto Investigacion\\PEFT\\medical-peft\\data\\obstetrics_spanish\\train_lm.jsonl",
-  "validation_output": "C:\\Users\\nicoh\\OneDrive\\Dev\\Proyecto Investigacion\\PEFT\\medical-peft\\data\\obstetrics_spanish\\validation_lm.jsonl",
-  "clean_pages_read": 1930,
-  "kept_pages_read": 1779,
-  "candidate_chunks": 1246,
-  "accepted_chunks_before_dedupe": 951,
-  "final_chunks": 951,
-  "train_records": 856,
-  "validation_records": 95,
+  "input": "/home/jhonh/Code/MinCiencias/Fine-Tunning-Benchmark/data/obstetrics_spanish/clean_pages.jsonl",
+  "chunks_output": "/home/jhonh/Code/MinCiencias/Fine-Tunning-Benchmark/data/obstetrics_spanish/chunks.jsonl",
+  "train_output": "/home/jhonh/Code/MinCiencias/Fine-Tunning-Benchmark/data/obstetrics_spanish/train_lm.jsonl",
+  "validation_output": "/home/jhonh/Code/MinCiencias/Fine-Tunning-Benchmark/data/obstetrics_spanish/validation_lm.jsonl",
+  "clean_pages_read": 2965,
+  "kept_pages_read": 2692,
+  "candidate_chunks": 1678,
+  "accepted_chunks_before_dedupe": 1200,
+  "final_chunks": 1200,
+  "train_records": 1084,
+  "validation_records": 116,
   "rejected_chunk_reasons": {
-    "admin_or_contact_text": 12,
-    "low_clinical_score": 25,
-    "numeric_or_table_heavy": 16,
-    "reference_heavy": 197,
-    "too_short": 45
+    "admin_or_contact_text": 13,
+    "low_clinical_score": 41,
+    "numeric_or_table_heavy": 17,
+    "reference_heavy": 344,
+    "too_short": 63
   },
   "chunks_by_pdf": {
     "18-vol-822.pdf": 30,
     "CAP09.pdf": 25,
+    "Capítulo+9.pdf": 15,
     "GAP_Control prenatal del embarazo normal_6105.pdf": 14,
-    "GINECOLOGÍA-Y-OBSTETRICIA.pdf": 109,
+    "GINECOLOGÍA-Y-OBSTETRICIA.pdf": 110,
+    "GPC_533_Embarazo_AETSA_compl.pdf": 88,
+    "MAN_PROC_SERV_GIN_2023.pdf": 145,
     "Manual-Obstetricia-y-Ginecologia-2024_compressed.pdf": 512,
     "Protocolo Atencion Obstetrica.pdf": 81,
     "Protocolo-de-Atencion-Clinica-integral-al-embarazo-parto-y-postparto-2.pdf": 41,
@@ -34,5 +37,5 @@
     "vol-842-1.pdf": 37,
     "vol831-1.pdf": 42
   },
-  "average_token_estimate": 901.36
+  "average_token_estimate": 908.75
 }

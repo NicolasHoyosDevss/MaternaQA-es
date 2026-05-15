@@ -1,24 +1,27 @@
 {
-  "input": "C:\\Users\\nicoh\\OneDrive\\Dev\\Proyecto Investigacion\\PEFT\\medical-peft\\data\\obstetrics_spanish\\raw_pages.jsonl",
-  "output": "C:\\Users\\nicoh\\OneDrive\\Dev\\Proyecto Investigacion\\PEFT\\medical-peft\\data\\obstetrics_spanish\\clean_pages.jsonl",
-  "total_pages": 1930,
-  "written_pages": 1930,
-  "kept_pages": 1779,
-  "dropped_pages": 151,
+  "input": "/home/jhonh/Code/MinCiencias/Fine-Tunning-Benchmark/data/obstetrics_spanish/raw_pages.jsonl",
+  "output": "/home/jhonh/Code/MinCiencias/Fine-Tunning-Benchmark/data/obstetrics_spanish/clean_pages.jsonl",
+  "total_pages": 2965,
+  "written_pages": 2965,
+  "kept_pages": 2692,
+  "dropped_pages": 273,
   "drop_reasons": {
     "corrupt_extraction": 20,
-    "fragmented_text": 9,
+    "fragmented_text": 33,
     "index_or_table_of_contents": 5,
-    "needs_ocr": 47,
+    "needs_ocr": 26,
     "non_clinical_section": 13,
-    "reference_heavy": 41,
-    "too_short": 16
+    "reference_heavy": 45,
+    "too_short": 131
   },
   "kept_by_pdf": {
     "18-vol-822.pdf": 130,
     "CAP09.pdf": 36,
+    "Capítulo+9.pdf": 36,
     "GAP_Control prenatal del embarazo normal_6105.pdf": 18,
     "GINECOLOGÍA-Y-OBSTETRICIA.pdf": 137,
+    "GPC_533_Embarazo_AETSA_compl.pdf": 476,
+    "MAN_PROC_SERV_GIN_2023.pdf": 401,
     "Manual-Obstetricia-y-Ginecologia-2024_compressed.pdf": 802,
     "Protocolo Atencion Obstetrica.pdf": 175,
     "Protocolo-de-Atencion-Clinica-integral-al-embarazo-parto-y-postparto-2.pdf": 121,
@@ -40,6 +43,10 @@
       "FARMACIA HOSPITALARIA",
       "OBSTETRICIA Y GINECOLOGÍA"
     ],
+    "Capítulo+9.pdf": [
+      "Fundamentos de ginecología y obstetricia",
+      "Wilmar Saldarriaga Gil - Manuel Antonio Artuz Alarcón"
+    ],
     "GAP_Control prenatal del embarazo normal_6105.pdf": [
       "Control prenatal del embarazo normal",
       "Prog Obstet Ginecol 2018;61(5):510-527",
@@ -48,13 +55,19 @@
     "GINECOLOGÍA-Y-OBSTETRICIA.pdf": [
       "Manual ENARM · Ginecología y Obstetricia"
     ],
+    "GPC_533_Embarazo_AETSA_compl.pdf": [
+      "Baja",
+      "Calidad",
+      "GPC DE ATENCIÓN EN EL EMBARAZO Y PUERPERIO",
+      "GUÍAS DE PRÁCTICA CLÍNICA EN EL SNS"
+    ],
+    "MAN_PROC_SERV_GIN_2023.pdf": [
+      "MANUAL DE PROCEDIMIENTOS",
+      "Rev. 1",
+      "SERVICIO DE GINECO OBSTETRICIA"
+    ],
     "Manual-Obstetricia-y-Ginecologia-2024_compressed.pdf": [
       "Manual de Obstetricia y Ginecología.   Dr. Jorge A Carvajal y Dra. Karen F García. Decimoquinta Edición. 2024."
-    ],
-    "Obstetrical Risk Management Playbook _ ASHRM.pdf": [
-      "12/5/26, 11:23 p.m.",
-      "Obstetrical Risk Management Playbook | ASHRM",
-      "https://www.ashrm.org/obstetrical-risk-management-playbook"
     ],
     "Protocolo Atencion Obstetrica.pdf": [
       "Protocolos de atención. Cuidados prenatales y atención obstétrica de emergencia"

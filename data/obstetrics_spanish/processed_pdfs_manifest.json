@@ -1,108 +1,156 @@
 {
-  "mode": "incremental",
-  "pdf_count": 17,
-  "pdfs": {
-    "obstetrics\\spanish\\18-vol-822.pdf": {
-      "source_pdf": "18-vol-822.pdf",
-      "source_path": "obstetrics\\spanish\\18-vol-822.pdf",
-      "file_size": 3130785,
-      "mtime_ns": 1778796992713347700
-    },
-    "obstetrics\\spanish\\CAP09.pdf": {
-      "source_pdf": "CAP09.pdf",
-      "source_path": "obstetrics\\spanish\\CAP09.pdf",
-      "file_size": 277956,
-      "mtime_ns": 1778796992715817700
-    },
-    "obstetrics\\spanish\\GAP_Control prenatal del embarazo normal_6105.pdf": {
-      "source_pdf": "GAP_Control prenatal del embarazo normal_6105.pdf",
-      "source_path": "obstetrics\\spanish\\GAP_Control prenatal del embarazo normal_6105.pdf",
-      "file_size": 453431,
-      "mtime_ns": 1778796992717824400
-    },
-    "obstetrics\\spanish\\GINECOLOGÍA-Y-OBSTETRICIA.pdf": {
-      "source_pdf": "GINECOLOGÍA-Y-OBSTETRICIA.pdf",
-      "source_path": "obstetrics\\spanish\\GINECOLOGÍA-Y-OBSTETRICIA.pdf",
-      "file_size": 11730247,
-      "mtime_ns": 1778796992762730300
-    },
-    "obstetrics\\spanish\\Manual-Obstetricia-y-Ginecologia-2024_compressed.pdf": {
-      "source_pdf": "Manual-Obstetricia-y-Ginecologia-2024_compressed.pdf",
-      "source_path": "obstetrics\\spanish\\Manual-Obstetricia-y-Ginecologia-2024_compressed.pdf",
-      "file_size": 19152930,
-      "mtime_ns": 1778796992857401500
-    },
-    "obstetrics\\spanish\\Obstetrical Risk Management Playbook _ ASHRM.pdf": {
-      "source_pdf": "Obstetrical Risk Management Playbook _ ASHRM.pdf",
-      "source_path": "obstetrics\\spanish\\Obstetrical Risk Management Playbook _ ASHRM.pdf",
-      "file_size": 32653489,
-      "mtime_ns": 1778796993038956200
-    },
-    "obstetrics\\spanish\\Protocolo Atencion Obstetrica.pdf": {
-      "source_pdf": "Protocolo Atencion Obstetrica.pdf",
-      "source_path": "obstetrics\\spanish\\Protocolo Atencion Obstetrica.pdf",
-      "file_size": 2057451,
-      "mtime_ns": 1778796993046972800
-    },
-    "obstetrics\\spanish\\Protocolo-de-Atencion-Clinica-integral-al-embarazo-parto-y-postparto-2.pdf": {
-      "source_pdf": "Protocolo-de-Atencion-Clinica-integral-al-embarazo-parto-y-postparto-2.pdf",
-      "source_path": "obstetrics\\spanish\\Protocolo-de-Atencion-Clinica-integral-al-embarazo-parto-y-postparto-2.pdf",
-      "file_size": 2279457,
-      "mtime_ns": 1778796993058970900
-    },
-    "obstetrics\\spanish\\RECOM_obstetricia_web.pdf": {
-      "source_pdf": "RECOM_obstetricia_web.pdf",
-      "source_path": "obstetrics\\spanish\\RECOM_obstetricia_web.pdf",
-      "file_size": 3999765,
-      "mtime_ns": 1778796993072285700
-    },
-    "obstetrics\\spanish\\S0304501310004589.pdf": {
-      "source_pdf": "S0304501310004589.pdf",
-      "source_path": "obstetrics\\spanish\\S0304501310004589.pdf",
-      "file_size": 332082,
-      "mtime_ns": 1778796993075413300
-    },
-    "obstetrics\\spanish\\S0716864011704321.pdf": {
-      "source_pdf": "S0716864011704321.pdf",
-      "source_path": "obstetrics\\spanish\\S0716864011704321.pdf",
-      "file_size": 147479,
-      "mtime_ns": 1778796993076413800
-    },
-    "obstetrics\\spanish\\S071686402300007X.pdf": {
-      "source_pdf": "S071686402300007X.pdf",
-      "source_path": "obstetrics\\spanish\\S071686402300007X.pdf",
-      "file_size": 160353,
-      "mtime_ns": 1778796993077452400
-    },
-    "obstetrics\\spanish\\S0716864024000324.pdf": {
-      "source_pdf": "S0716864024000324.pdf",
-      "source_path": "obstetrics\\spanish\\S0716864024000324.pdf",
-      "file_size": 139626,
-      "mtime_ns": 1778796993078452300
-    },
-    "obstetrics\\spanish\\S071686402500046X.pdf": {
-      "source_pdf": "S071686402500046X.pdf",
-      "source_path": "obstetrics\\spanish\\S071686402500046X.pdf",
-      "file_size": 127459,
-      "mtime_ns": 1778796993079451700
-    },
-    "obstetrics\\spanish\\usingunindicatorsqa-sp.pdf": {
-      "source_pdf": "usingunindicatorsqa-sp.pdf",
-      "source_path": "obstetrics\\spanish\\usingunindicatorsqa-sp.pdf",
-      "file_size": 204521,
-      "mtime_ns": 1778796993081451400
-    },
-    "obstetrics\\spanish\\vol-842-1.pdf": {
-      "source_pdf": "vol-842-1.pdf",
-      "source_path": "obstetrics\\spanish\\vol-842-1.pdf",
-      "file_size": 2970659,
-      "mtime_ns": 1778796993092832900
-    },
-    "obstetrics\\spanish\\vol831-1.pdf": {
-      "source_pdf": "vol831-1.pdf",
-      "source_path": "obstetrics\\spanish\\vol831-1.pdf",
-      "file_size": 1803454,
-      "mtime_ns": 1778796993100825600
-    }
-  }
+    "mode":  "incremental",
+    "pdf_count":  25,
+    "pdfs":  {
+                 "obstetrics\\spanish\\18-vol-822.pdf":  {
+                                                             "source_pdf":  "18-vol-822.pdf",
+                                                             "source_path":  "obstetrics\\spanish\\18-vol-822.pdf",
+                                                             "file_size":  3130785,
+                                                             "mtime_ns":  1778796992713347700
+                                                         },
+                 "obstetrics\\spanish\\4142_stamped.pdf":  {
+                                                               "source_pdf":  "4142_stamped.pdf",
+                                                               "source_path":  "obstetrics\\spanish\\4142_stamped.pdf",
+                                                               "file_size":  581178,
+                                                               "mtime_ns":  1778881046292204500
+                                                           },
+                 "obstetrics\\spanish\\4347_stamped.pdf":  {
+                                                               "source_pdf":  "4347_stamped.pdf",
+                                                               "source_path":  "obstetrics\\spanish\\4347_stamped.pdf",
+                                                               "file_size":  620301,
+                                                               "mtime_ns":  1778881037161037100
+                                                           },
+                 "obstetrics\\spanish\\CAP09.pdf":  {
+                                                        "source_pdf":  "CAP09.pdf",
+                                                        "source_path":  "obstetrics\\spanish\\CAP09.pdf",
+                                                        "file_size":  277956,
+                                                        "mtime_ns":  1778796992715817700
+                                                    },
+                 "obstetrics\\spanish\\CapÃƒÂ­tulo+9.pdf":  {
+                                                                "source_pdf":  "CapÃƒÂ­tulo+9.pdf",
+                                                                "source_path":  "obstetrics\\spanish\\CapÃƒÂ­tulo+9.pdf",
+                                                                "file_size":  487217,
+                                                                "mtime_ns":  1778870047932288700
+                                                            },
+                 "obstetrics\\spanish\\GAP_Control prenatal del embarazo normal_6105.pdf":  {
+                                                                                                "source_pdf":  "GAP_Control prenatal del embarazo normal_6105.pdf",
+                                                                                                "source_path":  "obstetrics\\spanish\\GAP_Control prenatal del embarazo normal_6105.pdf",
+                                                                                                "file_size":  453431,
+                                                                                                "mtime_ns":  1778796992717824400
+                                                                                            },
+                 "obstetrics\\spanish\\GINECOLOGIÃŒÂA-Y-OBSTETRICIA.pdf":  {
+                                                                                "source_pdf":  "GINECOLOGIÃŒÂA-Y-OBSTETRICIA.pdf",
+                                                                                "source_path":  "obstetrics\\spanish\\GINECOLOGIÃŒÂA-Y-OBSTETRICIA.pdf",
+                                                                                "file_size":  11730247,
+                                                                                "mtime_ns":  1778796992762730300
+                                                                            },
+                 "obstetrics\\spanish\\GPC_533_Embarazo_AETSA_compl.pdf":  {
+                                                                               "source_pdf":  "GPC_533_Embarazo_AETSA_compl.pdf",
+                                                                               "source_path":  "obstetrics\\spanish\\GPC_533_Embarazo_AETSA_compl.pdf",
+                                                                               "file_size":  2978827,
+                                                                               "mtime_ns":  1778870047946295700
+                                                                           },
+                 "obstetrics\\spanish\\MAN_PROC_SERV_GIN_2023.pdf":  {
+                                                                         "source_pdf":  "MAN_PROC_SERV_GIN_2023.pdf",
+                                                                         "source_path":  "obstetrics\\spanish\\MAN_PROC_SERV_GIN_2023.pdf",
+                                                                         "file_size":  23890185,
+                                                                         "mtime_ns":  1778870048074824300
+                                                                     },
+                 "obstetrics\\spanish\\Manual-Obstetricia-y-Ginecologia-2024_compressed.pdf":  {
+                                                                                                   "source_pdf":  "Manual-Obstetricia-y-Ginecologia-2024_compressed.pdf",
+                                                                                                   "source_path":  "obstetrics\\spanish\\Manual-Obstetricia-y-Ginecologia-2024_compressed.pdf",
+                                                                                                   "file_size":  19152930,
+                                                                                                   "mtime_ns":  1778796992857401500
+                                                                                               },
+                 "obstetrics\\spanish\\Manual_obstetricia_ginecologia.pdf":  {
+                                                                                 "source_pdf":  "Manual_obstetricia_ginecologia.pdf",
+                                                                                 "source_path":  "obstetrics\\spanish\\Manual_obstetricia_ginecologia.pdf",
+                                                                                 "file_size":  11283024,
+                                                                                 "mtime_ns":  1778881120665805900
+                                                                             },
+                 "obstetrics\\spanish\\Obstetrical Risk Management Playbook _ ASHRM.pdf":  {
+                                                                                               "source_pdf":  "Obstetrical Risk Management Playbook _ ASHRM.pdf",
+                                                                                               "source_path":  "obstetrics\\spanish\\Obstetrical Risk Management Playbook _ ASHRM.pdf",
+                                                                                               "file_size":  32653489,
+                                                                                               "mtime_ns":  1778796993038956200
+                                                                                           },
+                 "obstetrics\\spanish\\Protocolo Atencion Obstetrica.pdf":  {
+                                                                                "source_pdf":  "Protocolo Atencion Obstetrica.pdf",
+                                                                                "source_path":  "obstetrics\\spanish\\Protocolo Atencion Obstetrica.pdf",
+                                                                                "file_size":  2057451,
+                                                                                "mtime_ns":  1778796993046972800
+                                                                            },
+                 "obstetrics\\spanish\\Protocolo-de-Atencion-Clinica-integral-al-embarazo-parto-y-postparto-2.pdf":  {
+                                                                                                                         "source_pdf":  "Protocolo-de-Atencion-Clinica-integral-al-embarazo-parto-y-postparto-2.pdf",
+                                                                                                                         "source_path":  "obstetrics\\spanish\\Protocolo-de-Atencion-Clinica-integral-al-embarazo-parto-y-postparto-2.pdf",
+                                                                                                                         "file_size":  2279457,
+                                                                                                                         "mtime_ns":  1778796993058970900
+                                                                                                                     },
+                 "obstetrics\\spanish\\RECOM_obstetricia_web.pdf":  {
+                                                                        "source_pdf":  "RECOM_obstetricia_web.pdf",
+                                                                        "source_path":  "obstetrics\\spanish\\RECOM_obstetricia_web.pdf",
+                                                                        "file_size":  3999765,
+                                                                        "mtime_ns":  1778796993072285700
+                                                                    },
+                 "obstetrics\\spanish\\S0304501310004589.pdf":  {
+                                                                    "source_pdf":  "S0304501310004589.pdf",
+                                                                    "source_path":  "obstetrics\\spanish\\S0304501310004589.pdf",
+                                                                    "file_size":  332082,
+                                                                    "mtime_ns":  1778796993075413300
+                                                                },
+                 "obstetrics\\spanish\\S0716864011704321.pdf":  {
+                                                                    "source_pdf":  "S0716864011704321.pdf",
+                                                                    "source_path":  "obstetrics\\spanish\\S0716864011704321.pdf",
+                                                                    "file_size":  147479,
+                                                                    "mtime_ns":  1778796993076413800
+                                                                },
+                 "obstetrics\\spanish\\S071686402300007X.pdf":  {
+                                                                    "source_pdf":  "S071686402300007X.pdf",
+                                                                    "source_path":  "obstetrics\\spanish\\S071686402300007X.pdf",
+                                                                    "file_size":  160353,
+                                                                    "mtime_ns":  1778796993077452400
+                                                                },
+                 "obstetrics\\spanish\\S0716864024000324.pdf":  {
+                                                                    "source_pdf":  "S0716864024000324.pdf",
+                                                                    "source_path":  "obstetrics\\spanish\\S0716864024000324.pdf",
+                                                                    "file_size":  139626,
+                                                                    "mtime_ns":  1778796993078452300
+                                                                },
+                 "obstetrics\\spanish\\S071686402500046X.pdf":  {
+                                                                    "source_pdf":  "S071686402500046X.pdf",
+                                                                    "source_path":  "obstetrics\\spanish\\S071686402500046X.pdf",
+                                                                    "file_size":  127459,
+                                                                    "mtime_ns":  1778796993079451700
+                                                                },
+                 "obstetrics\\spanish\\rechog_25_90_4_237-246.pdf":  {
+                                                                         "source_pdf":  "rechog_25_90_4_237-246.pdf",
+                                                                         "source_path":  "obstetrics\\spanish\\rechog_25_90_4_237-246.pdf",
+                                                                         "file_size":  971998,
+                                                                         "mtime_ns":  1778881061994489500
+                                                                     },
+                 "obstetrics\\spanish\\rechog_25_90_4_265-273.pdf":  {
+                                                                         "source_pdf":  "rechog_25_90_4_265-273.pdf",
+                                                                         "source_path":  "obstetrics\\spanish\\rechog_25_90_4_265-273.pdf",
+                                                                         "file_size":  666969,
+                                                                         "mtime_ns":  1778881071460353200
+                                                                     },
+                 "obstetrics\\spanish\\usingunindicatorsqa-sp.pdf":  {
+                                                                         "source_pdf":  "usingunindicatorsqa-sp.pdf",
+                                                                         "source_path":  "obstetrics\\spanish\\usingunindicatorsqa-sp.pdf",
+                                                                         "file_size":  204521,
+                                                                         "mtime_ns":  1778796993081451400
+                                                                     },
+                 "obstetrics\\spanish\\vol-842-1.pdf":  {
+                                                            "source_pdf":  "vol-842-1.pdf",
+                                                            "source_path":  "obstetrics\\spanish\\vol-842-1.pdf",
+                                                            "file_size":  2970659,
+                                                            "mtime_ns":  1778796993092832900
+                                                        },
+                 "obstetrics\\spanish\\vol831-1.pdf":  {
+                                                           "source_pdf":  "vol831-1.pdf",
+                                                           "source_path":  "obstetrics\\spanish\\vol831-1.pdf",
+                                                           "file_size":  1803454,
+                                                           "mtime_ns":  1778796993100825600
+                                                       }
+             }
 }

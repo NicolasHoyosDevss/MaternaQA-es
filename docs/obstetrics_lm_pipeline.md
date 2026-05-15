@@ -1,94 +1,113 @@
-# Spanish Obstetrics LM Corpus Pipeline
+# Obstetrics Dataset Pipeline
 
-This pipeline builds a continued-training/domain-adaptation corpus from the PDFs in `obstetrics/spanish`.
-It is independent from the QA/chat preprocessing scripts and produces plain language-modeling JSONL records.
+Este documento describe el pipeline activo del proyecto. Los pipelines antiguos de MedQuad, BioASQ y PubMedQA fueron retirados.
 
-## Install
-
-```bash
-pip install -r requirements.txt
-```
-
-## Run
-
-Recommended one-command pipeline:
-
-```bash
-python scripts/run_obstetrics_lm_pipeline.py
-```
-
-To add new documentation, copy the new `.pdf` files into `obstetrics/spanish` and run the same command again.
-The pipeline rebuilds the artifacts from all PDFs in that folder, so the final JSONL files include the new documents without blindly appending duplicates.
-
-For faster iteration, use the incremental pipeline instead:
-
-```bash
-python scripts/run_obstetrics_lm_incremental.py
-```
-
-The incremental pipeline detects PDFs that are new or changed since the previous run, processes only those files, and appends their accepted chunks to the existing `chunks.jsonl`, `train_lm.jsonl`, and `validation_lm.jsonl`. It stores the processed file fingerprints in:
+## Flujo Principal
 
 ```text
-data/obstetrics_spanish/processed_pdfs_manifest.json
+PDFs en obstetrics/spanish
+  -> extracción por página
+  -> limpieza clínica
+  -> segmentación en chunks
+  -> train_lm.jsonl / validation_lm.jsonl
+  -> QA sintético opcional
 ```
 
-Use this when you are adding a few new PDFs and want to avoid reprocessing the whole folder.
+## Pipeline Incremental
 
-If you intentionally replaced an existing PDF and want to refresh only that document, the incremental pipeline detects the changed file size or modified timestamp and replaces that PDF's previous records before appending the new ones.
-
-To force refresh all discovered PDFs through the incremental path:
+Uso normal cuando agregas PDFs nuevos:
 
 ```bash
-python scripts/run_obstetrics_lm_incremental.py --force
+python scripts/obstetrics/run_incremental.py
 ```
 
-If PDFs are organized in subfolders:
+Características:
+
+- Detecta PDFs nuevos o modificados.
+- Procesa solo esos PDFs.
+- Reemplaza registros previos si un PDF cambió.
+- Hace append de chunks aceptados a los JSONL existentes.
+- Mantiene el manifiesto `data/obstetrics_spanish/processed_pdfs_manifest.json`.
+
+Opciones:
 
 ```bash
-python scripts/run_obstetrics_lm_pipeline.py --recursive
-python scripts/run_obstetrics_lm_incremental.py --recursive
+python scripts/obstetrics/run_incremental.py --recursive
+python scripts/obstetrics/run_incremental.py --force
+python scripts/obstetrics/run_incremental.py --keep-temp
+python scripts/obstetrics/run_incremental.py --input-dir path/to/pdfs
 ```
 
-You can also process a different input folder:
+## Reconstrucción Completa
+
+Úsalo cuando cambies reglas de limpieza/chunking o quieras reproducir todo desde cero:
 
 ```bash
-python scripts/run_obstetrics_lm_pipeline.py --input-dir path/to/new_pdfs
+python scripts/obstetrics/run_full_pipeline.py
 ```
 
-Manual step-by-step execution:
+## Pasos Internos
+
+Los runners llaman internamente:
 
 ```bash
-python scripts/extract_obstetrics_pdfs.py
-python scripts/clean_obstetrics_text.py
-python scripts/build_obstetrics_lm_dataset.py
-python scripts/audit_obstetrics_dataset.py
+python scripts/obstetrics/extract_pdfs.py
+python scripts/obstetrics/clean_text.py
+python scripts/obstetrics/build_lm_dataset.py
+python scripts/obstetrics/audit_dataset.py
 ```
 
-## Outputs
+## Salidas LM
 
 ```text
 data/obstetrics_spanish/raw_pages.jsonl
-data/obstetrics_spanish/inventory.json
 data/obstetrics_spanish/clean_pages.jsonl
-data/obstetrics_spanish/cleaning_report.json
 data/obstetrics_spanish/chunks.jsonl
 data/obstetrics_spanish/train_lm.jsonl
 data/obstetrics_spanish/validation_lm.jsonl
-data/obstetrics_spanish/build_report.json
 data/obstetrics_spanish/audit_report.json
 ```
 
-Final LM records use this shape:
+Formato:
 
 ```json
-{"text": "Texto clinico limpio...", "metadata": {"source": "obstetrics_spanish", "source_pdf": "...", "pages": [1, 2], "section": "...", "chunk_id": "..."}}
+{"text": "Texto clínico limpio...", "metadata": {"source": "obstetrics_spanish", "source_pdf": "...", "pages": [1, 2], "chunk_id": "..."}}
 ```
 
-The final dataset does not contain `messages`, `system`, `user`, or `assistant` fields and does not generate QA examples.
+## QA Sintético
 
-## Notes
+Dry run:
 
-- `PyMuPDF` is the primary extractor.
-- `pdfplumber` is used as a fallback when a page has little extracted text.
-- OCR is not run in v1. Pages that still have very little text are marked with `needs_ocr`.
-- Review `audit_report.json` before training, especially `manual_review_samples_by_pdf`.
+```bash
+python scripts/obstetrics/generate_synthetic_qa.py --dry-run --limit 5
+```
+
+Generación real:
+
+```bash
+set OPENAI_API_KEY=your_key_here
+python scripts/obstetrics/generate_synthetic_qa.py --limit 20
+```
+
+Salidas:
+
+```text
+data/obstetrics_spanish/synthetic_qa_raw.jsonl
+data/obstetrics_spanish/synthetic_qa_sft.jsonl
+data/obstetrics_spanish/.qa_generation_progress.json
+```
+
+Formato SFT:
+
+```json
+{"messages": [{"role": "system", "content": "..."}, {"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}], "metadata": {"source": "obstetrics_spanish_synthetic"}}
+```
+
+El checkpoint permite reanudar. Los errores de API no se marcan como procesados, por lo que se reintentan al relanzar.
+
+## Notas
+
+- `PyMuPDF` es el extractor principal.
+- `pdfplumber` es fallback para páginas con poco texto.
+- OCR real no está incluido todavía; páginas problemáticas se marcan como `needs_ocr`.
+- Revisa `audit_report.json` antes de entrenar.

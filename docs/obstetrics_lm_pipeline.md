@@ -5,11 +5,11 @@ Este documento describe el pipeline activo del proyecto. Los pipelines antiguos 
 ## Flujo Principal
 
 ```text
-PDFs en obstetrics/spanish
+PDFs en raw_data/obstetrics/spanish
   -> extracción por página
   -> limpieza clínica
   -> segmentación en chunks
-  -> train_lm.jsonl / validation_lm.jsonl
+  -> train_lm.jsonl / validation_lm.jsonl / test_lm.jsonl
   -> QA sintético opcional
 ```
 
@@ -65,6 +65,7 @@ data/obstetrics_spanish/clean_pages.jsonl
 data/obstetrics_spanish/chunks.jsonl
 data/obstetrics_spanish/train_lm.jsonl
 data/obstetrics_spanish/validation_lm.jsonl
+data/obstetrics_spanish/test_lm.jsonl
 data/obstetrics_spanish/audit_report.json
 ```
 
@@ -95,6 +96,7 @@ Salidas:
 data/obstetrics_spanish/synthetic_qa_raw.jsonl
 data/obstetrics_spanish/synthetic_qa_sft.jsonl
 data/obstetrics_spanish/.qa_generation_progress.json
+data/obstetrics_spanish/qa_generation_report.json
 ```
 
 Formato SFT:
@@ -111,3 +113,4 @@ El checkpoint permite reanudar. Los errores de API no se marcan como procesados,
 - `pdfplumber` es fallback para páginas con poco texto.
 - OCR real no está incluido todavía; páginas problemáticas se marcan como `needs_ocr`.
 - Revisa `audit_report.json` antes de entrenar.
+- Revisa `docs/research_notes/` para estado metodológico, decisiones y plan de benchmark.

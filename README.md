@@ -2,10 +2,10 @@
 
 Pipeline para construir datasets de entrenamiento a partir de PDFs de obstetricia y ginecología.
 
-El proyecto ahora se centra en una sola fuente de conocimiento:
+El proyecto ahora se centra en una sola fuente de conocimiento raw:
 
 ```text
-obstetrics/spanish/*.pdf
+raw_data/obstetrics/spanish/*.pdf
 ```
 
 Y produce dos tipos de datos:
@@ -25,15 +25,24 @@ data/
     chunks.jsonl
     train_lm.jsonl
     validation_lm.jsonl
+    test_lm.jsonl
     audit_report.json
     processed_pdfs_manifest.json
 
 docs/
   obstetrics_lm_pipeline.md
+  research_notes/
+    README.md
+    01_estado_actual.md
+    02_decisiones_tecnicas.md
+    03_plan_evaluacion_y_benchmark.md
 
-obstetrics/
-  spanish/
-    *.pdf
+raw_data/
+  obstetrics/
+    spanish/
+      *.pdf
+    english/
+      *.pdf
 
 scripts/
   obstetrics/
@@ -58,7 +67,7 @@ pip install -r requirements.txt
 Copia los PDFs nuevos en:
 
 ```text
-obstetrics/spanish/
+raw_data/obstetrics/spanish/
 ```
 
 Luego ejecuta el pipeline incremental:
@@ -73,6 +82,7 @@ Este comando procesa solo PDFs nuevos o modificados y actualiza:
 data/obstetrics_spanish/chunks.jsonl
 data/obstetrics_spanish/train_lm.jsonl
 data/obstetrics_spanish/validation_lm.jsonl
+data/obstetrics_spanish/test_lm.jsonl
 ```
 
 Para buscar PDFs dentro de subcarpetas:
@@ -122,6 +132,7 @@ Salidas:
 data/obstetrics_spanish/synthetic_qa_raw.jsonl
 data/obstetrics_spanish/synthetic_qa_sft.jsonl
 data/obstetrics_spanish/.qa_generation_progress.json
+data/obstetrics_spanish/qa_generation_report.json
 ```
 
 ## Formatos
@@ -147,3 +158,13 @@ data/obstetrics_spanish/audit_report.json
 ```
 
 Ahí quedan conteos, páginas descartadas, páginas que requieren OCR, distribución por PDF y muestras para revisión manual.
+
+## Documentación viva
+
+Para entender decisiones, estado metodológico y evaluación futura, revisa:
+
+```text
+docs/research_notes/
+```
+
+Esa carpeta funciona como bitácora técnica del proyecto y debe actualizarse cuando cambien decisiones importantes del pipeline o del diseño experimental.

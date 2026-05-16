@@ -18,6 +18,7 @@ env/
 .idea/
 *.swp
 *.swo
+.atl
 
 # OS files
 .DS_Store

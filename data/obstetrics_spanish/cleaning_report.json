@@ -1,43 +1,145 @@
 {
   "input": "/home/jhonh/Code/MinCiencias/Fine-Tunning-Benchmark/data/obstetrics_spanish/raw_pages.jsonl",
   "output": "/home/jhonh/Code/MinCiencias/Fine-Tunning-Benchmark/data/obstetrics_spanish/clean_pages.jsonl",
-  "total_pages": 2965,
-  "written_pages": 2965,
-  "kept_pages": 2692,
-  "dropped_pages": 273,
+  "total_pages": 5856,
+  "excluded_skipped": 20,
+  "written_pages": 5836,
+  "kept_pages": 5176,
+  "dropped_pages": 660,
   "drop_reasons": {
-    "corrupt_extraction": 20,
-    "fragmented_text": 33,
-    "index_or_table_of_contents": 5,
-    "needs_ocr": 26,
-    "non_clinical_section": 13,
-    "reference_heavy": 45,
-    "too_short": 131
+    "fragmented_text": 56,
+    "index_or_table_of_contents": 14,
+    "needs_ocr": 332,
+    "non_clinical_section": 14,
+    "reference_heavy": 89,
+    "too_short": 155
   },
   "kept_by_pdf": {
+    "0120-5633-rcca-30-5-286.pdf": 9,
+    "02revision01.pdf": 24,
+    "0300-9041-gom-85-06-380.pdf": 11,
+    "0300-9041-gom-91-04-227.pdf": 14,
+    "13043498.pdf": 5,
+    "13076666.pdf": 8,
+    "13091447.pdf": 7,
+    "17_GAP_vulvovaginitis.pdf": 12,
     "18-vol-822.pdf": 130,
+    "2524-1710-prh-37-02-72.pdf": 8,
+    "4142_stamped.pdf": 25,
+    "4347_stamped.pdf": 10,
+    "63fda96449432art4.pdf": 19,
     "CAP09.pdf": 36,
     "Capítulo+9.pdf": 36,
+    "Diagnostico y tratamiento de las infecciones vulvovaginales.pdf": 14,
+    "Diagnóstico y tratamiento de la infección vaginal obstétrica.pdf": 28,
+    "Dialnet-AccidenteCerebroVascularEnPacientesEmbarazadasPron-9205904.pdf": 13,
     "GAP_Control prenatal del embarazo normal_6105.pdf": 18,
     "GINECOLOGÍA-Y-OBSTETRICIA.pdf": 137,
+    "GPC-Atencion-Prenatal-de-Bajo-Riesgo-2023.pdf": 121,
+    "GPC-CPN-final-mayo-2016-DNN.pdf": 39,
+    "GPC_472_Parto_Normal_Osteba_compl.pdf": 291,
     "GPC_533_Embarazo_AETSA_compl.pdf": 476,
+    "GUIA 1.  CONTROL PRENATAL Y FACTORES DE RIESGO.pdf": 31,
+    "Guia_Practica_Clinica_para_la_Prevencion_y_manejo_de_la_Preeclampsia_y_Eclampsia.pdf": 23,
+    "Guía.completa.Embarazo.Parto.2013.pdf": 612,
+    "INFAC_Vol_33_6_embarazo.pdf": 9,
     "MAN_PROC_SERV_GIN_2023.pdf": 401,
     "Manual-Obstetricia-y-Ginecologia-2024_compressed.pdf": 802,
+    "Manual_obstetricia_ginecologia.pdf": 368,
+    "Medicamentos_y_embarazo.pdf": 310,
     "Protocolo Atencion Obstetrica.pdf": 175,
     "Protocolo-de-Atencion-Clinica-integral-al-embarazo-parto-y-postparto-2.pdf": 121,
     "RECOM_obstetricia_web.pdf": 50,
+    "RENC-D-22-0037_Manuscrito_final.pdf": 12,
+    "S0001731011000780.pdf": 6,
+    "S0213005X09004418.pdf": 6,
     "S0716864011704321.pdf": 16,
+    "S0716864014706406.pdf": 10,
+    "S0716864015000917.pdf": 10,
     "S071686402300007X.pdf": 7,
     "S0716864024000324.pdf": 11,
     "S071686402500046X.pdf": 7,
+    "TFG-H2297.pdf": 33,
+    "a09v60n2.pdf": 7,
+    "a11v18n2.pdf": 9,
+    "admobstygine,+Memorias+ObsyGine+2017+08+páginas+-41-45.pdf": 4,
+    "art04.pdf": 8,
+    "art06.pdf": 8,
+    "art09.pdf": 10,
+    "art11.pdf": 10,
+    "gpcsepsisvaginal.pdf": 13,
+    "guiaPracClinPartoCompleta.pdf": 291,
+    "rechog_25_90_4_237-246.pdf": 8,
+    "rechog_25_90_4_265-273.pdf": 9,
+    "revision1.pdf": 13,
     "usingunindicatorsqa-sp.pdf": 35,
+    "v28n1a5.pdf": 6,
     "vol-842-1.pdf": 115,
     "vol831-1.pdf": 119
   },
   "repeated_lines_by_pdf": {
+    "0120-5633-rcca-30-5-286.pdf": [
+      "L.I. Jaramillo-Jaramillo et al.  Preeclampsia y riesgo cardiovascular",
+      "Rev Colomb Cardiol. 2023;30(5)"
+    ],
+    "02revision01.pdf": [
+      "F. J. Sánchez-Muniz y cols.",
+      "Nutr Hosp. 2013;28(2):250-274",
+      "Nutrición, páncreas neonatal y resistencia",
+      "a la insulina"
+    ],
+    "0300-9041-gom-85-06-380.pdf": [
+      "2017 junio;85(6)",
+      "Ginecología y Obstetricia de México",
+      "Vigil-De Gracia y col. Diabetes gestacional"
+    ],
+    "0300-9041-gom-91-04-227.pdf": [
+      "2023; 91 (4)",
+      "Ginecología y Obstetricia de México",
+      "Santiago-Sanabria L, et al. Depresión posparto",
+      "https://doi.org/10.24245/gom.v91i4.8456"
+    ],
+    "13043498.pdf": [
+      "Clin Invest Gin Obst 2003;30(1):18-23",
+      "López-Torres E, et al. Antiarrítmicos en el embarazo"
+    ],
+    "13076666.pdf": [
+      "Prog Obstet Ginecol. 2005;48(6):289-96"
+    ],
+    "13091447.pdf": [
+      "Enferm Infecc Microbiol Clin 2005;23(Supl. 4):40-6",
+      "Herráiz MA, et al. Infección del tracto urinario en la embarazada"
+    ],
+    "17_GAP_vulvovaginitis.pdf": [
+      "Diagnóstico y tratamiento de las infecciones vulvovaginales. Actualizado 2016",
+      "Prog Obstet Ginecol. 2016;59(5):350-362",
+      "Sociedad Española de Ginecología y Obstetricia.",
+      "Tratamiento"
+    ],
     "18-vol-822.pdf": [
       "Rev Obstet Ginecol Venez",
       "Vol. 82, Nº 2,  abril 2022."
+    ],
+    "2524-1710-prh-37-02-72.pdf": [
+      "J.I. Paredes-García et al.  Preeclampsia y eclampsia",
+      "Perinatol Reprod Hum. 2023;37(2)"
+    ],
+    "4142_stamped.pdf": [
+      "Consenso colombiano de diagnóstico, prevención y manejo de la enfermedad Rh",
+      "Consenso de expertos. Los participantes en el",
+      "Consideraciones de su aplicación al contexto colombiano.",
+      "Revista Colombiana de Obstetricia y Ginecología Vol. 75 No.3 • 2024"
+    ],
+    "4347_stamped.pdf": [
+      "Fuente: Autores.",
+      "Medicamentos para el sistema nervioso con riesgo fetal: su uso antes y durante el embarazo en un seguro social argentino",
+      "Revista Colombiana de Obstetricia y Ginecología Vol. 76 No.2 • 2025"
+    ],
+    "63fda96449432art4.pdf": [
+      "Alimentación durante el embarazo",
+      "NPunto",
+      "Revista para profesionales de la salud",
+      "Vol. VI. Número 59. Febrero 2023"
     ],
     "CAP09.pdf": [
       "FARMACIA HOSPITALARIA",
@@ -47,6 +149,19 @@
       "Fundamentos de ginecología y obstetricia",
       "Wilmar Saldarriaga Gil - Manuel Antonio Artuz Alarcón"
     ],
+    "Diagnostico y tratamiento de las infecciones vulvovaginales.pdf": [
+      "Diagnóstico y tratamiento de las infecciones vulvovaginales",
+      "Prog Obstet Ginecol 2022;65:61-75",
+      "Sociedad Española de Ginecología y Obstetricia."
+    ],
+    "Diagnóstico y tratamiento de la infección vaginal obstétrica.pdf": [
+      "Guía de Práctica Clínica - Diagnóstico y tratamiento de infección vaginal en obstetricia"
+    ],
+    "Dialnet-AccidenteCerebroVascularEnPacientesEmbarazadasPron-9205904.pdf": [
+      "Accidente cerebro vascular en pacientes embarazadas, pronostico, manejo y tratamiento",
+      "Jessica Mariela Gallo Espín",
+      "Pol. Con. (Edición núm. 85) Vol. 8, No 11, Noviembre 2023, pp. 1-14, ISSN: 2550 - 682X"
+    ],
     "GAP_Control prenatal del embarazo normal_6105.pdf": [
       "Control prenatal del embarazo normal",
       "Prog Obstet Ginecol 2018;61(5):510-527",
@@ -55,11 +170,31 @@
     "GINECOLOGÍA-Y-OBSTETRICIA.pdf": [
       "Manual ENARM · Ginecología y Obstetricia"
     ],
+    "GPC-Atencion-Prenatal-de-Bajo-Riesgo-2023.pdf": [
+      "Actualización de ocho recomendaciones priorizadas.",
+      "Guía de Práctica Clínica. Atención Prenatal de Bajo Riesgo."
+    ],
+    "GPC-CPN-final-mayo-2016-DNN.pdf": [],
+    "GPC_472_Parto_Normal_Osteba_compl.pdf": [
+      "GUÍA DE PRÁCTICA CLÍNICA SOBRE LA ATENCIÓN AL PARTO NORMAL",
+      "GUÍAS DE PRÁCTICA CLÍNICA EN EL SNS"
+    ],
     "GPC_533_Embarazo_AETSA_compl.pdf": [
       "Baja",
       "Calidad",
       "GPC DE ATENCIÓN EN EL EMBARAZO Y PUERPERIO",
       "GUÍAS DE PRÁCTICA CLÍNICA EN EL SNS"
+    ],
+    "GUIA 1.  CONTROL PRENATAL Y FACTORES DE RIESGO.pdf": [
+      "Guía de control prenatal y factores de riesgo"
+    ],
+    "Guia_Practica_Clinica_para_la_Prevencion_y_manejo_de_la_Preeclampsia_y_Eclampsia.pdf": [
+      "Guía de práctica clínica para la prevención y manejo de la Preeclampsia y Eclampsia",
+      "Ministerio de Salud - Instituto Nacional Materno Perinatal"
+    ],
+    "Guía.completa.Embarazo.Parto.2013.pdf": [],
+    "INFAC_Vol_33_6_embarazo.pdf": [
+      "INFAC / VOLUMEN 33 • Nº 6 / 2025"
     ],
     "MAN_PROC_SERV_GIN_2023.pdf": [
       "MANUAL DE PROCEDIMIENTOS",
@@ -68,6 +203,13 @@
     ],
     "Manual-Obstetricia-y-Ginecologia-2024_compressed.pdf": [
       "Manual de Obstetricia y Ginecología.   Dr. Jorge A Carvajal y Dra. Karen F García. Decimoquinta Edición. 2024."
+    ],
+    "Manual_obstetricia_ginecologia.pdf": [
+      "Manual básico de Obstetricia y Ginecología"
+    ],
+    "Medicamentos_y_embarazo.pdf": [
+      "BIBLIOGRAFÍA",
+      "ÍNDICE"
     ],
     "Protocolo Atencion Obstetrica.pdf": [
       "Protocolos de atención. Cuidados prenatales y atención obstétrica de emergencia"
@@ -79,8 +221,28 @@
       "GERENCIA DIVISIÓN MÉDICA",
       "PROTOCOLO CLÍNICO DE ATENCIÓN INTEGRAL"
     ],
+    "RD_N°290_APROBAR_LA_GUIA_DE_PRACTICA_CLINICA_VERSION_EXTENSA.pdf": [],
     "RECOM_obstetricia_web.pdf": [
       "atención obstétrica"
+    ],
+    "RENC-D-22-0037_Manuscrito_final.pdf": [
+      "Alimentación en el embarazo y Salud Materna",
+      "Durante",
+      "Rev Esp Nutr Comunitaria 2023; 29(1)",
+      "Revisión",
+      "embarazo.",
+      "materna"
+    ],
+    "S0001731011000780.pdf": [
+      "Embarazo;",
+      "Nevus, melanoma y embarazo",
+      "V. Borges et al"
+    ],
+    "S0213005X09004418.pdf": [
+      "A. Vallano, J.M. Arnau / Enferm Infecc Microbiol Clin. 2009;27(9):536–542",
+      "ARTICLE IN PRESS",
+      "Embarazo",
+      "mujeres"
     ],
     "S0304501310004589.pdf": [
       "R³\"fg\"nc\"Jcdcpc.\"3;2\"Dclq\"*4:258+\"Ocftkf0\"G/ockn<\"ugiqBugiq0gu\"̃\"Vgn0<\";3\"572\";:\"38\"̃\"Hcz<\";3\"572\";:\"3:",
@@ -90,6 +252,14 @@
       "Manejo:",
       "[REV. MED. CLIN. CONDES - 2011; 22(3) 316-331]",
       "[URGENCIAS EN OBSTETRICIA - DR. ENRIQUE OYARZÚN E.  Y COL.]"
+    ],
+    "S0716864014706406.pdf": [
+      "[INFECCIONES CÉRVICO VAGINALES Y EMBARAZO - DR. MARCELO PRADENAS A.]",
+      "[REV. MED. CLIN. CONDES - 2014; 25(6) 925-935]"
+    ],
+    "S0716864015000917.pdf": [
+      "[DIAGNÓSTICO PRENATAL Y MANEJO PERINATAL EN ENFERMEDADES RARAS - Dr. Gustavo Renconret P. y cols.]",
+      "[REV. MED. CLIN. CONDES - 2015; 26(4) 432-441]"
     ],
     "S071686402300007X.pdf": [
       "[Morbilidad Materna Extremadamente Grave: un paso clave para reducir la muerte materna - De Mucio y cols.]",
@@ -103,7 +273,76 @@
       "[Duelo perinatal, salud mental y la importancia del acompañamiento psicológico - Francisca Cortés-Cataldo y cols.]",
       "[REV. MED. CLIN. CONDES - 2025; 36(3) 221-227]"
     ],
+    "TFG-H2297.pdf": [],
+    "a09v60n2.pdf": [
+      "Consideraciones para una adecuada alimentación durante el embarazo",
+      "Maria del Pilar Cereceda Bujaico, Margot Rosario Quintana Salinas"
+    ],
+    "a11v18n2.pdf": [
+      "Horiz Med 2018; 18(2): 71-79",
+      "José Sandoval Paredes, Cindy Sandoval Paz",
+      "Uso de fármacos durante el embarazo",
+      "http://dx.doi.org/10.24265/horizmed.2018.v18n2.11"
+    ],
+    "admobstygine,+Memorias+ObsyGine+2017+08+páginas+-41-45.pdf": [
+      "Educación Continua Facultad de Medicina UdeA",
+      "http://extension.medicinaudea.co"
+    ],
+    "art04.pdf": [
+      "DEPRESION POSPARTO EN EL EMBARAZO ADOLESCENTE  ... / CLAUDIA WOLF L. y cols.",
+      "REV CHIL OBSTET GINECOL 2009; 74(3)"
+    ],
+    "art06.pdf": [
+      "ECLAMPSIA",
+      "M. RIVAS, ET AL",
+      "Rev Obstet Ginecol Venez",
+      "Vol. 72, Nº 1, marzo 2012"
+    ],
+    "art09.pdf": [
+      "REV CHIL OBSTET GINECOL 2017; 82(2)"
+    ],
+    "art11.pdf": [
+      "Colombia",
+      "El impacto de la educación alimentaria nutricional en el embarazo: una revisión de las experiencias de intervención",
+      "India",
+      "País",
+      "Principales Hallazgos",
+      "Puszko B. y cols.",
+      "Restrepo S. y col. 2010 (46)",
+      "Shivalli S. y cols. 2015 (17)"
+    ],
+    "gpcsepsisvaginal.pdf": [
+      "c) Mujer embarazada:"
+    ],
+    "guiaPracClinPartoCompleta.pdf": [
+      "GUÍA DE PRÁCTICA CLÍNICA SOBRE LA ATENCIÓN AL PARTO NORMAL",
+      "GUÍAS DE PRÁCTICA CLÍNICA EN EL SNS"
+    ],
+    "rechog_25_90_4_237-246.pdf": [
+      "M. Valencia-Franco et al.  Mortalidad materna en Colombia en 2022",
+      "Rev Chil Obstet Ginecol. 2025;90(4)"
+    ],
+    "rechog_25_90_4_265-273.pdf": [
+      "20.0%",
+      "40.0%",
+      "50,0%",
+      "FIV+ICSI",
+      "G. Barrera-Cano et al.  Tratamiento de alta complejidad",
+      "ICSI",
+      "Rev Chil Obstet Ginecol. 2025;90(4)"
+    ],
+    "revision1.pdf": [
+      "Dietista-Nutricionista",
+      "Rev Esp Nutr Hum Diet. 2016; 20(1): 48 - 60"
+    ],
     "usingunindicatorsqa-sp.pdf": [],
+    "v28n1a5.pdf": [
+      "Complicaciones obstétricas de la diabetes gestacional:",
+      "Perinatol Reprod Hum 2014; 28 (1): 27-32",
+      "Ríos-Martínez W y cols.",
+      "criterios de la IADPSG y HAPO",
+      "www.medigraphic.org.mx"
+    ],
     "vol-842-1.pdf": [
       "Rev Obstet Ginecol Venez",
       "Vol. 84, Nº 2,  junio 2024."

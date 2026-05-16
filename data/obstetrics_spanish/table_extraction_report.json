@@ -1,0 +1,1458 @@
+{
+  "total_pdfs": 63,
+  "pdfs_with_tables": 39,
+  "total_tables_extracted": 720,
+  "tables_written": 720,
+  "strategy": "lines",
+  "strict_mode": true,
+  "min_rows": 2,
+  "min_cols": 2,
+  "pdf_reports": [
+    {
+      "pdf_id": "0120_5633_rcca_30_5_286",
+      "source_pdf": "0120-5633-rcca-30-5-286.pdf",
+      "page_count": 9,
+      "pages_with_tables": 1,
+      "pages_with_table_numbers": [
+        6
+      ],
+      "total_tables": 2,
+      "strategy_counts": {
+        "lines": 2,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "02revision01",
+      "source_pdf": "02revision01.pdf",
+      "page_count": 25,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "0300_9041_gom_85_06_380",
+      "source_pdf": "0300-9041-gom-85-06-380.pdf",
+      "page_count": 11,
+      "pages_with_tables": 2,
+      "pages_with_table_numbers": [
+        6,
+        8
+      ],
+      "total_tables": 3,
+      "strategy_counts": {
+        "lines": 3,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "0300_9041_gom_91_04_227",
+      "source_pdf": "0300-9041-gom-91-04-227.pdf",
+      "page_count": 14,
+      "pages_with_tables": 5,
+      "pages_with_table_numbers": [
+        5,
+        6,
+        8,
+        9,
+        14
+      ],
+      "total_tables": 5,
+      "strategy_counts": {
+        "lines": 5,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "13043498",
+      "source_pdf": "13043498.pdf",
+      "page_count": 6,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "13076666",
+      "source_pdf": "13076666.pdf",
+      "page_count": 8,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "13091447",
+      "source_pdf": "13091447.pdf",
+      "page_count": 7,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "17_gap_vulvovaginitis",
+      "source_pdf": "17_GAP_vulvovaginitis.pdf",
+      "page_count": 13,
+      "pages_with_tables": 3,
+      "pages_with_table_numbers": [
+        4,
+        6,
+        10
+      ],
+      "total_tables": 3,
+      "strategy_counts": {
+        "lines": 3,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "18_vol_822",
+      "source_pdf": "18-vol-822.pdf",
+      "page_count": 147,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "2524_1710_prh_37_02_72",
+      "source_pdf": "2524-1710-prh-37-02-72.pdf",
+      "page_count": 8,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "4142_stamped",
+      "source_pdf": "4142_stamped.pdf",
+      "page_count": 25,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "4347_stamped",
+      "source_pdf": "4347_stamped.pdf",
+      "page_count": 12,
+      "pages_with_tables": 4,
+      "pages_with_table_numbers": [
+        6,
+        7,
+        8,
+        9
+      ],
+      "total_tables": 5,
+      "strategy_counts": {
+        "lines": 5,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "63fda96449432art4",
+      "source_pdf": "63fda96449432art4.pdf",
+      "page_count": 20,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "cap09",
+      "source_pdf": "CAP09.pdf",
+      "page_count": 37,
+      "pages_with_tables": 3,
+      "pages_with_table_numbers": [
+        18,
+        32,
+        34
+      ],
+      "total_tables": 3,
+      "strategy_counts": {
+        "lines": 3,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "capitulo_9",
+      "source_pdf": "Capítulo+9.pdf",
+      "page_count": 36,
+      "pages_with_tables": 2,
+      "pages_with_table_numbers": [
+        6,
+        31
+      ],
+      "total_tables": 2,
+      "strategy_counts": {
+        "lines": 2,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "diagnostico_y_tratamiento_de_las_infecciones_vulvovaginales",
+      "source_pdf": "Diagnostico y tratamiento de las infecciones vulvovaginales.pdf",
+      "page_count": 15,
+      "pages_with_tables": 3,
+      "pages_with_table_numbers": [
+        4,
+        6,
+        13
+      ],
+      "total_tables": 3,
+      "strategy_counts": {
+        "lines": 3,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "diagnostico_y_tratamiento_de_la_infeccion_vaginal_obstetrica",
+      "source_pdf": "Diagnóstico y tratamiento de la infección vaginal obstétrica.pdf",
+      "page_count": 34,
+      "pages_with_tables": 12,
+      "pages_with_table_numbers": [
+        12,
+        15,
+        16,
+        17,
+        19,
+        20,
+        21,
+        22,
+        26,
+        28,
+        29,
+        32
+      ],
+      "total_tables": 19,
+      "strategy_counts": {
+        "lines": 19,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "dialnet_accidentecerebrovascularenpacientesembarazadaspron_9205904",
+      "source_pdf": "Dialnet-AccidenteCerebroVascularEnPacientesEmbarazadasPron-9205904.pdf",
+      "page_count": 15,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "gap_control_prenatal_del_embarazo_normal_6105",
+      "source_pdf": "GAP_Control prenatal del embarazo normal_6105.pdf",
+      "page_count": 18,
+      "pages_with_tables": 4,
+      "pages_with_table_numbers": [
+        6,
+        7,
+        8,
+        9
+      ],
+      "total_tables": 6,
+      "strategy_counts": {
+        "lines": 6,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "ginecologia_y_obstetricia",
+      "source_pdf": "GINECOLOGÍA-Y-OBSTETRICIA.pdf",
+      "page_count": 148,
+      "pages_with_tables": 22,
+      "pages_with_table_numbers": [
+        17,
+        21,
+        24,
+        25,
+        29,
+        31,
+        32,
+        36,
+        40,
+        44,
+        49,
+        56,
+        61,
+        63,
+        65,
+        68,
+        100,
+        125,
+        126,
+        132,
+        135,
+        136
+      ],
+      "total_tables": 25,
+      "strategy_counts": {
+        "lines": 25,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "gpc_atencion_prenatal_de_bajo_riesgo_2023",
+      "source_pdf": "GPC-Atencion-Prenatal-de-Bajo-Riesgo-2023.pdf",
+      "page_count": 134,
+      "pages_with_tables": 4,
+      "pages_with_table_numbers": [
+        23,
+        95,
+        102,
+        106
+      ],
+      "total_tables": 4,
+      "strategy_counts": {
+        "lines": 4,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "gpc_cpn_final_mayo_2016_dnn",
+      "source_pdf": "GPC-CPN-final-mayo-2016-DNN.pdf",
+      "page_count": 47,
+      "pages_with_tables": 9,
+      "pages_with_table_numbers": [
+        14,
+        15,
+        16,
+        22,
+        24,
+        25,
+        26,
+        31,
+        39
+      ],
+      "total_tables": 10,
+      "strategy_counts": {
+        "lines": 10,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "gpc_472_parto_normal_osteba_compl",
+      "source_pdf": "GPC_472_Parto_Normal_Osteba_compl.pdf",
+      "page_count": 316,
+      "pages_with_tables": 38,
+      "pages_with_table_numbers": [
+        21,
+        28,
+        29,
+        30,
+        32,
+        33,
+        61,
+        63,
+        67,
+        80,
+        104,
+        106,
+        109,
+        128,
+        129,
+        145,
+        148,
+        162,
+        167,
+        170,
+        172,
+        181,
+        186,
+        189,
+        192,
+        197,
+        207,
+        212,
+        213,
+        217,
+        220,
+        227,
+        230,
+        231,
+        233,
+        237,
+        243,
+        280
+      ],
+      "total_tables": 41,
+      "strategy_counts": {
+        "lines": 41,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "gpc_533_embarazo_aetsa_compl",
+      "source_pdf": "GPC_533_Embarazo_AETSA_compl.pdf",
+      "page_count": 494,
+      "pages_with_tables": 60,
+      "pages_with_table_numbers": [
+        24,
+        26,
+        30,
+        32,
+        33,
+        38,
+        41,
+        44,
+        65,
+        97,
+        117,
+        122,
+        134,
+        135,
+        136,
+        139,
+        161,
+        164,
+        165,
+        172,
+        174,
+        197,
+        198,
+        199,
+        200,
+        201,
+        202,
+        209,
+        229,
+        240,
+        241,
+        243,
+        245,
+        250,
+        263,
+        273,
+        276,
+        287,
+        289,
+        290,
+        295,
+        297,
+        299,
+        303,
+        306,
+        328,
+        332,
+        349,
+        378,
+        383,
+        394,
+        395,
+        401,
+        402,
+        403,
+        411,
+        422,
+        440,
+        441,
+        443
+      ],
+      "total_tables": 63,
+      "strategy_counts": {
+        "lines": 63,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "guia_1_control_prenatal_y_factores_de_riesgo",
+      "source_pdf": "GUIA 1.  CONTROL PRENATAL Y FACTORES DE RIESGO.pdf",
+      "page_count": 36,
+      "pages_with_tables": 5,
+      "pages_with_table_numbers": [
+        6,
+        16,
+        20,
+        27,
+        28
+      ],
+      "total_tables": 6,
+      "strategy_counts": {
+        "lines": 6,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "guia_practica_clinica_para_la_prevencion_y_manejo_de_la_preeclampsia_y_eclampsia",
+      "source_pdf": "Guia_Practica_Clinica_para_la_Prevencion_y_manejo_de_la_Preeclampsia_y_Eclampsia.pdf",
+      "page_count": 29,
+      "pages_with_tables": 1,
+      "pages_with_table_numbers": [
+        15
+      ],
+      "total_tables": 1,
+      "strategy_counts": {
+        "lines": 1,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "guia_completa_embarazo_parto_2013",
+      "source_pdf": "Guía.completa.Embarazo.Parto.2013.pdf",
+      "page_count": 623,
+      "pages_with_tables": 52,
+      "pages_with_table_numbers": [
+        25,
+        26,
+        28,
+        33,
+        35,
+        36,
+        38,
+        41,
+        47,
+        49,
+        52,
+        53,
+        54,
+        55,
+        56,
+        58,
+        61,
+        62,
+        64,
+        65,
+        66,
+        68,
+        70,
+        71,
+        89,
+        96,
+        97,
+        187,
+        220,
+        252,
+        287,
+        305,
+        334,
+        351,
+        387,
+        393,
+        400,
+        406,
+        407,
+        412,
+        424,
+        449,
+        456,
+        457,
+        470,
+        487,
+        490,
+        516,
+        520,
+        524,
+        532,
+        539
+      ],
+      "total_tables": 58,
+      "strategy_counts": {
+        "lines": 58,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "infac_vol_33_6_embarazo",
+      "source_pdf": "INFAC_Vol_33_6_embarazo.pdf",
+      "page_count": 10,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "man_proc_serv_gin_2023",
+      "source_pdf": "MAN_PROC_SERV_GIN_2023.pdf",
+      "page_count": 536,
+      "pages_with_tables": 105,
+      "pages_with_table_numbers": [
+        40,
+        41,
+        42,
+        68,
+        74,
+        82,
+        91,
+        92,
+        109,
+        148,
+        149,
+        150,
+        156,
+        157,
+        158,
+        166,
+        173,
+        178,
+        180,
+        186,
+        187,
+        188,
+        196,
+        197,
+        208,
+        209,
+        215,
+        216,
+        222,
+        224,
+        230,
+        233,
+        234,
+        243,
+        246,
+        247,
+        248,
+        255,
+        258,
+        259,
+        260,
+        266,
+        268,
+        269,
+        277,
+        281,
+        283,
+        291,
+        293,
+        294,
+        303,
+        304,
+        310,
+        311,
+        318,
+        319,
+        329,
+        331,
+        337,
+        338,
+        339,
+        346,
+        354,
+        366,
+        367,
+        368,
+        373,
+        374,
+        375,
+        381,
+        382,
+        383,
+        391,
+        392,
+        400,
+        401,
+        403,
+        404,
+        410,
+        412,
+        413,
+        420,
+        423,
+        424,
+        432,
+        443,
+        444,
+        462,
+        463,
+        481,
+        483,
+        484,
+        496,
+        497,
+        498,
+        507,
+        508,
+        509,
+        516,
+        518,
+        519,
+        520,
+        525,
+        531,
+        533
+      ],
+      "total_tables": 173,
+      "strategy_counts": {
+        "lines": 173,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "manual_obstetricia_y_ginecologia_2024_compressed",
+      "source_pdf": "Manual-Obstetricia-y-Ginecologia-2024_compressed.pdf",
+      "page_count": 810,
+      "pages_with_tables": 11,
+      "pages_with_table_numbers": [
+        213,
+        290,
+        369,
+        388,
+        473,
+        518,
+        626,
+        683,
+        706,
+        746,
+        800
+      ],
+      "total_tables": 15,
+      "strategy_counts": {
+        "lines": 15,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "manual_obstetricia_ginecologia",
+      "source_pdf": "Manual_obstetricia_ginecologia.pdf",
+      "page_count": 376,
+      "pages_with_tables": 37,
+      "pages_with_table_numbers": [
+        16,
+        79,
+        80,
+        86,
+        118,
+        122,
+        128,
+        129,
+        133,
+        138,
+        139,
+        142,
+        143,
+        144,
+        173,
+        179,
+        204,
+        205,
+        207,
+        210,
+        219,
+        220,
+        222,
+        229,
+        230,
+        243,
+        246,
+        269,
+        276,
+        280,
+        307,
+        308,
+        316,
+        354,
+        360,
+        363,
+        365
+      ],
+      "total_tables": 39,
+      "strategy_counts": {
+        "lines": 39,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "medicamentos_y_embarazo",
+      "source_pdf": "Medicamentos_y_embarazo.pdf",
+      "page_count": 480,
+      "pages_with_tables": 4,
+      "pages_with_table_numbers": [
+        53,
+        54,
+        162,
+        305
+      ],
+      "total_tables": 6,
+      "strategy_counts": {
+        "lines": 6,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "protocolo_atencion_obstetrica",
+      "source_pdf": "Protocolo Atencion Obstetrica.pdf",
+      "page_count": 192,
+      "pages_with_tables": 3,
+      "pages_with_table_numbers": [
+        51,
+        144,
+        157
+      ],
+      "total_tables": 3,
+      "strategy_counts": {
+        "lines": 3,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "protocolo_de_atencion_clinica_integral_al_embarazo_parto_y_postparto_2",
+      "source_pdf": "Protocolo-de-Atencion-Clinica-integral-al-embarazo-parto-y-postparto-2.pdf",
+      "page_count": 129,
+      "pages_with_tables": 118,
+      "pages_with_table_numbers": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99,
+        100,
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        112,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119,
+        120,
+        121,
+        122,
+        123,
+        124,
+        125,
+        126,
+        127,
+        128,
+        129
+      ],
+      "total_tables": 128,
+      "strategy_counts": {
+        "lines": 128,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "rd_n_290_aprobar_la_guia_de_practica_clinica_version_extensa",
+      "source_pdf": "RD_N°290_APROBAR_LA_GUIA_DE_PRACTICA_CLINICA_VERSION_EXTENSA.pdf",
+      "page_count": 109,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "recom_obstetricia_web",
+      "source_pdf": "RECOM_obstetricia_web.pdf",
+      "page_count": 62,
+      "pages_with_tables": 3,
+      "pages_with_table_numbers": [
+        22,
+        24,
+        36
+      ],
+      "total_tables": 3,
+      "strategy_counts": {
+        "lines": 3,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "renc_d_22_0037_manuscrito_final",
+      "source_pdf": "RENC-D-22-0037_Manuscrito_final.pdf",
+      "page_count": 12,
+      "pages_with_tables": 4,
+      "pages_with_table_numbers": [
+        2,
+        3,
+        4,
+        8
+      ],
+      "total_tables": 4,
+      "strategy_counts": {
+        "lines": 4,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "s0001731011000780",
+      "source_pdf": "S0001731011000780.pdf",
+      "page_count": 8,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "s0213005x09004418",
+      "source_pdf": "S0213005X09004418.pdf",
+      "page_count": 7,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "s0304501310004589",
+      "source_pdf": "S0304501310004589.pdf",
+      "page_count": 20,
+      "pages_with_tables": 4,
+      "pages_with_table_numbers": [
+        5,
+        7,
+        8,
+        16
+      ],
+      "total_tables": 8,
+      "strategy_counts": {
+        "lines": 8,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "s0716864011704321",
+      "source_pdf": "S0716864011704321.pdf",
+      "page_count": 16,
+      "pages_with_tables": 5,
+      "pages_with_table_numbers": [
+        4,
+        5,
+        9,
+        10,
+        13
+      ],
+      "total_tables": 5,
+      "strategy_counts": {
+        "lines": 5,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "s0716864014706406",
+      "source_pdf": "S0716864014706406.pdf",
+      "page_count": 11,
+      "pages_with_tables": 3,
+      "pages_with_table_numbers": [
+        2,
+        6,
+        9
+      ],
+      "total_tables": 3,
+      "strategy_counts": {
+        "lines": 3,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "s0716864015000917",
+      "source_pdf": "S0716864015000917.pdf",
+      "page_count": 10,
+      "pages_with_tables": 1,
+      "pages_with_table_numbers": [
+        5
+      ],
+      "total_tables": 1,
+      "strategy_counts": {
+        "lines": 1,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "s071686402300007x",
+      "source_pdf": "S071686402300007X.pdf",
+      "page_count": 7,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "s0716864024000324",
+      "source_pdf": "S0716864024000324.pdf",
+      "page_count": 11,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "s071686402500046x",
+      "source_pdf": "S071686402500046X.pdf",
+      "page_count": 7,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "tfg_h2297",
+      "source_pdf": "TFG-H2297.pdf",
+      "page_count": 35,
+      "pages_with_tables": 4,
+      "pages_with_table_numbers": [
+        7,
+        19,
+        22,
+        26
+      ],
+      "total_tables": 4,
+      "strategy_counts": {
+        "lines": 4,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "a09v60n2",
+      "source_pdf": "a09v60n2.pdf",
+      "page_count": 7,
+      "pages_with_tables": 2,
+      "pages_with_table_numbers": [
+        2,
+        6
+      ],
+      "total_tables": 2,
+      "strategy_counts": {
+        "lines": 2,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "a11v18n2",
+      "source_pdf": "a11v18n2.pdf",
+      "page_count": 9,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "admobstygine_memorias_obsygine_2017_08_paginas_41_45",
+      "source_pdf": "admobstygine,+Memorias+ObsyGine+2017+08+páginas+-41-45.pdf",
+      "page_count": 5,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "art04",
+      "source_pdf": "art04.pdf",
+      "page_count": 8,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "art06",
+      "source_pdf": "art06.pdf",
+      "page_count": 8,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "art09",
+      "source_pdf": "art09.pdf",
+      "page_count": 11,
+      "pages_with_tables": 2,
+      "pages_with_table_numbers": [
+        5,
+        6
+      ],
+      "total_tables": 4,
+      "strategy_counts": {
+        "lines": 4,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "art11",
+      "source_pdf": "art11.pdf",
+      "page_count": 10,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "gpcsepsisvaginal",
+      "source_pdf": "gpcsepsisvaginal.pdf",
+      "page_count": 13,
+      "pages_with_tables": 3,
+      "pages_with_table_numbers": [
+        4,
+        5,
+        6
+      ],
+      "total_tables": 9,
+      "strategy_counts": {
+        "lines": 9,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "guiapracclinpartocompleta",
+      "source_pdf": "guiaPracClinPartoCompleta.pdf",
+      "page_count": 317,
+      "pages_with_tables": 41,
+      "pages_with_table_numbers": [
+        21,
+        22,
+        28,
+        29,
+        30,
+        32,
+        33,
+        61,
+        63,
+        67,
+        80,
+        91,
+        104,
+        106,
+        109,
+        128,
+        129,
+        145,
+        148,
+        162,
+        167,
+        170,
+        172,
+        181,
+        186,
+        189,
+        192,
+        197,
+        207,
+        212,
+        213,
+        217,
+        220,
+        227,
+        230,
+        231,
+        233,
+        237,
+        243,
+        280,
+        290
+      ],
+      "total_tables": 44,
+      "strategy_counts": {
+        "lines": 44,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "rechog_25_90_4_237_246",
+      "source_pdf": "rechog_25_90_4_237-246.pdf",
+      "page_count": 10,
+      "pages_with_tables": 1,
+      "pages_with_table_numbers": [
+        5
+      ],
+      "total_tables": 1,
+      "strategy_counts": {
+        "lines": 1,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "rechog_25_90_4_265_273",
+      "source_pdf": "rechog_25_90_4_265-273.pdf",
+      "page_count": 9,
+      "pages_with_tables": 2,
+      "pages_with_table_numbers": [
+        4,
+        5
+      ],
+      "total_tables": 3,
+      "strategy_counts": {
+        "lines": 3,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "revision1",
+      "source_pdf": "revision1.pdf",
+      "page_count": 13,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "usingunindicatorsqa_sp",
+      "source_pdf": "usingunindicatorsqa-sp.pdf",
+      "page_count": 37,
+      "pages_with_tables": 4,
+      "pages_with_table_numbers": [
+        7,
+        20,
+        27,
+        28
+      ],
+      "total_tables": 4,
+      "strategy_counts": {
+        "lines": 4,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "v28n1a5",
+      "source_pdf": "v28n1a5.pdf",
+      "page_count": 6,
+      "pages_with_tables": 1,
+      "pages_with_table_numbers": [
+        3
+      ],
+      "total_tables": 2,
+      "strategy_counts": {
+        "lines": 2,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "vol_842_1",
+      "source_pdf": "vol-842-1.pdf",
+      "page_count": 126,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    },
+    {
+      "pdf_id": "vol831_1",
+      "source_pdf": "vol831-1.pdf",
+      "page_count": 132,
+      "pages_with_tables": 0,
+      "pages_with_table_numbers": [],
+      "total_tables": 0,
+      "strategy_counts": {
+        "lines": 0,
+        "text": 0
+      },
+      "strict_mode": true
+    }
+  ]
+}

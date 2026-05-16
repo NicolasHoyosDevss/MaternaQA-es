@@ -46,8 +46,10 @@ import json
 import logging
 import os
 import random
+import re
 import sys
 import time
+from collections import Counter
 from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional, Set, Tuple
 
@@ -292,7 +294,9 @@ def chunk_to_sft_records(
     """Convierte los pares generados al formato messages listo para fine-tuning."""
     meta = chunk.get("metadata", {})
     records = []
-    for pair in pairs:
+    for idx, pair in enumerate(pairs, start=1):
+        chunk_id = str(meta.get("chunk_id", ""))
+        qa_id = f"{chunk_id}_qa_{idx:03d}" if chunk_id else f"qa_{idx:03d}"
         records.append(
             {
                 "messages": [
@@ -304,8 +308,13 @@ def chunk_to_sft_records(
                     "source": "obstetrics_spanish_synthetic",
                     "source_pdf": meta.get("source_pdf", ""),
                     "chunk_id": meta.get("chunk_id", ""),
+                    "qa_id": qa_id,
                     "pages": meta.get("pages", []),
                     "section": meta.get("section", ""),
+                    "section_type": meta.get("section_type", ""),
+                    "content_role": meta.get("content_role", ""),
+                    "topics": meta.get("topics", []) or meta.get("topic_tags", []),
+                    "split": meta.get("split", ""),
                     "clinical_score": meta.get("clinical_score", 0),
                     "token_estimate": meta.get("token_estimate", 0),
                     "tipo": pair.tipo,
@@ -323,22 +332,57 @@ def chunk_to_raw_records(
 ) -> List[Dict[str, Any]]:
     """Guarda los pares en formato plano para auditoría / revisión humana."""
     meta = chunk.get("metadata", {})
-    return [
-        {
-            "chunk_id": meta.get("chunk_id", ""),
-            "source_pdf": meta.get("source_pdf", ""),
-            "section": meta.get("section", ""),
-            "pages": meta.get("pages", []),
-            "clinical_score": meta.get("clinical_score", 0),
-            "token_estimate": meta.get("token_estimate", 0),
-            "pregunta": p.pregunta,
-            "respuesta": p.respuesta,
-            "tipo": p.tipo,
-            "dificultad": p.dificultad,
-            "contexto_fuente": p.contexto_fuente,
-        }
-        for p in pairs
-    ]
+    rows: List[Dict[str, Any]] = []
+    chunk_id = str(meta.get("chunk_id", ""))
+    for idx, p in enumerate(pairs, start=1):
+        qa_id = f"{chunk_id}_qa_{idx:03d}" if chunk_id else f"qa_{idx:03d}"
+        rows.append(
+            {
+                "qa_id": qa_id,
+                "chunk_id": meta.get("chunk_id", ""),
+                "source_pdf": meta.get("source_pdf", ""),
+                "section": meta.get("section", ""),
+                "section_type": meta.get("section_type", ""),
+                "content_role": meta.get("content_role", ""),
+                "topics": meta.get("topics", []) or meta.get("topic_tags", []),
+                "split": meta.get("split", ""),
+                "pages": meta.get("pages", []),
+                "clinical_score": meta.get("clinical_score", 0),
+                "token_estimate": meta.get("token_estimate", 0),
+                "pregunta": p.pregunta,
+                "respuesta": p.respuesta,
+                "tipo": p.tipo,
+                "dificultad": p.dificultad,
+                "contexto_fuente": p.contexto_fuente,
+            }
+        )
+    return rows
+
+
+def _norm_tokens(text: str) -> Set[str]:
+    return set(re.findall(r"\b\w+\b", str(text).lower(), flags=re.UNICODE))
+
+
+def grounding_metrics_for_pairs(pairs: List[QAPar]) -> Dict[str, Any]:
+    overlap_ratios: List[float] = []
+    low_grounding = 0
+    for pair in pairs:
+        ctx = _norm_tokens(pair.contexto_fuente)
+        ans = _norm_tokens(pair.respuesta)
+        if not ctx:
+            overlap_ratios.append(0.0)
+            low_grounding += 1
+            continue
+        overlap = len(ctx & ans) / max(1, len(ctx))
+        overlap_ratios.append(overlap)
+        if overlap < 0.15:
+            low_grounding += 1
+    avg_overlap = sum(overlap_ratios) / max(1, len(overlap_ratios))
+    return {
+        "avg_context_answer_overlap": round(avg_overlap, 4),
+        "low_grounding_pairs": low_grounding,
+        "total_pairs": len(pairs),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -453,6 +497,7 @@ async def run_generation(
     sft_output: Path,
     raw_output: Path,
     progress_file: Path,
+    report_output: Path,
     logger: logging.Logger,
 ) -> Dict[str, Any]:
     processed_ids = load_progress(progress_file)
@@ -492,6 +537,9 @@ async def run_generation(
     processed = 0
     failed = 0
     total_pairs = 0
+    grounding_overlap_sum = 0.0
+    grounding_pairs = 0
+    low_grounding_pairs = 0
 
     # as_completed para poder escribir y actualizar checkpoint en cuanto cada tarea termina
     for coro in atqdm(
@@ -503,6 +551,10 @@ async def run_generation(
         if pairs:
             append_jsonl(sft_output, chunk_to_sft_records(chunk, pairs))
             append_jsonl(raw_output, chunk_to_raw_records(chunk, pairs))
+            gm = grounding_metrics_for_pairs(pairs)
+            grounding_overlap_sum += float(gm["avg_context_answer_overlap"]) * int(gm["total_pairs"])
+            grounding_pairs += int(gm["total_pairs"])
+            low_grounding_pairs += int(gm["low_grounding_pairs"])
             processed += 1
             total_pairs += len(pairs)
             processed_ids.add(chunk_id)
@@ -514,13 +566,22 @@ async def run_generation(
         else:
             failed += 1
 
-    return {
+    stats = {
         "total": len(chunks),
         "skipped": len(chunks) - len(pending),
         "processed": processed,
         "failed": failed,
         "qa_pairs": total_pairs,
+        "grounding": {
+            "avg_context_answer_overlap": round(grounding_overlap_sum / max(1, grounding_pairs), 4),
+            "low_grounding_pairs": low_grounding_pairs,
+            "total_pairs": grounding_pairs,
+            "low_grounding_rate": round(low_grounding_pairs / max(1, grounding_pairs), 4),
+        },
     }
+    report_output.parent.mkdir(parents=True, exist_ok=True)
+    report_output.write_text(json.dumps(stats, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return stats
 
 
 # ---------------------------------------------------------------------------
@@ -562,6 +623,12 @@ def parse_args() -> argparse.Namespace:
         help="Archivo de checkpoint para reanudar si el proceso se interrumpe.",
     )
     parser.add_argument(
+        "--report-output",
+        type=Path,
+        default=data_dir / "qa_generation_report.json",
+        help="Reporte de métricas de generación y grounding.",
+    )
+    parser.add_argument(
         "--model",
         type=str,
         default="gpt-5.4-mini",
@@ -598,6 +665,25 @@ def parse_args() -> argparse.Namespace:
         default=0,
         help="Ignorar chunks con clinical_score menor a este valor.",
     )
+    # Phase 7: content-role filtering for clinically useful QA generation
+    CLINICAL_ROLES = ("evidence", "recommendation", "procedure", "diagnostic", "treatment")
+    parser.add_argument(
+        "--allowed-content-roles",
+        type=str,
+        default=",".join(CLINICAL_ROLES),
+        help="Roles de contenido permitidos (coma-separados). Fase 7: solo roles clínicamente útiles.",
+    )
+    parser.add_argument(
+        "--no-content-role-filter",
+        action="store_true",
+        help="Deshabilitar el filtro por content_role (backward-compatible).",
+    )
+    parser.add_argument(
+        "--min-topic-coverage",
+        type=float,
+        default=0.30,
+        help="Fase 7: reporta cobertura mínima por topic sin reinyectar roles no accionables (0.0-1.0).",
+    )
     parser.add_argument(
         "--api-key",
         type=str,
@@ -622,6 +708,122 @@ def parse_args() -> argparse.Namespace:
         help="Semilla aleatoria para reproducibilidad.",
     )
     return parser.parse_args()
+
+
+# ---------------------------------------------------------------------------
+# Phase 7: content-role filtering with topic-coverage preservation
+# ---------------------------------------------------------------------------
+
+
+CLINICAL_CONTENT_ROLES = {
+    "evidence",
+    "recommendation",
+    "procedure",
+    "diagnostic",
+    "treatment",
+}
+
+
+def compute_topic_distribution(chunks: List[Dict[str, Any]]) -> Counter[str]:
+    """Compute topic frequency across chunks."""
+    dist: Counter[str] = Counter()
+    for chunk in chunks:
+        meta = chunk.get("metadata", {})
+        topics = meta.get("topics", []) or meta.get("topic_tags", [])
+        for topic in topics:
+            if topic:
+                dist[topic] += 1
+    return dist
+
+
+def chunk_metadata(chunk: Dict[str, Any]) -> Dict[str, Any]:
+    metadata = chunk.get("metadata")
+    return metadata if isinstance(metadata, dict) else chunk
+
+
+def chunk_content_role(chunk: Dict[str, Any]) -> str:
+    return str(chunk_metadata(chunk).get("content_role", "")).strip()
+
+
+def filter_by_content_role(
+    chunks: List[Dict[str, Any]],
+    allowed_roles: Set[str],
+    logger: logging.Logger,
+) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
+    """Filter chunks to only actionable content roles and report skipped stats."""
+    before = len(chunks)
+    filtered: List[Dict[str, Any]] = []
+    kept_by_role: Counter[str] = Counter()
+    skipped_by_role: Counter[str] = Counter()
+    for chunk in chunks:
+        role = chunk_content_role(chunk) or "unknown"
+        if role in allowed_roles:
+            filtered.append(chunk)
+            kept_by_role[role] += 1
+        else:
+            skipped_by_role[role] += 1
+    logger.info(
+        "Filtro content_role %s: %d → %d chunks",
+        allowed_roles,
+        before,
+        len(filtered),
+    )
+    if skipped_by_role:
+        logger.info(
+            "Chunks excluidos por content_role: %s",
+            dict(sorted(skipped_by_role.items())),
+        )
+    return filtered, {
+        "input_chunks": before,
+        "eligible_chunks": len(filtered),
+        "skipped_chunks": sum(skipped_by_role.values()),
+        "eligible_by_content_role": dict(sorted(kept_by_role.items())),
+        "skipped_by_content_role": dict(sorted(skipped_by_role.items())),
+        "allowed_content_roles": sorted(allowed_roles),
+    }
+
+
+def preserve_topic_coverage(
+    original: List[Dict[str, Any]],
+    filtered: List[Dict[str, Any]],
+    min_coverage: float,
+    allowed_roles: Set[str],
+    logger: logging.Logger,
+) -> List[Dict[str, Any]]:
+    """Report topic coverage without relaxing the actionable-role filter."""
+    if min_coverage <= 0.0:
+        return filtered
+
+    original_dist = compute_topic_distribution(original)
+    if not original_dist:
+        return filtered
+
+    filtered_dist = compute_topic_distribution(filtered)
+    below_threshold: Dict[str, Dict[str, float]] = {}
+
+    for topic, orig_count in original_dist.items():
+        if orig_count == 0:
+            continue
+        filt_count = filtered_dist.get(topic, 0)
+        coverage = filt_count / orig_count
+        if coverage >= min_coverage:
+            continue
+
+        below_threshold[topic] = {
+            "original": float(orig_count),
+            "filtered": float(filt_count),
+            "coverage": round(coverage, 4),
+            "allowed_roles": sorted(allowed_roles),
+        }
+
+    if below_threshold:
+        logger.warning(
+            "Cobertura por topic por debajo de %.0f%% tras el filtro accional: %s",
+            min_coverage * 100,
+            below_threshold,
+        )
+
+    return filtered
 
 
 def main() -> None:
@@ -671,6 +873,34 @@ def main() -> None:
         logger.warning("Sin chunks para procesar. Verifica --min-clinical-score.")
         sys.exit(0)
 
+    # ── Phase 7: Filtrar por content_role ─────────────────────────────────────
+    allowed_roles = set(r.strip() for r in args.allowed_content_roles.split(",") if r.strip())
+    filter_stats = {
+        "input_chunks": len(chunks),
+        "eligible_chunks": len(chunks),
+        "skipped_chunks": 0,
+        "eligible_by_content_role": {},
+        "skipped_by_content_role": {},
+        "allowed_content_roles": sorted(allowed_roles),
+    }
+    if not args.no_content_role_filter:
+        original_chunks = chunks[:]
+        chunks, filter_stats = filter_by_content_role(chunks, allowed_roles, logger)
+        chunks = preserve_topic_coverage(
+            original_chunks, chunks, args.min_topic_coverage, allowed_roles, logger
+        )
+    else:
+        logger.info("Filtro por content_role deshabilitado (--no-content-role-filter).")
+
+    # Reportar distribución de topics tras filtro
+    topic_dist = compute_topic_distribution(chunks)
+    if topic_dist:
+        logger.info("Topics tras filtro: %s", dict(sorted(topic_dist.items())))
+
+    if not chunks:
+        logger.warning("Sin chunks para procesar tras filtros de content_role.")
+        sys.exit(0)
+
     if args.limit is not None:
         if args.limit <= 0:
             logger.error("--limit debe ser mayor que 0.")
@@ -689,12 +919,24 @@ def main() -> None:
     print("  RESUMEN DE GENERACIÓN SINTÉTICA")
     print("=" * 60)
     print(f"  Modelo             : {args.model}")
+    print(f"  Chunks de entrada  : {filter_stats['input_chunks']}")
     print(f"  Chunks a procesar  : {len(chunks)}")
+    if not args.no_content_role_filter:
+        print(f"  Content roles      : {', '.join(sorted(allowed_roles))}")
+        print(f"  Topic coverage min : {args.min_topic_coverage:.0%}")
+        print(f"  Chunks excluidos   : {filter_stats['skipped_chunks']}")
+        if filter_stats["skipped_by_content_role"]:
+            print("  Excluidos por rol  :")
+            for role, count in filter_stats["skipped_by_content_role"].items():
+                print(f"    - {role}: {count}")
+    else:
+        print("  Content roles      : (sin filtro)")
     print(f"  Pares esperados    : ~{expected_pairs}")
     print(f"  Costo estimado     : ~${cost_est:.2f} USD")
     print(f"  Concurrencia       : {args.concurrency} peticiones simultáneas")
     print(f"  Salida SFT         : {args.sft_output}")
     print(f"  Salida raw         : {args.raw_output}")
+    print(f"  Reporte QA         : {args.report_output}")
     print(f"  Checkpoint         : {args.progress_file}")
     print("=" * 60)
     print()
@@ -724,6 +966,7 @@ def main() -> None:
             sft_output=args.sft_output,
             raw_output=args.raw_output,
             progress_file=args.progress_file,
+            report_output=args.report_output,
             logger=logger,
         )
     )
@@ -738,9 +981,15 @@ def main() -> None:
     print(f"  Procesados ahora   : {stats['processed']}")
     print(f"  Fallidos           : {stats['failed']}")
     print(f"  Pares QA generados : {stats['qa_pairs']}")
+    print(
+        "  Grounding (overlap): "
+        f"{stats['grounding']['avg_context_answer_overlap']:.3f} "
+        f"(bajo={stats['grounding']['low_grounding_rate']:.1%})"
+    )
     print(f"  Tiempo             : {elapsed:.0f}s")
     print(f"  SFT output         : {args.sft_output}")
     print(f"  Raw output         : {args.raw_output}")
+    print(f"  QA report          : {args.report_output}")
     print("=" * 60)
 
     if stats["failed"] > 0:

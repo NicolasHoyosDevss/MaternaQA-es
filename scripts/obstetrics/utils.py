@@ -29,6 +29,14 @@ REFERENCE_LINE_RE = re.compile(
     r"\(\d{4}\)|\b\d{4};\d+|\bet\s+al\b|\bdisponible en\b|\bconsultad[oa]\b|\bcitad[oa]\b",
     re.IGNORECASE,
 )
+ANSWER_KEY_RE = re.compile(r"\bRESPUESTA\s+CORRECTA\s*:\s*[A-E]\b", re.IGNORECASE)
+TOC_DOT_LEADER_RE = re.compile(r"\.{4,}")
+ANSWER_WITH_COMMENT_RE = re.compile(
+    r"(?:^|\s)\d{1,3}\.\s*RESPUESTA\s+CORRECTA\s*:\s*[A-E]\s*(?:COMENTARIO\s*:)?\s*",
+    re.IGNORECASE,
+)
+ANSWER_PLAIN_RE = re.compile(r"(?:^|\s)RESPUESTA\s+CORRECTA\s*:\s*[A-E]\s*(?:COMENTARIO\s*:)?\s*", re.IGNORECASE)
+ENARM_HEADER_RE = re.compile(r"\bRESPUESTAS?\s+ENARM\b", re.IGNORECASE)
 ADMIN_LINE_RE = re.compile(
     r"\b(?:isbn|issn|copyright|derechos reservados|agradecimientos?|directorio|"
     r"relacion general de autores|relación general de autores|autores|afiliaci[oó]n|"
@@ -179,6 +187,80 @@ def default_data_dir() -> Path:
     return project_root() / "data" / "obstetrics_spanish"
 
 
+# ---------------------------------------------------------------------------
+# Document classification helpers (Phase 1) - Backward Compatibility
+# ---------------------------------------------------------------------------
+
+# Import from document_manifest for backward compatibility
+try:
+    from document_manifest import (
+        classify_doc_type_from_text,
+        detect_language,
+        compute_clinical_density,
+    )
+except ImportError:
+    # Fallback if document_manifest not available
+    classify_doc_type_from_text = None  # type: ignore
+    detect_language = None  # type: ignore
+    compute_clinical_density = None  # type: ignore
+
+DOC_TYPES = ("gpc", "protocol", "manual", "article", "book", "guide", "unknown")
+
+
+def classify_doc_type_from_filename(filename: str) -> str:
+    """Infer document type from filename using keyword heuristics.
+
+    Note: For content-based classification, use classify_doc_type_from_text()
+    from document_manifest module instead.
+    """
+    normalized = normalize_for_compare(filename)
+    normalized = re.sub(r"[_\-+.]", " ", normalized)
+    # Also split camelCase-like transitions (e.g., guiaPracClin -> guia Prac Clin)
+    normalized = re.sub(r"([a-z])([A-Z])", r"\1 \2", normalized)
+    normalized = re.sub(r"\s+", " ", normalized).strip()
+
+    if re.search(r"\bgpc\b|\bguia\s+de\s+prac?tica\s+clinica|\bprac?tica\s+clinica\b", normalized):
+        return "gpc"
+    if re.search(r"\bprotocolo\b|\bprocedimiento\b|\bman\s*proc\s*serv\b", normalized):
+        return "protocol"
+    if re.search(r"\bmanual\b|\bmanuales\b", normalized):
+        return "manual"
+    if re.search(
+        r"\brev(ista)?\b|\brechog\b|\barticle\b|\bjournal\b|\bs\d{7,}[\dx]\b|\bvol\s*\d+\b|\bno\.?\s*\d+|\bstamped\b",
+        normalized,
+    ):
+        return "article"
+    if re.search(
+        r"\bbook\b|\blibro\b|\bcap[ií]tulo\b|\bcap\s*\d+\b|\btomo\b|"
+        r"\bginecologia\b.*\bobstetricia\b|\bobstetricia\b.*\bginecologia\b",
+        normalized,
+    ):
+        return "book"
+    if re.search(
+        r"\bgu[ií]a\b|\bguide\b|\brecomendaciones\b|\brecom\b|\bgap\b|"
+        r"\bembarazo\b.*\bparto\b|\bparto\b.*\bembarazo\b",
+        normalized,
+    ):
+        return "guide"
+    return "unknown"
+
+
+def load_inventory_manifest(path: Path) -> Dict[str, Any]:
+    """Load inventory.json manifest and return as dict."""
+    if not path.exists():
+        return {}
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def get_excluded_pdf_ids(manifest: Dict[str, Any]) -> set[str]:
+    """Return set of pdf_ids that are excluded from the manifest."""
+    excluded: set[str] = set()
+    for entry in manifest.get("pdfs", []):
+        if entry.get("inclusion_status") in {"excluded", "excluded_with_reason"}:
+            excluded.add(str(entry.get("pdf_id", "")))
+    return excluded
+
+
 def normalize_for_compare(value: str) -> str:
     text = unicodedata.normalize("NFKD", value or "")
     text = "".join(ch for ch in text if not unicodedata.combining(ch))
@@ -218,6 +300,12 @@ def write_json(path: Path, value: Dict[str, Any]) -> None:
     with path.open("w", encoding="utf-8", newline="\n") as f:
         json.dump(value, f, ensure_ascii=False, indent=2)
         f.write("\n")
+
+
+def read_json(path: Path) -> Dict[str, Any]:
+    if not path.exists():
+        return {}
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def word_count(text: str) -> int:
@@ -546,6 +634,7 @@ def chunk_records(
     for (source_pdf, section), group in grouped.items():
         group = sorted(group, key=lambda r: int(r.get("page", 0)))
         source_path = str(group[0].get("source_path", "")) if group else ""
+        doc_type = str(group[0].get("doc_type", "unknown")) if group else "unknown"
         buffer_parts: List[str] = []
         buffer_pages: List[int] = []
 
@@ -563,6 +652,7 @@ def chunk_records(
                         "text": text,
                         "source_pdf": source_pdf,
                         "source_path": source_path,
+                        "doc_type": doc_type,
                         "pages": sorted(set(buffer_pages)),
                         "section": section,
                         "token_estimate": tokens,
@@ -627,6 +717,10 @@ def accepted_for_lm(row: Dict[str, Any], min_tokens: int = 180, min_score: int =
     tokens = int(row.get("token_estimate", 0))
     score = int(row.get("clinical_score", 0))
     text = str(row.get("text", ""))
+    cleaned_text = strip_lm_noise(text)
+    cleaned_tokens = estimate_tokens(cleaned_text)
+    if cleaned_tokens < min_tokens:
+        return False, "too_short_after_noise_cleanup"
     if tokens < min_tokens:
         return False, "too_short"
     if score < min_score:
@@ -659,6 +753,11 @@ def accepted_for_lm(row: Dict[str, Any], min_tokens: int = 180, min_score: int =
         "metodologia anteriormente descrita",
         "viceministra",
         "viceministro",
+        "ninguna parte de este libro",
+        "puede ser reproducido",
+        "diseno de portada",
+        "diseño de portada",
+        "derechos reservados",
     )
     if any(term in normalized for term in admin_terms):
         return False, "admin_or_contact_text"
@@ -668,6 +767,10 @@ def accepted_for_lm(row: Dict[str, Any], min_tokens: int = 180, min_score: int =
         return False, "numeric_or_table_heavy"
     if "role" in row or "messages" in row:
         return False, "qa_like_record"
+    if ANSWER_KEY_RE.search(cleaned_text):
+        return False, "exam_answer_key"
+    if TOC_DOT_LEADER_RE.search(text) and score < 10:
+        return False, "toc_or_layout_noise"
     return True, ""
 
 
@@ -712,14 +815,419 @@ def split_train_validation(
 
 
 def to_lm_record(chunk: Dict[str, Any]) -> Dict[str, Any]:
+    topics = list(chunk.get("topics") or chunk.get("topic_tags") or [])
     metadata = {
         "source": "obstetrics_spanish",
+        "pdf_id": chunk.get("pdf_id", ""),
         "source_pdf": chunk.get("source_pdf"),
         "source_path": chunk.get("source_path", ""),
+        "doc_type": chunk.get("doc_type", "unknown"),
         "pages": chunk.get("pages", []),
         "section": chunk.get("section", ""),
         "chunk_id": chunk.get("chunk_id", ""),
         "token_estimate": chunk.get("token_estimate", 0),
         "clinical_score": chunk.get("clinical_score", 0),
+        "section_type": chunk.get("section_type", "unknown"),
+        "content_role": chunk.get("content_role", "unknown"),
+        "topics": topics,
+        "topic_tags": topics,
+        "topic_count": chunk.get("topic_count", len(topics)),
+        "split": chunk.get("split", ""),
     }
-    return {"text": collapse_whitespace(chunk.get("text", "")), "metadata": metadata}
+    cleaned_text = strip_lm_noise(str(chunk.get("text", "")))
+    return {"text": collapse_whitespace(cleaned_text), "metadata": metadata}
+
+
+def strip_lm_noise(text: str) -> str:
+    """Remove localized exam/index boilerplate while preserving clinical content."""
+    value = str(text or "")
+    value = ENARM_HEADER_RE.sub(" ", value)
+    value = ANSWER_WITH_COMMENT_RE.sub(" ", value)
+    value = ANSWER_PLAIN_RE.sub(" ", value)
+
+    cleaned_lines: List[str] = []
+    for line in value.splitlines():
+        line_stripped = line.strip()
+        if not line_stripped:
+            continue
+        # Remove pure index leaders like "CAPÍTULO ... ....... 23"
+        if TOC_DOT_LEADER_RE.search(line_stripped):
+            if len(line_stripped) >= 40:
+                continue
+            dense_text = re.sub(r"[.\d\s]", "", line_stripped)
+            if len(dense_text) < 40:
+                continue
+        cleaned_lines.append(line_stripped)
+
+    return "\n".join(cleaned_lines)
+
+
+# ---------------------------------------------------------------------------
+# Phase 3: Section Classification (section_type, content_role)
+# ---------------------------------------------------------------------------
+
+SECTION_TYPE_KEYWORDS = {
+    "index": ["indice", "tabla de contenido", "contenido", "sumario", "lista de figuras", "lista de tablas"],
+    "introduction": ["introduccion", "introducción", "presentacion", "presentación", "antecedentes", "justificacion", "justificación"],
+    "methodology": ["metodos", "métodos", "metodologia", "metodología", "diseno", "diseño", "muestra", "estadistica", "estadística", "analisis", "análisis"],
+    "clinical_content": ["resultados", "discusion", "discusión", "hallazgos", "caso clinico", "caso clínico", "presentacion del caso"],
+    "recommendations": ["recomendaciones", "conclusiones", "sintesis", "síntesis", "resumen ejecutivo", "implicaciones"],
+    "references": ["referencias", "bibliografia", "bibliografía", "bibliographic", "references"],
+    "appendix": ["anexo", "apendice", "apéndice", "anexos", "apendices", "apéndices", "material suplementario"],
+    "glossary": ["glosario", "abreviaturas", "siglas", "terminos", "términos", "definiciones"],
+}
+
+CONTENT_ROLE_KEYWORDS = {
+    "navigation": ["indice", "tabla de contenido", "sumario", "pagina", "página", "capitulo", "capítulo"],
+    "background": ["introduccion", "introducción", "antecedentes", "historia", "epidemiologia", "epidemiología", "contexto"],
+    "evidence": ["evidencia", "estudio", "estudios", "metaanalisis", "metaanálisis", "revision sistematica", "revisión sistemática", "ensayo clinico", "ensayo clínico", "cohorte", "caso control"],
+    "recommendation": ["recomendacion", "recomendación", "recomendaciones", "sugerencia", "sugerencias", "indicacion", "indicación", "contraindicacion", "contraindicación", "grado a", "grado b", "grado c", "nivel i", "nivel ii", "nivel iii"],
+    "procedure": ["procedimiento", "tecnica", "técnica", "protocolo", "algoritmo", "pasos", "manejo", "tratamiento", "intervencion", "intervención", "cirugia", "cirugía"],
+    "diagnostic": ["diagnostico", "diagnóstico", "diagnostico diferencial", "criterios", "clasificacion", "clasificación", "estadificacion", "estadificación", "tamizaje", "screening", "prueba", "pruebas"],
+    "treatment": ["tratamiento", "terapia", "farmacoterapia", "medicamento", "medicamentos", "dosis", "posologia", "posología", "administracion", "administración", "efectos adversos"],
+    "administrative": ["agradecimiento", "financiamiento", "conflicto de interes", "autores", "correspondencia", "derechos reservados", "isbn", "issn", "copyright"],
+}
+
+SECTION_TYPE_TO_CONTENT_ROLE = {
+    "index": "navigation",
+    "introduction": "background",
+    "methodology": "evidence",
+    "clinical_content": "evidence",
+    "recommendations": "recommendation",
+    "references": "administrative",
+    "appendix": "background",
+    "glossary": "background",
+}
+
+
+def classify_section_type(section_heading: str, text_sample: str = "") -> str:
+    """Clasifica el tipo de sección basado en el título y contenido."""
+    normalized_heading = normalize_for_compare(section_heading)
+    normalized_text = normalize_for_compare(text_sample[:1500])
+
+    # Primero verificar el heading
+    for section_type, keywords in SECTION_TYPE_KEYWORDS.items():
+        for keyword in keywords:
+            if keyword in normalized_heading:
+                return section_type
+
+    # Si no match en heading, verificar inicio del texto
+    for section_type, keywords in SECTION_TYPE_KEYWORDS.items():
+        for keyword in keywords:
+            if keyword in normalized_text[:500]:
+                return section_type
+
+    # Default: si tiene score clínico alto, es clinical_content
+    if clinical_score(text_sample[:1000]) >= 5:
+        return "clinical_content"
+
+    return "unknown"
+
+
+def classify_content_role(text: str, section_type: str = "") -> str:
+    """Clasifica el rol del contenido (evidence, recommendation, procedure, etc.)"""
+    normalized = normalize_for_compare(text[:2000])
+    default_role = SECTION_TYPE_TO_CONTENT_ROLE.get(section_type, "")
+
+    # Verificar keywords de content_role
+    scores: Dict[str, int] = {role: 0 for role in CONTENT_ROLE_KEYWORDS}
+    for role, keywords in CONTENT_ROLE_KEYWORDS.items():
+        for keyword in keywords:
+            if keyword in normalized:
+                scores[role] += 1
+
+    if default_role:
+        scores[default_role] += 2
+
+    # Si hay un ganador claro, devolverlo
+    if scores:
+        best_role = max(scores, key=scores.get)
+        best_score = scores[best_role]
+        if best_score >= 2 or (default_role and best_role == default_role and best_score >= 1):
+            return best_role
+
+    # Fallback basado en clinical_score
+    score = clinical_score(text)
+    if score >= 8:
+        return "evidence"
+    elif score >= 4:
+        return "background"
+
+    return "unknown"
+
+
+# ---------------------------------------------------------------------------
+# Phase 4: Topic Tagging
+# ---------------------------------------------------------------------------
+
+TOPIC_TAXONOMY = {
+    "hemorrhage": ["hemorragia", "sangrado", "sangrar", "perdida de sangre", "hematoma", "hematocrito", "transfusion"],
+    "preeclampsia": ["preeclampsia", "eclampsia", "hipertension gestacional", "hipertensión gestacional", "proteinuria", "edema", "convulsion", "convulsión", "magnesio"],
+    "diabetes_gestational": ["diabetes gestacional", "glucosa", "hipoglucemia", "hiperglucemia", "insulina", "glicemia", "glicosilada", "hgba1c", "macrosomia"],
+    "preterm_labor": ["parto prematuro", "trabajo de parto pretermino", "contracciones prematuras", "amenaza de parto prematuro", "tocolisis", "corticoides", "madurez fetal"],
+    "infection": ["infeccion", "infección", "sepsis", "corioamnionitis", "endometritis", "fiebre", "puerperal", "antibiotico", "antibiótico", "infeccion puerperal"],
+    "cesarean": ["cesarea", "cesárea", "cesarean", "csection", "c section", "operacion cesarea", "parto cesareo"],
+    "vaginal_birth": ["parto vaginal", "parto normal", "parto eutocico", "distocia", "prolapso", "episiotomia", "episiotomía", "forceps", "ventosa"],
+    "newborn_care": ["recien nacido", "recién nacido", "neonato", "neonatal", "apgar", "reanimacion neonatal", "reanimación neonatal", "hipoxia", "ictericia"],
+    "contraception": ["anticoncepcion", "anticoncepción", "planificacion familiar", "metodos anticonceptivos", "diu", "pildora", "pastilla", "esterilizacion", "vasectomia"],
+    "menopause": ["menopausia", "climaterio", "terapia hormonal", "sustitucion hormonal", "soja", "isoflavonas", "osteoporosis"],
+    "infertility": ["infertilidad", "esterilidad", "fecundacion", "fecundación", "fiv", "fertilizacion in vitro", "espermatozoide", "ovocito", "ovulacion", "ovulación"],
+    "prenatal_care": ["control prenatal", "consulta prenatal", "primer trimestre", "segundo trimestre", "tercer trimestre", "ecografia", "ecografía", "screening prenatal", "tamizaje"],
+    "postpartum": ["puerperio", "posparto", "lactancia", "mastitis", "depresion postparto", "puerperio inmediato"],
+    "fetal_monitoring": ["feto", "fetal", "monitoreo fetal", "cardiotocografia", "cardiotocografía", "ritmo fetal", "frecuencia cardiaca fetal", "biometria", "biometría"],
+    "labor_induction": ["induccion", "inducción", "maduracion cervical", "maduración cervical", "prostaglandinas", "oxitocina", "amniotomia", "amniotomía", "desgarro membranas"],
+    "gynecologic_oncology": ["cancer ginecologico", "cáncer ginecológico", "tumor", "neoplasia", "biopsia", "histologia", "histología", "cervix", "cervical", "vph", "hpv"],
+    "ultrasound": ["ultrasonido", "ecografia", "ecografía", "doppler", "transvaginal", "morfologica", "morfológica", "nuchal translucency"],
+    "genetics": ["genetica", "genética", "cariotipo", "mutacion", "mutación", "creening genetico", "screening genético", "amniocentesis", "villosidad corial"],
+}
+
+
+def tag_topics(text: str) -> List[str]:
+    """Tag a text with relevant clinical topics from the taxonomy."""
+    normalized = normalize_for_compare(text)
+    tags: List[str] = []
+    for topic, keywords in TOPIC_TAXONOMY.items():
+        for keyword in keywords:
+            if keyword in normalized:
+                tags.append(topic)
+                break  # Only add topic once
+    return tags
+
+
+# ---------------------------------------------------------------------------
+# Phase 5: Document-Level Deduplication
+# ---------------------------------------------------------------------------
+
+def compute_document_fingerprint(text: str) -> str:
+    """Compute a fingerprint for deduplication based on content."""
+    normalized = normalize_for_compare(text)
+    # Take first 100 "significant" words as fingerprint
+    words = [w for w in normalized.split() if len(w) > 3]
+    return " ".join(words[:100])
+
+
+def find_duplicate_documents(
+    entries: Sequence[Dict[str, Any]],
+    similarity_threshold: float = 0.85,
+) -> List[Tuple[str, str, float]]:
+    """Find potential duplicate documents based on content similarity.
+
+    Returns list of (pdf_id_a, pdf_id_b, similarity) tuples.
+    """
+    from difflib import SequenceMatcher
+
+    # Build fingerprints
+    fingerprints: Dict[str, str] = {}
+    for entry in entries:
+        pdf_id = str(entry.get("pdf_id", ""))
+        text_sample = str(entry.get("text_sample", ""))
+        if pdf_id and text_sample:
+            fingerprints[pdf_id] = compute_document_fingerprint(text_sample)
+
+    duplicates: List[Tuple[str, str, float]] = []
+    pdf_ids = sorted(fingerprints.keys())
+
+    for i, pdf_a in enumerate(pdf_ids):
+        fp_a = fingerprints[pdf_a]
+        for pdf_b in pdf_ids[i + 1:]:
+            fp_b = fingerprints[pdf_b]
+            similarity = SequenceMatcher(None, fp_a, fp_b).ratio()
+            if similarity >= similarity_threshold:
+                duplicates.append((pdf_a, pdf_b, round(similarity, 4)))
+
+    return duplicates
+
+
+# ---------------------------------------------------------------------------
+# Phase 6: Document-Level Train/Validation Split (NO LEAKAGE)
+# ---------------------------------------------------------------------------
+
+def _select_holdout_documents(
+    by_pdf: Dict[str, List[Dict[str, Any]]],
+    candidates: Sequence[str],
+    target_chunks: int,
+    rng: random.Random,
+    min_docs: int = 1,
+    max_single_pdf_ratio: float = 0.75,
+) -> set[str]:
+    """Choose whole documents whose chunk count approximates a target size."""
+    if target_chunks <= 0 or not candidates:
+        return set()
+
+    remaining = list(candidates)
+    rng.shuffle(remaining)
+    selected: set[str] = set()
+    selected_chunks = 0
+    max_single_pdf_chunks = max(1, round(target_chunks * max_single_pdf_ratio))
+
+    while remaining:
+        preferred_pool = remaining
+        if not selected:
+            smaller_candidates = [
+                pdf for pdf in remaining
+                if len(by_pdf[pdf]) <= max_single_pdf_chunks
+            ]
+            if smaller_candidates:
+                preferred_pool = smaller_candidates
+
+        current_gap = abs(target_chunks - selected_chunks)
+        best_pdf = min(
+            preferred_pool,
+            key=lambda pdf: (
+                abs(target_chunks - (selected_chunks + len(by_pdf[pdf]))),
+                len(by_pdf[pdf]),
+                pdf,
+            ),
+        )
+        next_gap = abs(target_chunks - (selected_chunks + len(by_pdf[best_pdf])))
+        if len(selected) >= min_docs and selected and next_gap >= current_gap:
+            break
+        selected.add(best_pdf)
+        selected_chunks += len(by_pdf[best_pdf])
+        remaining.remove(best_pdf)
+
+    if not selected:
+        selected.add(min(candidates, key=lambda pdf: (len(by_pdf[pdf]), pdf)))
+    while len(selected) < min_docs and remaining:
+        next_pdf = min(
+            remaining,
+            key=lambda pdf: (
+                len(by_pdf[pdf]),
+                abs(target_chunks - (selected_chunks + len(by_pdf[pdf]))),
+                pdf,
+            ),
+        )
+        selected.add(next_pdf)
+        selected_chunks += len(by_pdf[next_pdf])
+        remaining.remove(next_pdf)
+    return selected
+
+
+def split_train_validation_test_by_document(
+    chunks: Sequence[Dict[str, Any]],
+    validation_ratio: float = 0.05,
+    test_ratio: float = 0.05,
+    seed: int = 42,
+    stratify_by: str = "doc_type",
+    min_validation_pdfs: int = 3,
+    min_test_pdfs: int = 3,
+) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], List[Dict[str, Any]]]:
+    """Split chunks into train/validation/test by DOCUMENT and approximate chunk volume.
+
+    This ensures NO DATA LEAKAGE - all chunks from the same PDF
+    go to exactly one split. Ratios target exported chunk volume rather than
+    only document count, avoiding a tiny number of large PDFs dominating
+    validation/test.
+
+    Args:
+        chunks: All chunks to split
+        validation_ratio: Approximate fraction of chunks to assign to validation
+        test_ratio: Approximate fraction of chunks to assign to test
+        seed: Random seed for reproducibility
+        stratify_by: Kept for API compatibility and report semantics
+
+    Returns:
+        (train_chunks, validation_chunks, test_chunks)
+    """
+    if validation_ratio < 0 or test_ratio < 0 or validation_ratio + test_ratio >= 1:
+        raise ValueError("validation_ratio and test_ratio must be >= 0 and sum to < 1")
+
+    rng = random.Random(seed)
+
+    # Group chunks by document
+    by_pdf: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
+    for row in chunks:
+        document_key = str(row.get("pdf_id") or row.get("source_pdf", ""))
+        by_pdf[document_key].append(row)
+
+    pdf_ids = sorted(by_pdf)
+    total_chunks = len(chunks)
+    validation_target = round(total_chunks * validation_ratio)
+    test_target = round(total_chunks * test_ratio)
+
+    validation_pdfs = _select_holdout_documents(
+        by_pdf,
+        pdf_ids,
+        validation_target,
+        rng,
+        min_docs=min_validation_pdfs,
+    )
+    remaining_pdf_ids = [pdf for pdf in pdf_ids if pdf not in validation_pdfs]
+    test_pdfs = _select_holdout_documents(
+        by_pdf,
+        remaining_pdf_ids,
+        test_target,
+        rng,
+        min_docs=min_test_pdfs,
+    )
+    train_pdfs = set(pdf_ids) - validation_pdfs - test_pdfs
+
+    # Assign chunks based on PDF membership
+    train: List[Dict[str, Any]] = []
+    validation: List[Dict[str, Any]] = []
+    test: List[Dict[str, Any]] = []
+
+    for pdf_name, pdf_chunks in by_pdf.items():
+        if pdf_name in validation_pdfs:
+            validation.extend(pdf_chunks)
+        elif pdf_name in test_pdfs:
+            test.extend(pdf_chunks)
+        else:
+            train.extend(pdf_chunks)
+
+    return train, validation, test
+
+
+def split_train_validation_by_document(
+    chunks: Sequence[Dict[str, Any]],
+    validation_ratio: float = 0.10,
+    seed: int = 42,
+    stratify_by: str = "doc_type",
+) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+    """Backward-compatible wrapper around the chunk-balanced splitter."""
+    train, validation, _ = split_train_validation_test_by_document(
+        chunks,
+        validation_ratio=validation_ratio,
+        test_ratio=0.0,
+        seed=seed,
+        stratify_by=stratify_by,
+        min_validation_pdfs=3,
+        min_test_pdfs=0,
+    )
+    return train, validation
+
+
+# ---------------------------------------------------------------------------
+# Pipeline Integration: Enhanced Chunk Processing
+# ---------------------------------------------------------------------------
+
+def enrich_chunks(chunks: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Enrich chunks with section_type, content_role, and topic tags."""
+    enriched: List[Dict[str, Any]] = []
+    for chunk in chunks:
+        new_chunk = dict(chunk)
+        text = str(chunk.get("text", ""))
+        section = str(chunk.get("section", ""))
+        new_chunk["pdf_id"] = str(chunk.get("pdf_id") or slugify(str(chunk.get("source_pdf", "document"))))
+
+        # Phase 3: Section classification
+        section_type = classify_section_type(section, text[:500])
+        content_role = classify_content_role(text, section_type)
+
+        # Phase 4: Topic tagging
+        topics = tag_topics(text)
+
+        new_chunk["section_type"] = section_type
+        new_chunk["content_role"] = content_role
+        new_chunk["topics"] = topics
+        new_chunk["topic_tags"] = topics
+        new_chunk["topic_count"] = len(topics)
+
+        enriched.append(new_chunk)
+    return enriched
+
+
+def filter_lm_chunks(chunks: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Drop navigation/administrative chunks from final LM outputs."""
+    excluded_roles = {"navigation", "administrative", "excluded"}
+    return [chunk for chunk in chunks if str(chunk.get("content_role", "unknown")) not in excluded_roles]

@@ -13,10 +13,12 @@ from typing import Any, Dict, Iterable, List, Sequence, Tuple
 from utils import (
     default_data_dir,
     dedupe_chunks,
+    enrich_chunks,
+    filter_lm_chunks,
     project_root,
     read_jsonl,
     slugify,
-    split_train_validation,
+    split_train_validation_test_by_document,
     to_lm_record,
     write_json,
     write_jsonl,
@@ -32,10 +34,11 @@ def parse_args() -> argparse.Namespace:
             "Only new/changed PDFs are extracted and cleaned; existing artifacts are reused."
         )
     )
-    parser.add_argument("--input-dir", type=Path, default=root / "obstetrics" / "spanish")
+    parser.add_argument("--input-dir", type=Path, default=root / "raw_data" / "obstetrics" / "spanish")
     parser.add_argument("--data-dir", type=Path, default=data_dir)
     parser.add_argument("--recursive", action=argparse.BooleanOptionalAction, default=False)
-    parser.add_argument("--validation-ratio", type=float, default=0.10)
+    parser.add_argument("--validation-ratio", type=float, default=0.05)
+    parser.add_argument("--test-ratio", type=float, default=0.05)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--min-clinical-score", type=int, default=5)
     parser.add_argument("--min-tokens", type=int, default=500)
@@ -211,6 +214,7 @@ def main() -> None:
     chunks = data_dir / "chunks.jsonl"
     train = data_dir / "train_lm.jsonl"
     validation = data_dir / "validation_lm.jsonl"
+    test = data_dir / "test_lm.jsonl"
     manifest_path = data_dir / "processed_pdfs_manifest.json"
     incremental_dir = data_dir / "_incremental"
 
@@ -237,6 +241,7 @@ def main() -> None:
     new_chunks = incremental_dir / "chunks_new.jsonl"
     new_train = incremental_dir / "train_new.jsonl"
     new_validation = incremental_dir / "validation_new.jsonl"
+    new_test = incremental_dir / "test_new.jsonl"
     new_build_report = incremental_dir / "build_report_new.json"
 
     pdf_args: List[str] = []
@@ -266,6 +271,8 @@ def main() -> None:
             str(new_clean),
             "--report-output",
             str(new_cleaning_report),
+            "--inventory",
+            str(new_inventory),
         ],
     )
     run_step(
@@ -281,10 +288,14 @@ def main() -> None:
             str(new_train),
             "--validation-output",
             str(new_validation),
+            "--test-output",
+            str(new_test),
             "--build-report-output",
             str(new_build_report),
             "--validation-ratio",
             str(args.validation_ratio),
+            "--test-ratio",
+            str(args.test_ratio),
             "--seed",
             str(args.seed),
             "--min-clinical-score",
@@ -313,18 +324,19 @@ def main() -> None:
     combined_chunks = append_new_chunks(existing_chunks, read_jsonl(new_chunks))
     write_jsonl(chunks, combined_chunks)
 
-    existing_train = remove_sources(read_jsonl_if_exists(train), processed_paths, processed_pdfs)
-    existing_validation = remove_sources(read_jsonl_if_exists(validation), processed_paths, processed_pdfs)
-    # Recompute the new split from accepted chunks that were actually added, preserving existing train/validation.
-    old_keys = {normalized_chunk_key(row) for row in existing_chunks if row.get("text")}
-    truly_new = [row for row in combined_chunks if normalized_chunk_key(row) not in old_keys]
-    new_train_chunks, new_validation_chunks = split_train_validation(
-        truly_new,
+    enriched_combined_chunks = enrich_chunks(combined_chunks)
+    exportable_chunks = filter_lm_chunks(enriched_combined_chunks)
+    new_train_chunks, new_validation_chunks, new_test_chunks = split_train_validation_test_by_document(
+        exportable_chunks,
         validation_ratio=args.validation_ratio,
+        test_ratio=args.test_ratio,
         seed=args.seed,
+        stratify_by="doc_type",
     )
-    write_jsonl(train, existing_train + [to_lm_record(chunk) for chunk in new_train_chunks])
-    write_jsonl(validation, existing_validation + [to_lm_record(chunk) for chunk in new_validation_chunks])
+    write_jsonl(chunks, enriched_combined_chunks)
+    write_jsonl(train, [to_lm_record({**chunk, "split": "train"}) for chunk in new_train_chunks])
+    write_jsonl(validation, [to_lm_record({**chunk, "split": "validation"}) for chunk in new_validation_chunks])
+    write_jsonl(test, [to_lm_record({**chunk, "split": "test"}) for chunk in new_test_chunks])
 
     write_manifest(manifest_path, to_process, manifest)
 
@@ -343,6 +355,8 @@ def main() -> None:
             str(train),
             "--validation",
             str(validation),
+            "--test",
+            str(test),
             "--output",
             str(data_dir / "audit_report.json"),
             "--samples-per-pdf",
@@ -358,6 +372,7 @@ def main() -> None:
     print(f"Total chunks: {len(combined_chunks)}", flush=True)
     print(f"Train JSONL: {train}", flush=True)
     print(f"Validation JSONL: {validation}", flush=True)
+    print(f"Test JSONL: {test}", flush=True)
     print(f"Manifest: {manifest_path}", flush=True)
 
     if not args.keep_temp and incremental_dir.exists():

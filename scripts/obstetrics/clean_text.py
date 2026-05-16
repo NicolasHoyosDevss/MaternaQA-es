@@ -11,6 +11,8 @@ from utils import (
     default_data_dir,
     extract_page_section,
     find_repeated_lines,
+    get_excluded_pdf_ids,
+    load_inventory_manifest,
     read_jsonl,
     remove_repeated_lines,
     write_json,
@@ -24,6 +26,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--input", type=Path, default=data_dir / "raw_pages.jsonl")
     parser.add_argument("--output", type=Path, default=data_dir / "clean_pages.jsonl")
     parser.add_argument("--report-output", type=Path, default=data_dir / "cleaning_report.json")
+    parser.add_argument("--inventory", type=Path, default=data_dir / "inventory.json")
     parser.add_argument("--header-threshold-ratio", type=float, default=0.28)
     parser.add_argument("--include-dropped", action=argparse.BooleanOptionalAction, default=True)
     return parser.parse_args()
@@ -31,15 +34,32 @@ def parse_args() -> argparse.Namespace:
 
 def clean_rows(args: argparse.Namespace) -> List[Dict[str, Any]]:
     raw_rows = read_jsonl(args.input)
+    manifest = load_inventory_manifest(args.inventory)
+    excluded_pdf_ids = get_excluded_pdf_ids(manifest)
+    manifest_by_pdf_id = {
+        str(entry.get("pdf_id", "")): entry
+        for entry in manifest.get("pdfs", [])
+        if isinstance(entry, dict)
+    }
+
     repeated = find_repeated_lines(raw_rows, threshold_ratio=args.header_threshold_ratio)
     section_by_pdf: Dict[str, str] = defaultdict(str)
     cleaned_rows: List[Dict[str, Any]] = []
     drop_counts: Counter[str] = Counter()
     kept_counts: Counter[str] = Counter()
+    excluded_skipped = 0
 
     for row in raw_rows:
         source_pdf = str(row.get("source_pdf", ""))
+        pdf_id = str(row.get("pdf_id", ""))
         page = int(row.get("page", 0))
+        manifest_entry = manifest_by_pdf_id.get(pdf_id, {})
+
+        # Skip pages from excluded documents entirely (Phase 1)
+        if pdf_id in excluded_pdf_ids:
+            excluded_skipped += 1
+            continue
+
         text = clean_extracted_text(row.get("text", ""))
         text = remove_repeated_lines(text, repeated.get(source_pdf, []))
         text = clean_extracted_text(text)
@@ -59,7 +79,7 @@ def clean_rows(args: argparse.Namespace) -> List[Dict[str, Any]]:
             drop_counts[drop_reason] += 1
 
         cleaned = {
-            "pdf_id": row.get("pdf_id"),
+            "pdf_id": pdf_id,
             "source_pdf": source_pdf,
             "source_path": row.get("source_path"),
             "page": page,
@@ -69,6 +89,11 @@ def clean_rows(args: argparse.Namespace) -> List[Dict[str, Any]]:
             "drop_reason": drop_reason,
             "needs_ocr": bool(row.get("needs_ocr")),
             "extraction_method": row.get("extraction_method"),
+            "doc_type": row.get("doc_type") or manifest_entry.get("doc_type", "unknown"),
+            "inclusion_status": manifest_entry.get("inclusion_status", "included"),
+            "exclusion_reason": manifest_entry.get("exclusion_reason"),
+            "ocr_status": manifest_entry.get("ocr_status"),
+            "document_metadata": manifest_entry.get("metadata", {}),
             "metrics": metrics,
         }
         if is_kept or args.include_dropped:
@@ -78,6 +103,7 @@ def clean_rows(args: argparse.Namespace) -> List[Dict[str, Any]]:
         "input": str(args.input),
         "output": str(args.output),
         "total_pages": len(raw_rows),
+        "excluded_skipped": excluded_skipped,
         "written_pages": len(cleaned_rows),
         "kept_pages": sum(kept_counts.values()),
         "dropped_pages": sum(drop_counts.values()),

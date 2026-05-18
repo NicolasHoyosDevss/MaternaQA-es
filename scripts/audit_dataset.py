@@ -102,6 +102,14 @@ def topic_distribution(rows: List[Dict[str, Any]], chunk_index: Dict[str, Dict[s
     return counts
 
 
+def language_distribution(rows: List[Dict[str, Any]], chunk_index: Dict[str, Dict[str, Any]]) -> Counter[str]:
+    counts: Counter[str] = Counter()
+    for row in rows:
+        metadata = merged_metadata(row, chunk_index)
+        counts[str(metadata.get("language", "unknown"))] += 1
+    return counts
+
+
 def pdf_set(rows: List[Dict[str, Any]], chunk_index: Dict[str, Dict[str, Any]]) -> set[str]:
     pdfs: set[str] = set()
     for row in rows:
@@ -207,6 +215,9 @@ def main() -> None:
     train_topics = topic_distribution(train, chunk_index)
     validation_topics = topic_distribution(validation, chunk_index)
     test_topics = topic_distribution(test, chunk_index)
+    train_lang = language_distribution(train, chunk_index)
+    validation_lang = language_distribution(validation, chunk_index)
+    test_lang = language_distribution(test, chunk_index)
     train_topic_set = set(train_topics)
     validation_topic_set = set(validation_topics)
     test_topic_set = set(test_topics)
@@ -301,6 +312,12 @@ def main() -> None:
             "train_only_topics": sorted(train_topic_set - validation_topic_set),
             "validation_only_topics": sorted(validation_topic_set - train_topic_set),
             "test_only_topics": sorted(test_topic_set - train_topic_set - validation_topic_set),
+        },
+        "language_distribution": {
+            "train": dict(sorted(train_lang.items())),
+            "validation": dict(sorted(validation_lang.items())),
+            "test": dict(sorted(test_lang.items())),
+            "combined": dict(sorted((train_lang + validation_lang + test_lang).items())),
         },
         "average_chunk_tokens": round(
             sum(int(chunk.get("token_estimate", 0)) for chunk in chunks) / max(1, len(chunks)),

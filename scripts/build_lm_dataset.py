@@ -40,6 +40,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--min-clinical-score", type=int, default=5)
     parser.add_argument("--validation-ratio", type=float, default=0.05)
     parser.add_argument("--test-ratio", type=float, default=0.05)
+    parser.add_argument(
+        "--allowed-languages",
+        type=str,
+        default="es,unknown",
+        help="Idiomas permitidos para export LM (coma-separados).",
+    )
     parser.add_argument("--seed", type=int, default=42)
     return parser.parse_args()
 
@@ -64,6 +70,11 @@ def _content_role_distribution(rows: Iterable[Dict[str, Any]]) -> Dict[str, int]
 
 def _doc_type_distribution(rows: Iterable[Dict[str, Any]]) -> Dict[str, int]:
     counts: Counter[str] = Counter(str(row.get("doc_type", "unknown")) for row in rows)
+    return dict(sorted(counts.items()))
+
+
+def _language_distribution(rows: Iterable[Dict[str, Any]]) -> Dict[str, int]:
+    counts: Counter[str] = Counter(str(row.get("language", "unknown")) for row in rows)
     return dict(sorted(counts.items()))
 
 
@@ -132,7 +143,8 @@ def main() -> None:
 
     # Phase 6: document-level split over exportable LM chunks so the actual
     # exported train/validation/test files stay close to the requested ratios.
-    exportable_chunks = filter_lm_chunks(chunks)
+    allowed_languages = [x.strip() for x in args.allowed_languages.split(",") if x.strip()]
+    exportable_chunks = filter_lm_chunks(chunks, allowed_languages=allowed_languages)
     train_chunks, validation_chunks, test_chunks = split_train_validation_test_by_document(
         exportable_chunks,
         validation_ratio=args.validation_ratio,
@@ -189,6 +201,7 @@ def main() -> None:
         ),
         "split_method": "document_level_chunk_balanced",
         "stratify_by": "doc_type",
+        "allowed_languages": allowed_languages,
         "requested_split_ratios": {
             "train": round(1 - args.validation_ratio - args.test_ratio, 4),
             "validation": args.validation_ratio,
@@ -217,6 +230,9 @@ def main() -> None:
         "doc_type_distribution_train": _doc_type_distribution(output_train_chunks),
         "doc_type_distribution_validation": _doc_type_distribution(output_validation_chunks),
         "doc_type_distribution_test": _doc_type_distribution(output_test_chunks),
+        "language_distribution_train": _language_distribution(output_train_chunks),
+        "language_distribution_validation": _language_distribution(output_validation_chunks),
+        "language_distribution_test": _language_distribution(output_test_chunks),
         "dedupe_audit": _dedupe_audit(accepted),
     }
     write_json(args.build_report_output, report)

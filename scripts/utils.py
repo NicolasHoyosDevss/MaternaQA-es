@@ -842,6 +842,7 @@ def to_lm_record(chunk: Dict[str, Any]) -> Dict[str, Any]:
         "clinical_score": chunk.get("clinical_score", 0),
         "section_type": chunk.get("section_type", "unknown"),
         "content_role": chunk.get("content_role", "unknown"),
+        "language": chunk.get("language", "unknown"),
         "topics": topics,
         "topic_tags": topics,
         "topic_count": chunk.get("topic_count", len(topics)),
@@ -1229,9 +1230,11 @@ def enrich_chunks(chunks: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
         # Phase 4: Topic tagging
         topics = tag_topics(text)
+        lang = detect_language(text[:4000]) if callable(detect_language) else "unknown"
 
         new_chunk["section_type"] = section_type
         new_chunk["content_role"] = content_role
+        new_chunk["language"] = lang
         new_chunk["topics"] = topics
         new_chunk["topic_tags"] = topics
         new_chunk["topic_count"] = len(topics)
@@ -1240,7 +1243,20 @@ def enrich_chunks(chunks: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
     return enriched
 
 
-def filter_lm_chunks(chunks: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def filter_lm_chunks(
+    chunks: Sequence[Dict[str, Any]],
+    allowed_languages: Sequence[str] = ("es", "unknown"),
+) -> List[Dict[str, Any]]:
     """Drop navigation/administrative chunks from final LM outputs."""
     excluded_roles = {"navigation", "administrative", "excluded"}
-    return [chunk for chunk in chunks if str(chunk.get("content_role", "unknown")) not in excluded_roles]
+    allowed = {str(x).strip().lower() for x in allowed_languages if str(x).strip()}
+    filtered: List[Dict[str, Any]] = []
+    for chunk in chunks:
+        role = str(chunk.get("content_role", "unknown"))
+        lang = str(chunk.get("language", "unknown")).lower()
+        if role in excluded_roles:
+            continue
+        if allowed and lang not in allowed:
+            continue
+        filtered.append(chunk)
+    return filtered

@@ -1,9 +1,9 @@
 """
 document_manifest.py
 ======================
-Sistema de manifiesto documental para el pipeline de obstetricia.
-Maneja clasificación de tipo de documento, criterios de inclusión/exclusión,
-y metadatos extraídos de los PDFs.
+Document manifest system for the obstetrics pipeline.
+Handles document type classification, inclusion/exclusion criteria,
+and metadata extracted from PDFs.
 """
 from __future__ import annotations
 
@@ -18,39 +18,39 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 
 class DocumentType(str, Enum):
-    """Tipos de documentos médicos en el corpus."""
+    """Medical document types in the corpus."""
 
-    GPC = "gpc"  # Guía de Práctica Clínica
-    PROTOCOL = "protocol"  # Protocolo hospitalario / algoritmo
-    MANUAL = "manual"  # Manual académico / texto universitario
-    ARTICLE = "article"  # Artículo científico
-    BOOK = "book"  # Libro / capítulo de libro
-    UNKNOWN = "unknown"  # No clasificado
+    GPC = "gpc"  # Clinical practice guideline.
+    PROTOCOL = "protocol"  # Hospital protocol or algorithm.
+    MANUAL = "manual"  # Academic manual or university textbook.
+    ARTICLE = "article"  # Scientific article.
+    BOOK = "book"  # Book or book chapter.
+    UNKNOWN = "unknown"  # Unclassified.
 
 
 class InclusionStatus(str, Enum):
-    """Estado de inclusión de un documento en el corpus."""
+    """Inclusion status for a document in the corpus."""
 
     INCLUDED = "included"
     EXCLUDED = "excluded"
 
 
 class ExclusionReason(str, Enum):
-    """Razones objetivas de exclusión."""
+    """Objective exclusion reasons."""
 
-    OCR_DOMINATED = "ocr_dominated"  # >50% de páginas necesitan OCR
-    NON_CLINICAL = "non_clinical"  # <10% de términos clínicos
-    DUPLICATE = "duplicate"  # Documento duplicado
-    CORRUPTED = "corrupted"  # PDF corrupto / ilegible
-    WRONG_LANGUAGE = "wrong_language"  # No está en español
-    EMPTY = "empty"  # Sin contenido extraíble
-    METADATA_ONLY = "metadata_only"  # Solo portada/índice/metadata
-    EXCLUDED_BY_USER = "excluded_by_user"  # Exclusión manual
+    OCR_DOMINATED = "ocr_dominated"  # >50% of pages require OCR.
+    NON_CLINICAL = "non_clinical"  # <10% clinical-term density.
+    DUPLICATE = "duplicate"  # Duplicate document.
+    CORRUPTED = "corrupted"  # Corrupted or unreadable PDF.
+    WRONG_LANGUAGE = "wrong_language"  # Document is not in Spanish.
+    EMPTY = "empty"  # No extractable content.
+    METADATA_ONLY = "metadata_only"  # Cover/table-of-contents/metadata only.
+    EXCLUDED_BY_USER = "excluded_by_user"  # Manually excluded.
 
 
 @dataclass
 class DocumentMetadata:
-    """Metadatos extraídos de un PDF."""
+    """Metadata extracted from a PDF."""
 
     title: Optional[str] = None
     author: Optional[str] = None
@@ -89,7 +89,7 @@ class DocumentMetadata:
 
 @dataclass
 class DocumentEntry:
-    """Entrada de un documento en el manifiesto."""
+    """A single document entry in the manifest."""
 
     pdf_id: str
     source_pdf: str
@@ -163,7 +163,7 @@ class DocumentEntry:
 
 
 class DocumentManifest:
-    """Manifiesto de documentos del corpus."""
+    """Document manifest for the corpus."""
 
     def __init__(self, entries: Optional[List[DocumentEntry]] = None) -> None:
         self.entries: List[DocumentEntry] = entries or []
@@ -174,7 +174,7 @@ class DocumentManifest:
         self._by_pdf_id = {e.pdf_id: e for e in self.entries}
 
     def add(self, entry: DocumentEntry) -> None:
-        """Agrega o actualiza una entrada."""
+        """Add a new entry or update an existing one."""
         self._by_pdf_id[entry.pdf_id] = entry
         self.entries = list(self._by_pdf_id.values())
 
@@ -305,11 +305,10 @@ def classify_doc_type_from_text(text: str, pdf_name: str = "") -> DocumentType:
 
 
 def classify_document_type(text: str, pdf_name: str) -> DocumentType:
-    """Clasifica el tipo de documento basado en nombre y contenido."""
+    """Classify document type from filename and content."""
     name_lower = pdf_name.lower()
     text_lower = text.lower()
-
-    # Señales fuertes en el nombre del archivo
+    # Strong signals in the filename.
     if any(k in name_lower for k in ["gpc", "guía de práctica", "guia de practica", "clinical practice"]):
         return DocumentType.GPC
     if any(k in name_lower for k in ["protocolo", "protocol", "algoritmo", "algorithm", "procedimiento"]):
@@ -319,7 +318,7 @@ def classify_document_type(text: str, pdf_name: str) -> DocumentType:
     if any(k in name_lower for k in ["artículo", "articulo", "article", "paper", "pubmed"]):
         return DocumentType.ARTICLE
 
-    # Señales en el contenido (primeras 5000 chars)
+    # Content signals from the first 5000 characters.
     sample = text_lower[:5000]
     gpc_markers = ["guía de práctica clínica", "evidencia científica", "nivel de evidencia",
                    "recomendación formal", "grado de recomendación", "consenso"]
@@ -337,17 +336,15 @@ def classify_document_type(text: str, pdf_name: str) -> DocumentType:
         DocumentType.BOOK: sum(1 for m in book_markers if m in sample),
     }
 
-    # Si hay señales claras, usarlas
+    # Prefer direct signals when confidence is high.
     if scores:
         best_type, best_score = max(scores.items(), key=lambda x: x[1])
         if best_score >= 2:
             return best_type
-
-    # Fallback: si parece un capítulo/capítulo
+    # Fallback when the filename suggests a chapter.
     if any(k in name_lower for k in ["cap", "capítulo", "capitulo", "chapter"]):
         return DocumentType.BOOK
-
-    # Si tiene muchas páginas y estructura de manual
+    # Keep UNKNOWN when no reliable evidence is available.
     return DocumentType.UNKNOWN
 
 
@@ -357,12 +354,12 @@ def evaluate_inclusion(
     max_ocr_ratio: float = 0.50,
     min_pages: int = 3,
 ) -> Tuple[InclusionStatus, Optional[ExclusionReason], Optional[str]]:
-    """Evalúa si un documento debe ser incluido en el corpus.
+    """Evaluate whether a document should be included in the corpus.
 
     Returns:
-        (inclusion_status, exclusion_reason, exclusion_details)
+        Tuple of (inclusion_status, exclusion_reason, exclusion_details).
     """
-    # 1. Verificar OCR dominante
+    # 1) Exclude OCR-dominated documents.
     if entry.page_count > 0:
         ocr_ratio = entry.needs_ocr_pages / entry.page_count
         if ocr_ratio > max_ocr_ratio:
@@ -372,7 +369,7 @@ def evaluate_inclusion(
                 f"{entry.needs_ocr_pages}/{entry.page_count} páginas ({ocr_ratio:.1%}) requieren OCR",
             )
 
-    # 2. Verificar contenido clínico
+    # 2) Exclude documents with low clinical density.
     if entry.clinical_term_ratio < min_clinical_ratio:
         return (
             InclusionStatus.EXCLUDED,
@@ -380,7 +377,7 @@ def evaluate_inclusion(
             f"Ratio de términos clínicos: {entry.clinical_term_ratio:.1%} (mínimo: {min_clinical_ratio:.0%})",
         )
 
-    # 3. Verificar mínimo de páginas
+    # 3) Exclude documents below the minimum page threshold.
     if entry.page_count < min_pages:
         return (
             InclusionStatus.EXCLUDED,
@@ -388,14 +385,13 @@ def evaluate_inclusion(
             f"Solo {entry.page_count} páginas (mínimo: {min_pages})",
         )
 
-    # 4. Verificar duplicado (se evalúa externamente)
-    # 5. Verificar idioma (se evalúa externamente)
+    # 4-5) Duplicate and language checks are handled in upstream stages.
 
     return InclusionStatus.INCLUDED, None, None
 
 
 def generate_exclusion_report(manifest: DocumentManifest) -> Dict[str, Any]:
-    """Genera un reporte de documentos excluidos."""
+    """Generate an exclusion summary for manifest entries."""
     excluded = manifest.excluded()
     by_reason: Dict[str, List[DocumentEntry]] = {}
     for e in excluded:
@@ -424,17 +420,17 @@ def generate_exclusion_report(manifest: DocumentManifest) -> Dict[str, Any]:
     }
 
 
-# Alias para compatibilidad con extract_pdfs.py
+# Compatibility alias used by extract_pdfs.py.
 Manifest = DocumentManifest
 
 
 def classify_doc_type_from_filename(pdf_name: str) -> DocumentType:
-    """Clasifica el tipo de documento basado únicamente en el nombre del archivo."""
+    """Classify document type using only the filename."""
     return classify_document_type("", pdf_name)
 
 
 def extract_pdf_metadata(document: Any) -> DocumentMetadata:
-    """Extrae metadatos de un documento PyMuPDF."""
+    """Extract metadata from a PyMuPDF document."""
     try:
         meta = document.metadata
         if meta:
@@ -458,7 +454,7 @@ def compute_document_ocr_status(
     needs_ocr_pages: int,
     ocr_failed_pages: int = 0,
 ) -> Dict[str, Any]:
-    """Computa el estado OCR de un documento."""
+    """Compute OCR status metrics for a document."""
     if page_count == 0:
         return {"status": "unknown", "ratio": 0.0}
 
@@ -488,36 +484,33 @@ def determine_inclusion_status(
     min_pages: int = 3,
     max_empty_ratio: float = 0.8,
 ) -> Tuple[InclusionStatus, Optional[ExclusionReason]]:
-    """Determina el estado de inclusión de un documento.
+    """Determine the inclusion status for a document.
 
     Returns:
-        (inclusion_status, exclusion_reason)
+        Tuple of (inclusion_status, exclusion_reason).
     """
-    # Verificar mínimo de páginas
+    # Enforce a minimum page count.
     if page_count < min_pages:
         return InclusionStatus.EXCLUDED, ExclusionReason.EMPTY
-
-    # Verificar tamaño mínimo (archivos corruptos suelen ser muy pequeños)
+    # Enforce a minimum file size (tiny files are often corrupted).
     if file_size < 1024:
         return InclusionStatus.EXCLUDED, ExclusionReason.CORRUPTED
-
-    # Verificar contenido no vacío
+    # Reject near-empty extracted text.
     if sample_text:
         empty_ratio = sample_text.count("\n\n") / max(1, len(sample_text))
         if empty_ratio > max_empty_ratio:
             return InclusionStatus.EXCLUDED, ExclusionReason.EMPTY
-
-    # Verificar idioma (señales de español)
+    # Basic language check using Spanish markers.
     spanish_markers = ["el", "la", "de", "y", "en", "que", "a", "los", "del"]
     text_lower = sample_text.lower()
     spanish_count = sum(1 for m in spanish_markers if m in text_lower)
     if len(sample_text) > 200 and spanish_count < 3:
-        # Posiblemente no está en español
+        # The content is likely not Spanish.
         return InclusionStatus.EXCLUDED, ExclusionReason.WRONG_LANGUAGE
 
     return InclusionStatus.INCLUDED, None
 
 
 def write_manifest_json(path: Path, manifest: DocumentManifest) -> None:
-    """Escribe el manifiesto a un archivo JSON."""
+    """Write the manifest to a JSON file."""
     manifest.save(path)

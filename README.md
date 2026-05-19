@@ -1,187 +1,220 @@
-# Obstetrics PEFT Dataset Pipeline
+﻿# Medical PEFT Dataset Pipeline
 
-Pipeline para construir datasets de entrenamiento a partir de PDFs de obstetricia y ginecología.
+Professional preprocessing pipeline for medical QA datasets used in supervised fine-tuning (SFT) with PEFT/QLoRA workflows.
 
-El proyecto ahora se centra en una sola fuente de conocimiento fuente:
+This repository currently focuses **only** on dataset engineering and preprocessing.
 
-```text
-pdfs/obstetrics/*.pdf
-```
+python scripts/preprocess_medquad.py
+python scripts/preprocess_bioasq.py
+python scripts/preprocess_pubmedqa.py
+python scripts/merge_datasets.py
+python scripts/split_dataset.py
+python scripts/validate_dataset.py --input data/final --fail-on-error
 
-Y produce dos tipos de datos:
 
-```text
-1. Corpus LM: texto clínico limpio para continued training / domain adaptation.
-2. QA sintético: pares pregunta-respuesta en formato chat para SFT / QLoRA.
-```
 
-## Estructura
+## Project structure
 
 ```text
-artifacts/
-  obstetrics/
-    corpus/
-      raw_pages.jsonl
-      clean_pages.jsonl
-      chunks.jsonl
-    tables/
-      tables.jsonl
-    metadata/
-      inventory.json
-      processed_pdfs_manifest.json
-      legacy/
-        inventory_enhanced.json
-    reports/
-      cleaning_report.json
-      build_report.json
-      audit_report.json
-      table_extraction_report.json
-    qa_experiments/
-    debug/
-
-datasets/
-  obstetrics/
-    lm/
-      train_lm.jsonl
-      validation_lm.jsonl
-      test_lm.jsonl
-    qa/
-      synthetic_qa_raw.jsonl
-      synthetic_qa_sft.jsonl
-
-docs/
-  obstetrics_lm_pipeline.md
-  research_notes/
-    README.md
-    01_estado_actual.md
-    02_decisiones_tecnicas.md
-    03_plan_evaluacion_y_benchmark.md
-
-pdfs/
-  obstetrics/
-    *.pdf
-
-scripts/
-  run_incremental.py
-  run_full_pipeline.py
-  generate_synthetic_qa.py
-  extract_pdfs.py
-  clean_text.py
-  build_lm_dataset.py
-  audit_dataset.py
-  extract_tables.py
-  utils.py
+medical-peft/
+├── data/
+│   ├── raw/
+│   │   ├── medquad/
+│   │   ├── bioasq/
+│   │   └── pubmedqa/
+│   ├── processed/
+│   │   ├── medquad_chat.jsonl
+│   │   ├── bioasq_chat.jsonl
+│   │   └── pubmedqa_chat.jsonl
+│   └── final/
+│       ├── merged.jsonl
+│       ├── train.jsonl
+│       ├── validation.jsonl
+│       └── test.jsonl
+├── scripts/
+│   ├── common.py
+│   ├── preprocess_medquad.py
+│   ├── preprocess_bioasq.py
+│   ├── preprocess_pubmedqa.py
+│   ├── merge_datasets.py
+│   ├── split_dataset.py
+│   └── validate_dataset.py
+├── requirements.txt
+├── README.md
+└── .gitignore
 ```
 
-## Instalación
+## Dataset schema
+
+All outputs use JSONL with the following chat format:
+
+```json
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful medical AI assistant. Provide accurate and evidence-based medical information."
+    },
+    {
+      "role": "user",
+      "content": "What are the symptoms of asthma?"
+    },
+    {
+      "role": "assistant",
+      "content": "Common symptoms include wheezing, coughing, chest tightness and shortness of breath."
+    }
+  ],
+  "metadata": {
+    "source": "medquad"
+  }
+}
+```
+
+## Installation
 
 ```bash
+cd medical-peft
+python -m venv .venv
+# Windows PowerShell:
+.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
-## Agregar Nuevos PDFs
+## Raw data ingestion model
 
-Copia los PDFs nuevos en:
+Preprocessing scripts use **hybrid local+HF loading**:
+
+1. Try local files in `data/raw/<dataset>/` (JSON, JSONL, CSV, TSV).
+2. If no local records are found, fallback to Hugging Face `datasets`.
+
+You can override dataset identifiers via CLI flags:
+
+- MedQuAD: `--hf-dataset`, `--hf-split`
+- BioASQ: `--hf-dataset`, `--hf-config`, `--hf-split`
+- PubMedQA: `--hf-dataset`, `--hf-config pqa_labeled`, `--hf-split`
+
+## Processing rules implemented
+
+- Shared fixed system prompt across all sources.
+- UTF-8 JSONL output.
+- Cleans control characters and excessive whitespace.
+- Removes empty question/answer pairs.
+- Deduplicates by `(user_content, assistant_content, source)`.
+- Deterministic behavior with default seed `42`.
+
+## Script usage
+
+### 1) Preprocess MedQuAD
+
+```bash
+python scripts/preprocess_medquad.py
+```
+
+Important args:
+
+- `--input data/raw/medquad`
+- `--output data/processed/medquad_chat.jsonl`
+- `--seed 42`
+- `--use-local-first` / `--no-use-local-first`
+
+### 2) Preprocess BioASQ
+
+```bash
+python scripts/preprocess_bioasq.py
+```
+
+Important args:
+
+- `--input data/raw/bioasq`
+- `--output data/processed/bioasq_chat.jsonl`
+- `--include-snippets` / `--no-include-snippets`
+- `--max-snippets 3`
+- `--seed 42`
+
+`ideal_answer` lists are concatenated into one assistant response.
+When snippets are enabled, up to 3 snippets are prepended in `Context:`.
+
+### 3) Preprocess PubMedQA (`pqa_labeled`)
+
+```bash
+python scripts/preprocess_pubmedqa.py
+```
+
+Important args:
+
+- `--input data/raw/pubmedqa`
+- `--output data/processed/pubmedqa_chat.jsonl`
+- `--hf-config pqa_labeled`
+- `--seed 42`
+
+User message format:
 
 ```text
-pdfs/obstetrics/
+Context:
+...
+
+Question:
+...
 ```
 
-Luego ejecuta el pipeline incremental:
+### 4) Merge processed datasets
 
 ```bash
-python scripts/run_incremental.py
+python scripts/merge_datasets.py \
+  --medquad-weight 0.5 \
+  --bioasq-weight 0.3 \
+  --pubmedqa-weight 0.2 \
+  --mode downsample_strict \
+  --seed 42
 ```
 
-Este comando procesa solo PDFs nuevos o modificados y actualiza:
+Behavior:
 
-```text
-artifacts/obstetrics/corpus/chunks.jsonl
-datasets/obstetrics/lm/train_lm.jsonl
-datasets/obstetrics/lm/validation_lm.jsonl
-datasets/obstetrics/lm/test_lm.jsonl
-```
+- Enforces strict weighted mix using downsampling only.
+- No duplication/synthetic upsampling.
+- Writes `data/final/merged.jsonl`.
 
-Para buscar PDFs dentro de subcarpetas:
+### 5) Split train/validation/test
 
 ```bash
-python scripts/run_incremental.py --recursive
+python scripts/split_dataset.py \
+  --train-ratio 0.8 \
+  --val-ratio 0.1 \
+  --test-ratio 0.1 \
+  --stratify-by-source \
+  --seed 42
 ```
 
-Para forzar reprocesamiento incremental de todos los PDFs descubiertos:
+Behavior:
+
+- Stratifies by `metadata.source` by default.
+- Writes `train.jsonl`, `validation.jsonl`, `test.jsonl` in `data/final/`.
+
+### 6) Validate outputs
 
 ```bash
-python scripts/run_incremental.py --force
+python scripts/validate_dataset.py --input data/final --fail-on-error
 ```
 
-## Reconstruir Todo
+Validation checks:
 
-Si quieres regenerar todos los artefactos desde cero:
+- `messages` exists and is non-empty list.
+- message roles are valid (`system`, `user`, `assistant`).
+- all message contents are non-empty strings.
+- `metadata.source` exists and is non-empty.
+
+## Recommended end-to-end run order
 
 ```bash
-python scripts/run_full_pipeline.py
+python scripts/preprocess_medquad.py
+python scripts/preprocess_bioasq.py
+python scripts/preprocess_pubmedqa.py
+python scripts/merge_datasets.py
+python scripts/split_dataset.py
+python scripts/validate_dataset.py --input data/final --fail-on-error
 ```
 
-## Generar QA Sintético
+## Notes
 
-Primero estima costo y cantidad de pares sin llamar a la API:
-
-```bash
-python scripts/generate_synthetic_qa.py --dry-run --limit 5
-```
-
-Para generar una muestra real:
-
-```bash
-set OPENAI_API_KEY=tu_api_key
-python scripts/generate_synthetic_qa.py --limit 20
-```
-
-Para generar sobre todo `train_lm.jsonl`:
-
-```bash
-python scripts/generate_synthetic_qa.py
-```
-
-Salidas:
-
-```text
-datasets/obstetrics/qa/synthetic_qa_raw.jsonl
-datasets/obstetrics/qa/synthetic_qa_sft.jsonl
-datasets/obstetrics/qa/.qa_generation_progress.json
-datasets/obstetrics/qa/qa_generation_report.json
-```
-
-## Formatos
-
-Corpus LM:
-
-```json
-{"text": "Texto clínico limpio...", "metadata": {"source_pdf": "...", "pages": [1, 2], "chunk_id": "..."}}
-```
-
-QA/SFT:
-
-```json
-{"messages": [{"role": "system", "content": "..."}, {"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}], "metadata": {"source": "obstetrics_spanish_synthetic"}}
-```
-
-## Auditoría
-
-Después de cada corrida revisa:
-
-```text
-artifacts/obstetrics/reports/audit_report.json
-```
-
-Ahí quedan conteos, páginas descartadas, páginas que requieren OCR, distribución por PDF y muestras para revisión manual.
-
-## Documentación viva
-
-Para entender decisiones, estado metodológico y evaluación futura, revisa:
-
-```text
-docs/research_notes/
-```
-
-Esa carpeta funciona como bitácora técnica del proyecto y debe actualizarse cuando cambien decisiones importantes del pipeline o del diseño experimental.
+- This phase intentionally excludes model training.
+- If a Hugging Face dataset identifier/config changes, pass updated values via CLI arguments.

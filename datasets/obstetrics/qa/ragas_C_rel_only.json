@@ -1,0 +1,30 @@
+{
+  "script_version": "ragas_eval_v2_diagnostic",
+  "generated_at": "2026-05-18T21:50:25.341640+00:00",
+  "input_file": "datasets/obstetrics/qa/raw_C_gpt52_gen_gpt55_eval.jsonl",
+  "ragas_models": {
+    "llm_model": "gpt-4o-mini",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "summary": {
+    "pairs_evaluated": 1,
+    "pairs_scored": 0,
+    "pairs_with_error": 0,
+    "avg_ragas_faithfulness": null,
+    "min_ragas_faithfulness": null,
+    "max_ragas_faithfulness": null,
+    "avg_ragas_answer_relevancy": 0.8477,
+    "min_ragas_answer_relevancy": 0.8477,
+    "max_ragas_answer_relevancy": 0.8477
+  },
+  "per_pair": [
+    {
+      "qa_id": "02revision01_00003_qa_001",
+      "chunk_id": "02revision01_00003",
+      "ragas_faithfulness": null,
+      "ragas_answer_relevancy": 0.8477384170851409,
+      "ragas_faithfulness_reason": "",
+      "ragas_answer_relevancy_reason": ""
+    }
+  ]
+}

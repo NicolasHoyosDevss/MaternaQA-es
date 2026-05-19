@@ -1,0 +1,222 @@
+{
+  "experiments": [
+    {
+      "experiment_id": "A_gpt54_gen_gpt55_eval",
+      "report_file": "report_A_gpt54_gen_gpt55_eval.json",
+      "models": {
+        "generator_model": "gpt-5.4",
+        "verifier_model": "gpt-5.5"
+      },
+      "total": 5,
+      "skipped": 0,
+      "processed": 5,
+      "failed": 0,
+      "qa_pairs": 17,
+      "grounding": {
+        "avg_context_answer_overlap": 0.7005,
+        "low_grounding_pairs": 0,
+        "total_pairs": 17,
+        "low_grounding_rate": 0.0
+      },
+      "quality": {
+        "enabled": true,
+        "verifier_model": "gpt-5.5",
+        "pairs_evaluated": 17,
+        "pairs_accepted": 17,
+        "acceptance_rate": 1.0,
+        "avg_faithfulness": 0.9876,
+        "avg_answer_relevancy": 0.9829,
+        "avg_roundtrip_consistency": 0.9782,
+        "quality_filter_enabled": false,
+        "thresholds": {
+          "min_faithfulness": 0.8,
+          "min_relevancy": 0.75,
+          "min_roundtrip": 0.75
+        }
+      },
+      "raw_file": "raw_A_gpt54_gen_gpt55_eval.jsonl",
+      "avg_question_words": 21.18,
+      "avg_answer_words": 66.88,
+      "min_answer_words": 42,
+      "max_answer_words": 117,
+      "meta_answer_refs": 8,
+      "questions_with_y": 11,
+      "types": {
+        "definicion": 2,
+        "razonamiento": 3,
+        "aplicacion": 5,
+        "factual": 3,
+        "comparacion": 3,
+        "hipotetico": 1
+      },
+      "difficulty": {
+        "basico": 4,
+        "intermedio": 10,
+        "avanzado": 3
+      }
+    },
+    {
+      "experiment_id": "B_gpt54mini_gen_gpt55_eval",
+      "report_file": "report_B_gpt54mini_gen_gpt55_eval.json",
+      "models": {
+        "generator_model": "gpt-5.4-mini",
+        "verifier_model": "gpt-5.5"
+      },
+      "total": 5,
+      "skipped": 0,
+      "processed": 5,
+      "failed": 0,
+      "qa_pairs": 17,
+      "grounding": {
+        "avg_context_answer_overlap": 0.5632,
+        "low_grounding_pairs": 0,
+        "total_pairs": 17,
+        "low_grounding_rate": 0.0
+      },
+      "quality": {
+        "enabled": true,
+        "verifier_model": "gpt-5.5",
+        "pairs_evaluated": 17,
+        "pairs_accepted": 16,
+        "acceptance_rate": 0.9412,
+        "avg_faithfulness": 0.9382,
+        "avg_answer_relevancy": 0.9447,
+        "avg_roundtrip_consistency": 0.9341,
+        "quality_filter_enabled": false,
+        "thresholds": {
+          "min_faithfulness": 0.8,
+          "min_relevancy": 0.75,
+          "min_roundtrip": 0.75
+        }
+      },
+      "raw_file": "raw_B_gpt54mini_gen_gpt55_eval.jsonl",
+      "avg_question_words": 14.47,
+      "avg_answer_words": 35.59,
+      "min_answer_words": 17,
+      "max_answer_words": 53,
+      "meta_answer_refs": 0,
+      "questions_with_y": 4,
+      "types": {
+        "factual": 7,
+        "razonamiento": 4,
+        "definicion": 3,
+        "aplicacion": 2,
+        "comparacion": 1
+      },
+      "difficulty": {
+        "intermedio": 8,
+        "avanzado": 3,
+        "basico": 6
+      }
+    },
+    {
+      "experiment_id": "C_gpt52_gen_gpt55_eval",
+      "report_file": "report_C_gpt52_gen_gpt55_eval.json",
+      "models": {
+        "generator_model": "gpt-5.2",
+        "verifier_model": "gpt-5.5"
+      },
+      "total": 5,
+      "skipped": 0,
+      "processed": 5,
+      "failed": 0,
+      "qa_pairs": 17,
+      "grounding": {
+        "avg_context_answer_overlap": 0.7024,
+        "low_grounding_pairs": 0,
+        "total_pairs": 17,
+        "low_grounding_rate": 0.0
+      },
+      "quality": {
+        "enabled": true,
+        "verifier_model": "gpt-5.5",
+        "pairs_evaluated": 17,
+        "pairs_accepted": 17,
+        "acceptance_rate": 1.0,
+        "avg_faithfulness": 0.9924,
+        "avg_answer_relevancy": 0.9947,
+        "avg_roundtrip_consistency": 0.9918,
+        "quality_filter_enabled": false,
+        "thresholds": {
+          "min_faithfulness": 0.8,
+          "min_relevancy": 0.75,
+          "min_roundtrip": 0.75
+        }
+      },
+      "raw_file": "raw_C_gpt52_gen_gpt55_eval.jsonl",
+      "avg_question_words": 21.12,
+      "avg_answer_words": 47.12,
+      "min_answer_words": 27,
+      "max_answer_words": 94,
+      "meta_answer_refs": 0,
+      "questions_with_y": 6,
+      "types": {
+        "factual": 3,
+        "razonamiento": 5,
+        "aplicacion": 5,
+        "definicion": 2,
+        "hipotetico": 1,
+        "comparacion": 1
+      },
+      "difficulty": {
+        "basico": 5,
+        "intermedio": 11,
+        "avanzado": 1
+      }
+    },
+    {
+      "experiment_id": "D_gpt54_gen_gpt54mini_eval",
+      "report_file": "report_D_gpt54_gen_gpt54mini_eval.json",
+      "models": {
+        "generator_model": "gpt-5.4",
+        "verifier_model": "gpt-5.4-mini"
+      },
+      "total": 5,
+      "skipped": 0,
+      "processed": 5,
+      "failed": 0,
+      "qa_pairs": 17,
+      "grounding": {
+        "avg_context_answer_overlap": 0.5964,
+        "low_grounding_pairs": 0,
+        "total_pairs": 17,
+        "low_grounding_rate": 0.0
+      },
+      "quality": {
+        "enabled": true,
+        "verifier_model": "gpt-5.4-mini",
+        "pairs_evaluated": 17,
+        "pairs_accepted": 16,
+        "acceptance_rate": 0.9412,
+        "avg_faithfulness": 0.9235,
+        "avg_answer_relevancy": 0.9359,
+        "avg_roundtrip_consistency": 0.9182,
+        "quality_filter_enabled": false,
+        "thresholds": {
+          "min_faithfulness": 0.8,
+          "min_relevancy": 0.75,
+          "min_roundtrip": 0.75
+        }
+      },
+      "raw_file": "raw_D_gpt54_gen_gpt54mini_eval.jsonl",
+      "avg_question_words": 16.59,
+      "avg_answer_words": 54.18,
+      "min_answer_words": 33,
+      "max_answer_words": 98,
+      "meta_answer_refs": 8,
+      "questions_with_y": 6,
+      "types": {
+        "definicion": 2,
+        "razonamiento": 5,
+        "aplicacion": 5,
+        "factual": 4,
+        "comparacion": 1
+      },
+      "difficulty": {
+        "basico": 4,
+        "intermedio": 10,
+        "avanzado": 3
+      }
+    }
+  ]
+}

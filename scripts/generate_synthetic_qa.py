@@ -50,6 +50,7 @@ import re
 import sys
 import time
 from collections import Counter
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional, Set, Tuple
 
@@ -150,6 +151,9 @@ Reglas estrictas:
    preguntarse, conviértelas en dos pares separados solo cuando cada una sea útil por sí misma.
 10. No sacrifiques calidad por cantidad. Genera solo pares que el fragmento soporte bien;
     evita forzar tipos o preguntas adicionales si el contenido no lo permite.
+11. Las respuestas también deben quedar limpias y autocontenidas: NO escribas
+    "el fragmento dice", "el contexto señala", "según el texto" ni expresiones equivalentes.
+    Responde directamente como si la pregunta fuera autónoma.
 """
 
 # Template del mensaje de usuario enviado a GPT por cada chunk.
@@ -162,7 +166,8 @@ Sección: {section}
 </contexto>
 
 Genera hasta {n_pairs} pares de pregunta-respuesta en español basados en el \
-fragmento anterior. Si el fragmento solo permite menos pares de alta calidad, genera menos.
+fragmento anterior. No intentes acercarte a ese número si el contenido no lo justifica:
+si el fragmento solo permite 1 o 2 pares de alta calidad, genera solo esos.
 """
 
 ROUNDTRIP_SYSTEM_PROMPT = """\
@@ -275,6 +280,26 @@ def load_progress(path: Path) -> Set[str]:
     return set(data.get("processed_chunk_ids", []))
 
 
+def load_processed_ids_from_raw_output(path: Path) -> Set[str]:
+    """Recupera chunk_ids ya escritos en raw_output para evitar duplicados al reanudar."""
+    if not path.exists():
+        return set()
+    processed: Set[str] = set()
+    with path.open("r", encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                row = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            chunk_id = str(row.get("chunk_id", "")).strip()
+            if chunk_id:
+                processed.add(chunk_id)
+    return processed
+
+
 def save_progress(path: Path, processed_ids: Set[str]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
@@ -283,6 +308,19 @@ def save_progress(path: Path, processed_ids: Set[str]) -> None:
             ensure_ascii=False,
             indent=2,
         ),
+        encoding="utf-8",
+    )
+
+
+def status_path_for_progress(progress_file: Path) -> Path:
+    return progress_file.with_name(f"{progress_file.stem}_status.json")
+
+
+def save_run_status(path: Path, payload: Dict[str, Any]) -> None:
+    """Guarda estado legible para monitorear ejecuciones largas y reanudaciones."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
 
@@ -687,6 +725,17 @@ async def run_generation(
     logger: logging.Logger,
 ) -> Dict[str, Any]:
     processed_ids = load_progress(progress_file)
+    recovered_from_raw = load_processed_ids_from_raw_output(raw_output)
+    if recovered_from_raw - processed_ids:
+        logger.info(
+            "Recuperados %d chunk_ids desde raw_output para reanudar sin duplicar.",
+            len(recovered_from_raw - processed_ids),
+        )
+        processed_ids |= recovered_from_raw
+        save_progress(progress_file, processed_ids)
+
+    status_file = status_path_for_progress(progress_file)
+    started_at = time.time()
 
     # Solo procesar lo que no se haya procesado aún (resume-safe)
     pending = [
@@ -694,12 +743,30 @@ async def run_generation(
         for c in chunks
         if c.get("metadata", {}).get("chunk_id", "") not in processed_ids
     ]
+    already_processed_at_start = len(processed_ids)
 
     logger.info(
         "Chunks totales: %d | Ya procesados: %d | Pendientes: %d",
         len(chunks),
         len(processed_ids),
         len(pending),
+    )
+
+    save_run_status(
+        status_file,
+        {
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "state": "running" if pending else "complete",
+            "total_chunks": len(chunks),
+            "already_processed_at_start": already_processed_at_start,
+            "pending_at_start": len(pending),
+            "processed_now": 0,
+            "failed_now": 0,
+            "qa_pairs_now": 0,
+            "raw_output": str(raw_output),
+            "sft_output": str(sft_output),
+            "progress_file": str(progress_file),
+        },
     )
 
     if not pending:
@@ -738,6 +805,7 @@ async def run_generation(
     ):
         chunk, pairs, status = await coro
         chunk_id = chunk.get("metadata", {}).get("chunk_id", "unknown")
+        last_status = status
 
         if pairs:
             qualities: Optional[List[PairQuality]] = None
@@ -783,12 +851,57 @@ async def run_generation(
             total_pairs += len(pairs)
             processed_ids.add(chunk_id)
             save_progress(progress_file, processed_ids)
+            logger.info(
+                "Chunk completado %s | pares=%d | procesados ahora=%d | pendientes=%d",
+                chunk_id,
+                len(pairs),
+                processed,
+                max(0, len(pending) - processed - failed),
+            )
         elif status == "refused":
             failed += 1
             processed_ids.add(chunk_id)
             save_progress(progress_file, processed_ids)
+            logger.warning("Chunk omitido por rechazo del modelo: %s", chunk_id)
+        elif status == "ok":
+            # El modelo devolvió una lista vacía válida. Lo marcamos como procesado
+            # para no reintentarlo indefinidamente al reanudar.
+            failed += 1
+            processed_ids.add(chunk_id)
+            save_progress(progress_file, processed_ids)
+            last_status = "empty"
+            logger.warning("Chunk sin pares generados: %s", chunk_id)
         else:
             failed += 1
+            logger.warning("Chunk fallido y reintentable al reanudar: %s", chunk_id)
+
+        elapsed = max(0.001, time.time() - started_at)
+        done_now = processed + failed
+        rate = done_now / elapsed
+        remaining = max(0, len(pending) - done_now)
+        eta_seconds = int(remaining / rate) if rate > 0 else None
+        save_run_status(
+            status_file,
+            {
+                "updated_at": datetime.now(timezone.utc).isoformat(),
+                "state": "running" if done_now < len(pending) else "complete",
+                "total_chunks": len(chunks),
+                "already_processed_at_start": already_processed_at_start,
+                "pending_at_start": len(pending),
+                "processed_now": processed,
+                "failed_now": failed,
+                "completed_now": done_now,
+                "remaining_now": remaining,
+                "qa_pairs_now": total_pairs,
+                "last_chunk_id": chunk_id,
+                "last_status": last_status,
+                "elapsed_seconds": int(elapsed),
+                "eta_seconds": eta_seconds,
+                "raw_output": str(raw_output),
+                "sft_output": str(sft_output),
+                "progress_file": str(progress_file),
+            },
+        )
 
     stats = {
         "models": {

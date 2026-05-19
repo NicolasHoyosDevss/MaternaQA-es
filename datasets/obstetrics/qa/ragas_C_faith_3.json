@@ -1,0 +1,46 @@
+{
+  "script_version": "ragas_eval_v2_diagnostic",
+  "generated_at": "2026-05-18T21:55:40.659836+00:00",
+  "input_file": "datasets/obstetrics/qa/raw_C_gpt52_gen_gpt55_eval.jsonl",
+  "ragas_models": {
+    "llm_model": "gpt-4o-mini",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "summary": {
+    "pairs_evaluated": 3,
+    "pairs_scored": 3,
+    "pairs_with_error": 0,
+    "avg_ragas_faithfulness": 0.6944,
+    "min_ragas_faithfulness": 0.6667,
+    "max_ragas_faithfulness": 0.75,
+    "avg_ragas_answer_relevancy": null,
+    "min_ragas_answer_relevancy": null,
+    "max_ragas_answer_relevancy": null
+  },
+  "per_pair": [
+    {
+      "qa_id": "02revision01_00003_qa_001",
+      "chunk_id": "02revision01_00003",
+      "ragas_faithfulness": 0.6666666666666666,
+      "ragas_answer_relevancy": null,
+      "ragas_faithfulness_reason": "",
+      "ragas_answer_relevancy_reason": ""
+    },
+    {
+      "qa_id": "02revision01_00003_qa_002",
+      "chunk_id": "02revision01_00003",
+      "ragas_faithfulness": 0.75,
+      "ragas_answer_relevancy": null,
+      "ragas_faithfulness_reason": "",
+      "ragas_answer_relevancy_reason": ""
+    },
+    {
+      "qa_id": "02revision01_00003_qa_003",
+      "chunk_id": "02revision01_00003",
+      "ragas_faithfulness": 0.6666666666666666,
+      "ragas_answer_relevancy": null,
+      "ragas_faithfulness_reason": "",
+      "ragas_answer_relevancy_reason": ""
+    }
+  ]
+}

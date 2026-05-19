@@ -1,0 +1,58 @@
+{
+  "script_version": "qa_sample_eval_v1",
+  "generated_at": "2026-05-19T03:19:39.653672+00:00",
+  "input_file": "poc/sample_1qa.jsonl",
+  "total_pairs_in_input": 1,
+  "sampled_pairs": 1,
+  "sample_size_requested": null,
+  "sample_seed": null,
+  "execution": "single_command_two_internal_passes",
+  "ragas_models": {
+    "llm_model": "gpt-5.5",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "custom_judge_model": null,
+  "summary": {
+    "pairs_evaluated": 1,
+    "pairs_scored_faithfulness": 1,
+    "pairs_scored_answer_relevancy": 1,
+    "pairs_with_error": 0,
+    "avg_ragas_faithfulness": 1.0,
+    "min_ragas_faithfulness": 1.0,
+    "max_ragas_faithfulness": 1.0,
+    "avg_ragas_answer_relevancy": 0.8909,
+    "min_ragas_answer_relevancy": 0.8909,
+    "max_ragas_answer_relevancy": 0.8909,
+    "custom_pairs_scored": 0,
+    "custom_acceptance_rate": null,
+    "avg_custom_faithfulness": null,
+    "avg_custom_answer_relevancy": null,
+    "avg_custom_roundtrip_consistency": null,
+    "questions_with_meta_reference": 0,
+    "answers_with_meta_reference": 0
+  },
+  "per_pair": [
+    {
+      "qa_id": "poc-qa-1",
+      "chunk_id": "poc-chunk-1",
+      "source_pdf": "poc.pdf",
+      "tipo": "factual",
+      "dificultad": "baja",
+      "pregunta": "¿Cuál es el medicamento recomendado para prevenir hemorragia posparto según el contexto?",
+      "respuesta": "Según el contexto, se recomienda oxitocina 10 UI IM o IV para prevenir hemorragia posparto.",
+      "ragas_faithfulness": 1.0,
+      "ragas_answer_relevancy": 0.8909205359894296,
+      "ragas_faithfulness_reason": "",
+      "ragas_answer_relevancy_reason": "",
+      "custom_faithfulness": null,
+      "custom_answer_relevancy": null,
+      "custom_roundtrip_consistency": null,
+      "custom_verdict": null,
+      "custom_reason": "",
+      "question_has_meta_reference": false,
+      "answer_has_meta_reference": false,
+      "question_mark_count": 2,
+      "answer_word_count": 15
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Consolida reportes de experimentos QA sintéticos en JSON y Markdown."""
+"""Consolidate synthetic QA experiment reports into JSON and Markdown."""
 
 from __future__ import annotations
 

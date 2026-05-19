@@ -15,9 +15,9 @@ Se usa `scripts/generate_synthetic_qa.py`.
 
 Este paso produce:
 
-- `raw_*.jsonl`: artefacto auditable;
-- `sft_*.jsonl`: artefacto listo para entrenamiento;
-- `report_*.json`: métricas operativas del experimento.
+- `datasets/obstetrics/qa/final/<split>/raw.jsonl`: artefacto auditable;
+- `datasets/obstetrics/qa/final/<split>/sft.jsonl`: artefacto listo para entrenamiento;
+- `datasets/obstetrics/qa/final/<split>/generation_report.json`: métricas operativas del split.
 
 ### 2. Filtrar y auditar operativamente
 
@@ -32,7 +32,7 @@ Estas señales ayudan a depurar, pero **no sustituyen** la evaluación formal.
 
 ### 3. Evaluar formalmente con Ragas real
 
-Se usa `scripts/evaluate_qa_with_ragas.py` sobre los `raw_*.jsonl`.
+Se usa `scripts/evaluate_qa_with_ragas.py` sobre los `raw.jsonl` de cada split.
 
 Métricas formales que se reportan:
 
@@ -53,9 +53,11 @@ Antes de escalar o entregar:
 
 ```bash
 python scripts/evaluate_qa_with_ragas.py \
-  --input datasets/obstetrics/qa/raw_C_gpt52_gen_gpt55_eval.jsonl \
-  --output datasets/obstetrics/qa/ragas_C_gpt52_gen_gpt55_eval.json \
-  --llm-model gpt-4o-mini
+  --input datasets/obstetrics/qa/final/train/raw.jsonl \
+  --sample-size 300 \
+  --seed 42 \
+  --custom-judge-model gpt-5.4-mini \
+  --output datasets/obstetrics/qa/final/train/sample300_eval.json
 ```
 
 ## Lectura correcta

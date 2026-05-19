@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Evalúa datasets QA grounded con métricas estándar de Ragas.
+"""Evaluate grounded QA datasets with standard Ragas metrics.
 
-Uso típico:
-    python scripts/evaluate_qa_with_ragas.py --input datasets/obstetrics/qa/raw_C_gpt52_gen_gpt55_eval.jsonl
+Typical usage:
+    python scripts/evaluate_qa_with_ragas.py --input datasets/obstetrics/qa/final/train/raw.jsonl
 
-El script calcula Faithfulness y Answer Relevancy en dos pasadas internas y
-genera un único reporte final. Se hace así porque en esta librería/entorno la
-ejecución combinada puede quedarse colgada, mientras que por separado funcionó.
+The script computes Faithfulness and Answer Relevancy in two internal passes
+and writes a single final report. This split avoids hangs observed in this
+environment during combined execution.
 """
 
 from __future__ import annotations
@@ -163,7 +163,7 @@ def stratified_sample(
     sample_size: int | None,
     seed: int,
 ) -> List[Dict[str, Any]]:
-    """Muestra reproducible, intentando no dejar que un PDF domine la evaluación."""
+    """Return a reproducible sample while avoiding PDF-level dominance."""
     if sample_size is None or sample_size >= len(rows):
         return rows
     if sample_size <= 0:
@@ -222,7 +222,7 @@ def basic_cleanliness(row: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def extract_metric_value(result: Any) -> Any:
-    """Intenta extraer un valor numérico de distintos formatos de resultado."""
+    """Extract a numeric metric value from multiple possible result formats."""
     if isinstance(result, (int, float)):
         return float(result)
     if isinstance(result, dict):
@@ -255,6 +255,15 @@ async def evaluate_rows(
 
     client = AsyncOpenAI()
     llm = llm_factory(llm_model, client=client)
+    # Compatibility patch for dotted GPT-5 model IDs (e.g., gpt-5.5):
+    # Ragas may not remap max_tokens -> max_completion_tokens for these names.
+    model_lower = llm_model.lower()
+    if model_lower.startswith("gpt-5."):
+        if hasattr(llm, "model_args") and isinstance(llm.model_args, dict):
+            llm.model_args.pop("max_tokens", None)
+            llm.model_args.setdefault("max_completion_tokens", 1024)
+            llm.model_args["temperature"] = 1.0
+            llm.model_args.pop("top_p", None)
     embeddings = embedding_factory("openai", model=embedding_model, client=client)
     faithfulness = Faithfulness(llm=llm)
     relevancy = AnswerRelevancy(llm=llm, embeddings=embeddings)
@@ -444,8 +453,8 @@ async def main_async(args: argparse.Namespace) -> None:
         flush=True,
     )
 
-    # Implementación simple para el usuario: una sola ejecución.
-    # Implementación robusta por dentro: dos pasadas y merge final.
+    # User-facing behavior: one command.
+    # Internal implementation: two metric passes with a final merge.
     print("[RAGAS] Calculando faithfulness...", flush=True)
     faith_rows = await evaluate_rows(
         rows,

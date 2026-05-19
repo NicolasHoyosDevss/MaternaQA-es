@@ -1,40 +1,39 @@
 """
 generate_synthetic_qa.py
 ========================
-Genera pares sintéticos de Pregunta/Respuesta en español a partir de los
-chunks ya procesados en datasets/obstetrics/lm/train_lm.jsonl.
+Generate synthetic Spanish Question/Answer pairs from chunks already
+processed in `datasets/obstetrics/lm/train_lm.jsonl`.
 
-Usa OpenAI Structured Outputs (gpt-4o-mini / gpt-4o) para garantizar que
-la salida sea un JSON válido y alineado con el esquema Pydantic. Todos los
-registros se escriben en formato messages (SFT-ready) para Unsloth o
-HuggingFace TRL.
+Uses OpenAI Structured Outputs (gpt-4o-mini / gpt-4o) to guarantee valid
+JSON aligned with the Pydantic schema. All records are written in
+`messages` format (SFT-ready) for Unsloth or HuggingFace TRL.
 
-Flujo:
-  1. Lee los chunks de train_lm.jsonl (producidos por build_obstetrics_lm_dataset.py)
-  2. Determina cuántos pares generar por chunk según token_estimate y clinical_score
-  3. Llama a la API de forma asíncrona (semáforo configurable)
-  4. Guarda checkpoint incremental para poder reanudar si algo falla
-  5. Escribe dos archivos:
-       - synthetic_qa_raw.jsonl  → pares crudos con metadatos para auditoría
-       - synthetic_qa_sft.jsonl  → formato {"messages": [...], "metadata": {...}}
-                                   listo para entrenamiento SFT/QLoRA
+Flow:
+  1. Read chunks from `train_lm.jsonl` (produced by `build_obstetrics_lm_dataset.py`).
+  2. Determine how many pairs to generate per chunk from `token_estimate` and `clinical_score`.
+  3. Call the API asynchronously (configurable semaphore).
+  4. Save incremental checkpoints to support safe resume.
+  5. Write two files:
+       - `synthetic_qa_raw.jsonl` -> raw pairs with audit metadata
+       - `synthetic_qa_sft.jsonl` -> {"messages": [...], "metadata": {...}}
+                                     ready for SFT/QLoRA training.
 
-Uso básico:
+Basic usage:
     export OPENAI_API_KEY="sk-..."
     python scripts/generate_synthetic_qa.py
 
-Dry-run (sin llamar a la API):
+Dry-run (without API calls):
     python scripts/generate_synthetic_qa.py --dry-run
 
-Estimación de costo (856 chunks, mayo 2026):
-    gpt-5.4-mini  ≈ $1.10  USD  (recomendado para presupuesto)
-    gpt-5.4       ≈ $4.50  USD  (balance calidad/costo)
-    gpt-5.5       ≈ $8.00  USD  (máxima calidad clínica)
+Cost estimate (856 chunks, May 2026):
+    gpt-5.4-mini  ≈ $1.10 USD (budget recommendation)
+    gpt-5.4       ≈ $4.50 USD (quality/cost balance)
+    gpt-5.5       ≈ $8.00 USD (maximum clinical quality)
 
-Nota: gpt-4o y gpt-4o-mini fueron deprecados en febrero 2026.
+Note: gpt-4o and gpt-4o-mini were deprecated in February 2026.
 
-Versiones mínimas requeridas:
-    openai>=1.68.0   (structured outputs estables, sin .beta.)
+Minimum required versions:
+    openai>=1.68.0   (stable structured outputs, without .beta.)
     pydantic>=2.7.0
 """
 
@@ -58,7 +57,7 @@ from pydantic import BaseModel, field_validator
 from tqdm.asyncio import tqdm as atqdm
 
 # ---------------------------------------------------------------------------
-# Pydantic: esquema de respuesta (Structured Outputs de OpenAI)
+# Structured-output schemas returned by the OpenAI generation and judge calls.
 # ---------------------------------------------------------------------------
 
 TipoPregunta = Literal[
@@ -110,9 +109,10 @@ class PairQuality(BaseModel):
 # Prompts
 # ---------------------------------------------------------------------------
 
-# Prompt del sistema usado DENTRO del mensaje SFT (lo que verá el modelo al inferir).
-# Debe reflejar el comportamiento que realmente queremos enseñar en el dataset,
-# no políticas clínicas adicionales que no formen parte de la tarea.
+# This is the system prompt stored inside each SFT example, so it defines the
+# behavior the fine-tuned model will learn at inference time. Keep it narrower
+# than generation-time policy: it should describe the target assistant, not the
+# data-construction process.
 SFT_SYSTEM_PROMPT = (
     "Eres un asistente especializado en obstetricia y ginecología. "
     "Responde en español con precisión clínica, claridad y vocabulario médico apropiado. "
@@ -121,7 +121,7 @@ SFT_SYSTEM_PROMPT = (
     "afirmación concluyente, indícalo con claridad en lugar de inventar detalles."
 )
 
-# Prompt del sistema que le damos a GPT para que GENERE los pares.
+# Generation-time prompt used to create candidate QA pairs from each source chunk.
 GENERATION_SYSTEM_PROMPT = """\
 Eres un experto en generación de datasets de entrenamiento para modelos de lenguaje.
 Tu tarea es leer fragmentos de una base de conocimiento médica en obstetricia y ginecología,
@@ -156,7 +156,7 @@ Reglas estrictas:
     Responde directamente como si la pregunta fuera autónoma.
 """
 
-# Template del mensaje de usuario enviado a GPT por cada chunk.
+# Per-chunk user message template sent to the generation model.
 GENERATION_USER_TEMPLATE = """\
 Documento fuente: {source_pdf}
 Sección: {section}
@@ -216,16 +216,16 @@ Respuesta roundtrip:
 MAX_RETRIES = 5
 BASE_BACKOFF_S = 2.0
 
-# Modelos activos en la API de OpenAI a mayo 2026.
-# gpt-4o y gpt-4o-mini fueron deprecados en febrero 2026.
+# Active OpenAI API models as of May 2026.
+# gpt-4o and gpt-4o-mini were deprecated in February 2026.
 SUPPORTED_MODELS = (
     "gpt-5.2",
-    "gpt-5.4-mini",  # Más barato y rápido, reemplaza a gpt-4o-mini
-    "gpt-5.4",  # Balance calidad/costo
-    "gpt-5.5",  # Flagship, mejor calidad, más caro
+    "gpt-5.4-mini",  # Lower-cost, faster replacement for gpt-4o-mini.
+    "gpt-5.4",  # Balanced quality/cost option.
+    "gpt-5.5",  # Highest-quality option, with higher cost.
 )
 
-# Precios por millón de tokens (mayo 2026, fuente: platform.openai.com/api/docs/models)
+# Prices per million tokens (May 2026, source: platform.openai.com/api/docs/models).
 PRICES_PER_M = {
     "gpt-5.2": {"input": 2.50, "output": 15.00},
     "gpt-5.4-mini": {"input": 0.75, "output": 4.50},
@@ -233,12 +233,12 @@ PRICES_PER_M = {
     "gpt-5.5": {"input": 5.00, "output": 30.00},
 }
 
-# Estimación conservadora de tokens de respuesta por par generado
+# Conservative output-token estimate per generated QA pair.
 TOKENS_PER_PAIR_OUTPUT_EST = 160
 
 
 # ---------------------------------------------------------------------------
-# Helpers de I/O
+# File I/O helpers.
 # ---------------------------------------------------------------------------
 
 
@@ -261,7 +261,7 @@ def read_jsonl(path: Path) -> List[Dict[str, Any]]:
 
 
 def append_jsonl(path: Path, rows: List[Dict[str, Any]]) -> None:
-    """Escribe los registros en modo append para no perder datos si el script se interrumpe."""
+    """Append records so an interrupted run does not overwrite completed work."""
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8", newline="\n") as fh:
         for row in rows:
@@ -281,7 +281,7 @@ def load_progress(path: Path) -> Set[str]:
 
 
 def load_processed_ids_from_raw_output(path: Path) -> Set[str]:
-    """Recupera chunk_ids ya escritos en raw_output para evitar duplicados al reanudar."""
+    """Recover chunk IDs already written to raw output to avoid duplicates on resume."""
     if not path.exists():
         return set()
     processed: Set[str] = set()
@@ -317,7 +317,7 @@ def status_path_for_progress(progress_file: Path) -> Path:
 
 
 def save_run_status(path: Path, payload: Dict[str, Any]) -> None:
-    """Guarda estado legible para monitorear ejecuciones largas y reanudaciones."""
+    """Persist human-readable run state for long jobs and safe resume checks."""
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
@@ -326,7 +326,7 @@ def save_run_status(path: Path, payload: Dict[str, Any]) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Lógica de pares por chunk
+# Pair-count heuristic.
 # ---------------------------------------------------------------------------
 
 
@@ -336,14 +336,14 @@ def n_pairs_for_chunk(
     min_pairs: int,
     max_pairs: int,
 ) -> int:
-    """
-    Determina cuántos pares generar basándose en el tamaño y relevancia clínica del chunk.
+    """Choose how many QA pairs to request from a chunk.
 
-    Lógica:
-    - Chunks pequeños (<400 tokens)  → mínimo de pares.
-    - Chunks medianos (400-700)      → mínimo + 1.
-    - Chunks grandes (>700 tokens)   → máximo - 1.
-    - clinical_score >= 20           → +1 par extra (hasta el máximo).
+    The heuristic biases generation toward larger and clinically richer chunks
+    while respecting caller-provided limits:
+    - small chunks (<400 tokens) request the minimum;
+    - medium chunks (400-700 tokens) request one extra pair;
+    - large chunks (>700 tokens) request near the maximum;
+    - high clinical_score chunks get one additional pair, capped at max_pairs.
     """
     if token_estimate < 400:
         n = min_pairs
@@ -364,7 +364,7 @@ def estimate_cost(
     min_pairs: int,
     max_pairs: int,
 ) -> Tuple[int, float]:
-    """Devuelve (pares_esperados, costo_estimado_usd)."""
+    """Return the expected pair count and estimated generation cost in USD."""
     expected_pairs = sum(
         n_pairs_for_chunk(
             c.get("metadata", {}).get("token_estimate", 500),
@@ -387,7 +387,7 @@ def estimate_cost(
 
 
 # ---------------------------------------------------------------------------
-# Conversión a formato SFT
+# SFT record conversion.
 # ---------------------------------------------------------------------------
 
 
@@ -396,7 +396,7 @@ def chunk_to_sft_records(
     pairs: List[QAPar],
     qualities: Optional[List[Optional[PairQuality]]] = None,
 ) -> List[Dict[str, Any]]:
-    """Convierte los pares generados al formato messages listo para fine-tuning."""
+    """Convert generated QA pairs into chat-message records ready for fine-tuning."""
     meta = chunk.get("metadata", {})
     records = []
     for idx, pair in enumerate(pairs, start=1):
@@ -441,7 +441,7 @@ def chunk_to_raw_records(
     pairs: List[QAPar],
     qualities: Optional[List[Optional[PairQuality]]] = None,
 ) -> List[Dict[str, Any]]:
-    """Guarda los pares en formato plano para auditoría / revisión humana."""
+    """Convert generated QA pairs into flat audit records for human review."""
     meta = chunk.get("metadata", {})
     rows: List[Dict[str, Any]] = []
     chunk_id = str(meta.get("chunk_id", ""))
@@ -503,7 +503,7 @@ def grounding_metrics_for_pairs(pairs: List[QAPar]) -> Dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
-# Generación asíncrona
+# Asynchronous generation.
 # ---------------------------------------------------------------------------
 
 
@@ -516,7 +516,7 @@ async def generate_for_chunk(
     semaphore: asyncio.Semaphore,
     logger: logging.Logger,
 ) -> Tuple[Dict[str, Any], List[QAPar], str]:
-    """Llama a la API para un único chunk. Incluye reintentos con backoff exponencial."""
+    """Call the API for a single chunk with exponential-backoff retries."""
     meta = chunk.get("metadata", {})
     chunk_id = meta.get("chunk_id", "unknown")
     n = n_pairs_for_chunk(
@@ -547,7 +547,7 @@ async def generate_for_chunk(
                     temperature=0.75,
                 )
 
-            # Verificar rechazo del modelo
+            # Treat model refusals as terminal for this chunk so resume does not retry them forever.
             choice = response.choices[0]
             if getattr(choice.message, "refusal", None):
                 logger.warning(
@@ -562,7 +562,7 @@ async def generate_for_chunk(
             return chunk, parsed.pares, "ok"
 
         except Exception as exc:
-            # Importar aquí para evitar dependencia en el top-level (puede no estar instalado aún)
+            # Import lazily so dry-runs and static inspection do not require the OpenAI package.
             try:
                 from openai import APIStatusError, RateLimitError
             except ImportError:
@@ -737,7 +737,7 @@ async def run_generation(
     status_file = status_path_for_progress(progress_file)
     started_at = time.time()
 
-    # Solo procesar lo que no se haya procesado aún (resume-safe)
+    # Only schedule chunks that are not already complete; this keeps resume idempotent.
     pending = [
         c
         for c in chunks
@@ -799,7 +799,7 @@ async def run_generation(
     quality_relevancy_sum = 0.0
     quality_roundtrip_sum = 0.0
 
-    # as_completed para poder escribir y actualizar checkpoint en cuanto cada tarea termina
+    # Stream completed tasks so outputs and checkpoints are flushed as soon as each chunk finishes.
     for coro in atqdm(
         asyncio.as_completed(tasks), total=len(tasks), desc="Generando QA"
     ):
@@ -864,8 +864,8 @@ async def run_generation(
             save_progress(progress_file, processed_ids)
             logger.warning("Chunk omitido por rechazo del modelo: %s", chunk_id)
         elif status == "ok":
-            # El modelo devolvió una lista vacía válida. Lo marcamos como procesado
-            # para no reintentarlo indefinidamente al reanudar.
+            # An empty list is a valid model response. Mark it processed to avoid
+            # retrying an unsupported/low-signal chunk indefinitely.
             failed += 1
             processed_ids.add(chunk_id)
             save_progress(progress_file, processed_ids)
@@ -1144,7 +1144,7 @@ def chunk_content_role(chunk: Dict[str, Any]) -> str:
 
 
 def looks_spanish(text: str) -> bool:
-    """Heurística liviana para detectar español cuando falta metadata.language."""
+    """Lightweight Spanish detector used when metadata.language is missing."""
     lowered = f" {str(text).lower()} "
     score = 0
     spanish_signals = [
@@ -1160,18 +1160,17 @@ def looks_spanish(text: str) -> bool:
 
 
 def language_matches(chunk: Dict[str, Any], allowed_languages: Set[str]) -> bool:
-    """Evalúa si un chunk pasa el filtro de idioma, con fallback si falta metadata."""
+    """Return whether a chunk passes the language filter, with metadata fallback."""
     meta = chunk_metadata(chunk)
     lang = str(meta.get("language", "")).strip().lower()
     if lang:
         return lang in allowed_languages
 
-    # Fallback para chunks sin metadata.language:
-    # si el conjunto permitido incluye español, aceptamos chunks que parezcan en español.
+    # When language metadata is absent, accept Spanish-looking chunks if Spanish is allowed.
     if "es" in allowed_languages:
         return looks_spanish(str(chunk.get("text", "")))
 
-    # Si no sabemos el idioma y no hay español como permitido, no filtramos agresivamente.
+    # Avoid aggressive filtering when the language is unknown and Spanish is not the target.
     return True
 
 
@@ -1336,7 +1335,7 @@ def main() -> None:
     else:
         logger.info("Filtro por content_role deshabilitado (--no-content-role-filter).")
 
-    # Reportar distribución de topics tras filtro
+    # Log topic coverage after filtering so quality regressions are easy to spot.
     topic_dist = compute_topic_distribution(chunks)
     if topic_dist:
         logger.info("Topics tras filtro: %s", dict(sorted(topic_dist.items())))
@@ -1353,7 +1352,7 @@ def main() -> None:
         chunks = chunks[: args.limit]
         logger.info("Limitando chunks: %d → %d", before, len(chunks))
 
-    # ── Estimación de costo y estadísticas ──────────────────────────────────
+    # ── Cost estimate and run summary ────────────────────────────────────────
     expected_pairs, cost_est = estimate_cost(
         chunks, args.model, args.min_pairs, args.max_pairs
     )
@@ -1399,7 +1398,7 @@ def main() -> None:
         logger.info("Modo dry-run: no se llamó a la API.")
         return
 
-    # ── Ejecutar generación ──────────────────────────────────────────────────
+    # ── Execute generation ───────────────────────────────────────────────────
     try:
         from openai import AsyncOpenAI
     except ImportError:

@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
 
 <img src="./public/app-icon.png" alt="Logo" width="140" height="140" />
 
@@ -24,7 +24,7 @@
 [![Pipeline](https://img.shields.io/badge/Pipeline-8%20pasos-A78BFA?style=for-the-badge&logo=apacheairflow&logoColor=white&labelColor=1e293b)](./docs/obstetrics_lm_pipeline.md)
 [![Licencia](https://img.shields.io/badge/Licencia-MIT-FACC15?style=for-the-badge&logo=opensourceinitiative&logoColor=black&labelColor=1e293b)](./LICENSE)
 
-[Instalación](#-instalación) · [Entregables](#-entregables) · [Pipeline](#-pipeline) · [Resultados](#-resultados) · [Fine-Tuning](#-fine-tuning) · [Docs](./docs)
+[Instalación](#instalación) · [Entregables](#entregables) · [Pipeline](#pipeline) · [Resultados](#resultados) · [Fine-Tuning](#fine-tuning) · [Docs](./docs)
 
 </div>
 
@@ -51,7 +51,7 @@ Este proyecto ofrece **dos productos de investigación independientes**. Elegí 
 
 Para investigadores que prefieren **generar su propio QA** a partir del corpus.
 
-- **2,268 chunks** de texto clínico en español, enriquecidos con metadatos
+- **2,223 chunks** de texto clínico en español, enriquecidos con metadatos
 - Cada chunk incluye: `source_pdf`, `pages`, `section_type`, `content_role`, `clinical_score`, `topics` (18 tópicos), `token_estimate`
 - Split 90/5/5 a nivel de documento — **cero fuga de datos**
 - Disponible en `datasets/obstetrics/lm/`
@@ -231,9 +231,17 @@ python scripts/run_full_pipeline.py
 **Generar pares de QA:**
 
 ```bash
+# Generar para cada split (ajustá las rutas según corresponda)
 python scripts/generate_synthetic_qa.py \
+  --input datasets/obstetrics/lm/train_lm.jsonl \
+  --raw-output datasets/obstetrics/qa/final/train/raw.jsonl \
+  --sft-output datasets/obstetrics/qa/final/train/sft.jsonl \
+  --progress-file datasets/obstetrics/qa/final/train/progress.json \
+  --report-output datasets/obstetrics/qa/final/train/generation_report.json \
   --model gpt-5.4-mini \
   --min-pairs 2 --max-pairs 5
+
+# Repetir para validation y test cambiando las rutas de --input y --*-output
 ```
 
 **Fine-tuning (smoke test):**
@@ -357,11 +365,19 @@ python scripts/audit_dataset.py [--input-dir artifacts/obstetrics]
 
 ### `generate_synthetic_qa.py`
 ```bash
+# Generar para cada split (ajustá las rutas según corresponda)
 python scripts/generate_synthetic_qa.py \
+  --input datasets/obstetrics/lm/train_lm.jsonl \
+  --raw-output datasets/obstetrics/qa/final/train/raw.jsonl \
+  --sft-output datasets/obstetrics/qa/final/train/sft.jsonl \
+  --progress-file datasets/obstetrics/qa/final/train/progress.json \
+  --report-output datasets/obstetrics/qa/final/train/generation_report.json \
   --model gpt-5.4-mini \
   --min-pairs 2 --max-pairs 5 \
   --enable-quality-eval \
   --concurrency 8
+
+# Repetir para validation y test cambiando las rutas de --input y --*-output
 ```
 
 ### `evaluate_qa_with_ragas.py`
@@ -395,7 +411,7 @@ Tres capas aseguran la calidad del dataset:
 
 Cada chunk se etiqueta con tópicos clínicos relevantes:
 
-`hemorrhage` · `preeclampsia` · `gestational_diabetes` · `preterm_labor` · `infection` · `cesarean` · `vaginal_birth` · `newborn_care` · `contraception` · `menopause` · `infertility` · `prenatal_care` · `postpartum` · `fetal_monitoring` · `labor_induction` · `gynecologic_oncology` · `ultrasound` · `genetics`
+`hemorrhage` · `preeclampsia` · `diabetes_gestational` · `preterm_labor` · `infection` · `cesarean` · `vaginal_birth` · `newborn_care` · `contraception` · `menopause` · `infertility` · `prenatal_care` · `postpartum` · `fetal_monitoring` · `labor_induction` · `gynecologic_oncology` · `ultrasound` · `genetics`
 
 ## Documentación
 

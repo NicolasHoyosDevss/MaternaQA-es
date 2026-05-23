@@ -13,10 +13,17 @@ Construir un dataset clínico útil para fine-tuning supervisado, con pares preg
 
 ## 1. Generación de QA
 
-Script:
+Script (ejemplo para el split de entrenamiento; repetí para validation y test ajustando rutas):
 
 ```bash
-python scripts/generate_synthetic_qa.py
+python scripts/generate_synthetic_qa.py \
+  --input datasets/obstetrics/lm/train_lm.jsonl \
+  --raw-output datasets/obstetrics/qa/final/train/raw.jsonl \
+  --sft-output datasets/obstetrics/qa/final/train/sft.jsonl \
+  --progress-file datasets/obstetrics/qa/final/train/progress.json \
+  --report-output datasets/obstetrics/qa/final/train/generation_report.json \
+  --model gpt-5.4-mini \
+  --min-pairs 2 --max-pairs 5
 ```
 
 Entradas típicas:
@@ -33,7 +40,6 @@ Salidas por split:
 datasets/obstetrics/qa/final/<split>/raw.jsonl
 datasets/obstetrics/qa/final/<split>/sft.jsonl
 datasets/obstetrics/qa/final/<split>/progress.json
-datasets/obstetrics/qa/final/<split>/progress_status.json
 datasets/obstetrics/qa/final/<split>/generation_report.json
 ```
 

@@ -7,6 +7,7 @@ Esta carpeta conserva el contexto acumulado del proyecto para que las decisiones
 - `01_estado_actual.md` — qué existe hoy, qué tan sólido es y qué falta.
 - `02_decisiones_tecnicas.md` — decisiones tomadas y por qué.
 - `03_plan_evaluacion_y_benchmark.md` — cómo evaluar el futuro modelo SFT Q+A cuando no existe benchmark externo alineado.
+- `../article_methodology.md` — síntesis metodológica para redactar el artículo del dataset.
 
 ## Cómo usar esta carpeta
 

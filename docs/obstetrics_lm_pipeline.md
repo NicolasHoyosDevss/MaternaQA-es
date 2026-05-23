@@ -1,21 +1,146 @@
-# Obstetrics Dataset Pipeline
+# Pipeline LM de Obstetricia
 
-Este documento describe el pipeline activo del proyecto. Los pipelines antiguos de MedQuad, BioASQ y PubMedQA fueron retirados.
+Este documento describe el pipeline activo para convertir PDFs clínicos de obstetricia y ginecología en un corpus limpio, auditable y segmentado para entrenamiento o generación de QA.
+
+Los pipelines antiguos de MedQuad, BioASQ y PubMedQA no forman parte del flujo actual.
 
 ## Flujo Principal
 
 ```text
-PDFs en pdfs/obstetrics
-  -> extracción por página
-  -> limpieza clínica
-  -> segmentación en chunks
-  -> datasets/obstetrics/lm/train_lm.jsonl / validation_lm.jsonl / test_lm.jsonl
-  -> QA sintético opcional
+pdfs/obstetrics/*.pdf
+  -> extract_pdfs.py
+  -> clean_text.py
+  -> build_lm_dataset.py
+  -> audit_dataset.py
+  -> datasets/obstetrics/lm/{train,validation,test}_lm.jsonl
 ```
+
+Opcionalmente, el pipeline también extrae tablas y genera QA sintético.
+
+## 1. Extracción
+
+Script:
+
+```bash
+python scripts/extract_pdfs.py
+```
+
+Responsabilidades:
+
+- descubrir PDFs en `pdfs/obstetrics/`;
+- extraer texto por página con `PyMuPDF`;
+- usar `pdfplumber` como fallback si la extracción principal produce poco texto;
+- marcar páginas con posible necesidad de OCR;
+- crear o actualizar el manifiesto documental.
+
+Salidas:
+
+```text
+artifacts/obstetrics/corpus/raw_pages.jsonl
+artifacts/obstetrics/metadata/inventory.json
+```
+
+## 2. Limpieza
+
+Script:
+
+```bash
+python scripts/clean_text.py
+```
+
+Responsabilidades:
+
+- remover encabezados y pies repetidos;
+- normalizar ruido de extracción;
+- detectar secciones;
+- filtrar páginas no clínicas o no útiles;
+- conservar razón de descarte para auditoría.
+
+Salidas:
+
+```text
+artifacts/obstetrics/corpus/clean_pages.jsonl
+artifacts/obstetrics/reports/cleaning_report.json
+```
+
+Razones de descarte esperadas:
+
+- `too_short`;
+- `needs_ocr`;
+- `fragmented_text`;
+- `reference_heavy`;
+- `index_or_table_of_contents`;
+- `non_clinical_section`.
+
+## 3. Chunking y Splits
+
+Script:
+
+```bash
+python scripts/build_lm_dataset.py
+```
+
+Responsabilidades:
+
+- agrupar páginas limpias en chunks;
+- aplicar límites de tokens y solapamiento;
+- deduplicar contenido exacto o casi duplicado;
+- enriquecer chunks con tipo de sección, rol de contenido y temas;
+- filtrar por puntaje clínico mínimo;
+- crear splits a nivel de documento para evitar fuga entre train, validation y test.
+
+Salidas:
+
+```text
+artifacts/obstetrics/corpus/chunks.jsonl
+datasets/obstetrics/lm/train_lm.jsonl
+datasets/obstetrics/lm/validation_lm.jsonl
+datasets/obstetrics/lm/test_lm.jsonl
+artifacts/obstetrics/reports/build_report.json
+```
+
+Formato LM:
+
+```json
+{
+  "text": "Texto clínico limpio...",
+  "metadata": {
+    "source": "obstetrics_spanish",
+    "source_pdf": "documento.pdf",
+    "pages": [1, 2],
+    "chunk_id": "documento_00001"
+  }
+}
+```
+
+## 4. Auditoría
+
+Script:
+
+```bash
+python scripts/audit_dataset.py
+```
+
+Responsabilidades:
+
+- consolidar conteos de páginas, chunks y splits;
+- auditar fuga entre splits por PDF;
+- resumir cobertura temática;
+- resumir distribución por tipo documental;
+- reportar documentos excluidos;
+- incluir resumen de extracción de tablas.
+
+Salida:
+
+```text
+artifacts/obstetrics/reports/audit_report.json
+```
+
+El reporte debe revisarse antes de entrenar o publicar un dataset.
 
 ## Pipeline Incremental
 
-Uso normal cuando agregas PDFs nuevos:
+Uso normal al agregar PDFs:
 
 ```bash
 python scripts/run_incremental.py
@@ -23,13 +148,13 @@ python scripts/run_incremental.py
 
 Características:
 
-- Detecta PDFs nuevos o modificados.
-- Procesa solo esos PDFs.
-- Reemplaza registros previos si un PDF cambió.
-- Hace append de chunks aceptados a los JSONL existentes.
-- Mantiene el manifiesto `artifacts/obstetrics/metadata/processed_pdfs_manifest.json`.
+- detecta PDFs nuevos o modificados;
+- procesa solo esos archivos;
+- reemplaza registros previos de PDFs modificados;
+- conserva chunks existentes no afectados;
+- actualiza `processed_pdfs_manifest.json`.
 
-Opciones:
+Opciones útiles:
 
 ```bash
 python scripts/run_incremental.py --recursive
@@ -40,77 +165,42 @@ python scripts/run_incremental.py --input-dir path/to/pdfs
 
 ## Reconstrucción Completa
 
-Úsalo cuando cambies reglas de limpieza/chunking o quieras reproducir todo desde cero:
+Usar cuando cambien reglas de limpieza, chunking, scoring o split:
 
 ```bash
 python scripts/run_full_pipeline.py
 ```
 
-## Pasos Internos
-
-Los runners llaman internamente:
+Opciones frecuentes:
 
 ```bash
-python scripts/extract_pdfs.py
-python scripts/clean_text.py
-python scripts/build_lm_dataset.py
-python scripts/audit_dataset.py
+python scripts/run_full_pipeline.py --recursive
+python scripts/run_full_pipeline.py --no-extract-tables
+python scripts/run_full_pipeline.py --generate-qa
+python scripts/run_full_pipeline.py --qa-dry-run --generate-qa
 ```
 
-## Salidas LM
+## Extracción de Tablas
 
-```text
-artifacts/obstetrics/corpus/raw_pages.jsonl
-artifacts/obstetrics/corpus/clean_pages.jsonl
-artifacts/obstetrics/corpus/chunks.jsonl
-datasets/obstetrics/lm/train_lm.jsonl
-datasets/obstetrics/lm/validation_lm.jsonl
-datasets/obstetrics/lm/test_lm.jsonl
-artifacts/obstetrics/reports/audit_report.json
-```
-
-Formato:
-
-```json
-{"text": "Texto clínico limpio...", "metadata": {"source": "obstetrics_spanish", "source_pdf": "...", "pages": [1, 2], "chunk_id": "..."}}
-```
-
-## QA Sintético
-
-Dry run:
+Script:
 
 ```bash
-python scripts/generate_synthetic_qa.py --dry-run --limit 5
-```
-
-Generación real:
-
-```bash
-set OPENAI_API_KEY=your_key_here
-python scripts/generate_synthetic_qa.py --limit 20
+python scripts/extract_tables.py
 ```
 
 Salidas:
 
 ```text
-datasets/obstetrics/qa/final/<split>/raw.jsonl
-datasets/obstetrics/qa/final/<split>/sft.jsonl
-datasets/obstetrics/qa/final/<split>/progress.json
-datasets/obstetrics/qa/final/<split>/generation_report.json
+artifacts/obstetrics/tables/tables.jsonl
+artifacts/obstetrics/reports/table_extraction_report.json
 ```
 
-Formato SFT:
+Las tablas se mantienen como artefacto auditable separado del texto principal. No todas las tablas son adecuadas para QA sin revisión, por lo que conviene tratarlas como evidencia complementaria.
 
-```json
-{"messages": [{"role": "system", "content": "..."}, {"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}], "metadata": {"source": "obstetrics_spanish_synthetic"}}
-```
+## Buenas Prácticas
 
-El checkpoint permite reanudar. Los errores de API no se marcan como procesados, por lo que se reintentan al relanzar.
-
-## Notas
-
-- `PyMuPDF` es el extractor principal.
-- `pdfplumber` es fallback para páginas con poco texto.
-- OCR real no está incluido todavía; páginas problemáticas se marcan como `needs_ocr`.
-- Revisa `audit_report.json` antes de entrenar.
-- Revisa `docs/research_notes/` para estado metodológico, decisiones y plan de benchmark.
+- Agregar PDFs en `pdfs/obstetrics/` y procesarlos con el runner incremental.
+- Revisar `audit_report.json` después de cada corrida importante.
+- Usar reconstrucción completa si cambian reglas de limpieza o chunking.
+- Mantener splits por documento para evitar contaminación entre entrenamiento y evaluación.
+- Documentar decisiones metodológicas en `docs/research_notes/`.

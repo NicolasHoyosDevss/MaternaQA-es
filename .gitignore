@@ -25,8 +25,20 @@ env/
 .DS_Store
 Thumbs.db
 
-# Logs / temp
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
 *.log
+papers/**/IEEEtran.cls
+papers/**/IEEEtran.bst
+
+# Logs / temp
 tmp/
 temp/
 

@@ -34,6 +34,7 @@ Thumbs.db
 *.fls
 *.fdb_latexmk
 *.synctex.gz
+*.log
 papers/**/IEEEtran.cls
 papers/**/IEEEtran.bst
 

@@ -119,7 +119,7 @@ def load_adapter_config(adapter_dir: Path) -> dict[str, Any]:
     config_path = adapter_dir / "adapter_config.json"
     if not config_path.exists():
         raise FileNotFoundError(f"No se encontro adapter_config.json en {adapter_dir}")
-    with open(config_path) as f:
+    with open(config_path, encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -232,7 +232,7 @@ def load_test_examples(
         raise FileNotFoundError(f"No se encontro test.jsonl en {test_file}")
 
     examples = []
-    with open(test_file) as f:
+    with open(test_file, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if line:
@@ -305,7 +305,7 @@ def run_inference(
 
 def save_results(results: list[dict[str, Any]], output_file: Path) -> None:
     output_file.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_file, "w") as f:
+    with open(output_file, "w", encoding="utf-8", newline="\n") as f:
         for result in results:
             f.write(json.dumps(result, ensure_ascii=False) + "\n")
     print(f"Resultados guardados en: {output_file}")

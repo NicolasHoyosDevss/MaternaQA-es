@@ -137,6 +137,45 @@ Antes de publicar o entrenar un modelo final, revisar una muestra estratificada:
 
 La revisión humana debe priorizar utilidad clínica, precisión, completitud, claridad, ausencia de alucinaciones y ausencia de recomendaciones peligrosas.
 
+## 8. Evaluación de Modelos Fine-Tuneados
+
+La evaluación del dataset y la evaluación del modelo son capas distintas. Para comparar adapters QLoRA, primero se generan predicciones sobre el mismo `test.jsonl` y luego se evalúa la respuesta generada contra la respuesta de referencia y el contexto fuente.
+
+Para comparar Gemma vs MedGemma:
+
+```bash
+python scripts/inference_qlora.py \
+  --adapter-dir outputs/gemma4-grounded \
+  --output-prefix outputs/gemma4-grounded/test
+
+python scripts/inference_qlora.py \
+  --adapter-dir outputs/medgemma-grounded \
+  --output-prefix outputs/medgemma-grounded/test
+```
+
+Para evaluar las predicciones de ambos modelos:
+
+```bash
+python scripts/evaluate_model_predictions.py \
+  --input outputs/gemma4-grounded/test_predictions.jsonl \
+  --output outputs/gemma4-grounded/test_eval.json
+
+python scripts/evaluate_model_predictions.py \
+  --input outputs/medgemma-grounded/test_predictions.jsonl \
+  --output outputs/medgemma-grounded/test_eval.json
+```
+
+Métricas recomendadas para comparar modelos:
+
+| Métrica | Rol |
+|---|---|
+| `faithfulness` | La respuesta generada está respaldada por el contexto fuente. |
+| `answer_relevancy` | La respuesta generada responde la pregunta. |
+| `answer_correctness` | La respuesta generada coincide con la respuesta de referencia. |
+| `semantic_similarity` | La respuesta generada es semánticamente similar a la referencia. |
+
+ROUGE/BLEU pueden reportarse como métricas auxiliares de solapamiento, pero no deberían decidir el resultado principal en respuestas clínicas abiertas: penalizan paráfrasis válidas y no detectan bien alucinaciones. La comparación principal debe combinar fidelidad al contexto, corrección contra referencia, relevancia y revisión humana estratificada.
+
 ## Lectura Correcta de las Capas
 
 | Capa | Rol |
@@ -145,3 +184,4 @@ La revisión humana debe priorizar utilidad clínica, precisión, completitud, c
 | Judge custom | Diagnóstico operativo y priorización. |
 | Ragas | Evaluación formal comparable. |
 | Revisión humana | Validación clínica y editorial final. |
+| Evaluación de modelo | Comparación de outputs Gemma/MedGemma contra test held-out. |

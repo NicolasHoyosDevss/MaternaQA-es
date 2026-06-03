@@ -14,13 +14,18 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import os
 import random
 import statistics
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List
 
+from dotenv import load_dotenv
 from pydantic import BaseModel, field_validator
+
+# Load environment variables from .env file (OPENAI_API_KEY, ANTHROPIC_API_KEY, etc.)
+load_dotenv()
 
 
 class CustomQuality(BaseModel):

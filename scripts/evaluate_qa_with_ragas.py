@@ -27,14 +27,29 @@ class CustomQuality(BaseModel):
     faithfulness: float
     answer_relevancy: float
     roundtrip_consistency: float
+    question_groundness: float
     verdict: str
     reason: str
 
-    @field_validator("faithfulness", "answer_relevancy", "roundtrip_consistency", mode="before")
+    @field_validator(
+        "faithfulness", "answer_relevancy", "roundtrip_consistency",
+        "question_groundness", mode="before",
+    )
     @classmethod
     def clamp_score(cls, value: Any) -> float:
         score = float(value)
         return max(0.0, min(1.0, score))
+
+
+def _detect_transport(custom_judge_model: str | None) -> str:
+    """Return which transport will be used for the custom judge."""
+    if not custom_judge_model:
+        return "none"
+    try:
+        import litellm  # noqa: F811
+        return "litellm"
+    except ImportError:
+        return "openai_native"
 
 
 ROUNDTRIP_SYSTEM_PROMPT = """\
@@ -60,20 +75,23 @@ Evalúa:
 1) faithfulness: qué tan respaldada está la respuesta por el contexto.
 2) answer_relevancy: qué tan bien responde la pregunta.
 3) roundtrip_consistency: qué tan consistente es con una segunda respuesta independiente.
+4) question_groundness: si la pregunta es respondible usando únicamente información del contexto.
+   Una pregunta bien fundamentada se puede responder con el contexto solo; no asume hechos externos,
+   no es ambigua ni trivial, y no pide información que el contexto no contiene.
 Retorna puntajes [0,1], verdict ("accept" o "reject") y reason breve.
 """
 
 CUSTOM_JUDGE_USER_TEMPLATE = """\
-Contexto:
+Contexto fuente:
 {context}
 
-Pregunta:
+Pregunta generada:
 {question}
 
-Respuesta original:
+Respuesta generada:
 {answer}
 
-Respuesta roundtrip:
+Respuesta independiente (roundtrip):
 {roundtrip_answer}
 """
 
@@ -97,6 +115,33 @@ def read_jsonl(path: Path) -> List[Dict[str, Any]]:
         for line in path.read_text(encoding="utf-8").splitlines()
         if line.strip()
     ]
+
+
+def build_chunk_lookup(lm_paths: List[Path]) -> Dict[str, str]:
+    """Load LM chunk text indexed by chunk_id for honest RAGAS evaluation."""
+    lookup: Dict[str, str] = {}
+    for lm_path in lm_paths:
+        if not lm_path.exists():
+            print(f"[EVAL] LM chunks file not found (skipped): {lm_path}", flush=True)
+            continue
+        for line in lm_path.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            record = json.loads(line)
+            cid = record.get("metadata", {}).get("chunk_id")
+            text = record.get("text")
+            if cid and text:
+                lookup[cid] = text
+    print(f"[EVAL] Loaded {len(lookup)} LM chunks for source-context lookup", flush=True)
+    return lookup
+
+
+def resolve_chunk_text(row: Dict[str, Any], chunk_lookup: Dict[str, str]) -> str:
+    """Return the full source chunk text for a QA row, falling back to contexto_fuente."""
+    cid = row.get("chunk_id")
+    if cid and cid in chunk_lookup:
+        return chunk_lookup[cid]
+    return str(row.get("contexto_fuente") or "")
 
 
 def parse_args() -> argparse.Namespace:
@@ -153,6 +198,18 @@ def parse_args() -> argparse.Namespace:
         help=(
             "Opcional. Si se define, además de Ragas calcula la validación custom "
             "sobre la misma muestra usando este modelo."
+        ),
+    )
+    parser.add_argument(
+        "--lm-chunks",
+        type=Path,
+        nargs="+",
+        default=None,
+        help=(
+            "Ruta(s) al archivo LM chunks (ej. datasets/obstetrics/lm/train_lm.jsonl). "
+            "Si se omite, se intenta derivar automáticamente del --input. "
+            "Se usa el texto completo del chunk como contexto para RAGAS Faithfulness "
+            "en lugar del contexto_fuente co-generado."
         ),
     )
     return parser.parse_args()
@@ -242,6 +299,7 @@ async def evaluate_rows(
     embedding_model: str,
     timeout_seconds: int,
     metric: str,
+    chunk_lookup: Dict[str, str] | None = None,
 ) -> List[Dict[str, Any]]:
     try:
         from openai import AsyncOpenAI
@@ -272,7 +330,8 @@ async def evaluate_rows(
     total = len(rows)
     for i, row in enumerate(rows, start=1):
         try:
-            contexts = [row["contexto_fuente"]]
+            source_context = resolve_chunk_text(row, chunk_lookup or {})
+            contexts = [source_context]
             faith_value = None
             rel_value = None
             faith_reason = ""
@@ -336,6 +395,7 @@ def summarize(results: List[Dict[str, Any]]) -> Dict[str, Any]:
     custom_faith = [r["custom_faithfulness"] for r in results if r.get("custom_faithfulness") is not None]
     custom_rel = [r["custom_answer_relevancy"] for r in results if r.get("custom_answer_relevancy") is not None]
     custom_rt = [r["custom_roundtrip_consistency"] for r in results if r.get("custom_roundtrip_consistency") is not None]
+    custom_qg = [r["custom_question_groundness"] for r in results if r.get("custom_question_groundness") is not None]
     errors = sum(1 for r in results if "error" in r)
     return {
         "pairs_evaluated": len(results),
@@ -357,6 +417,7 @@ def summarize(results: List[Dict[str, Any]]) -> Dict[str, Any]:
         "avg_custom_faithfulness": round(statistics.mean(custom_faith), 4) if custom_faith else None,
         "avg_custom_answer_relevancy": round(statistics.mean(custom_rel), 4) if custom_rel else None,
         "avg_custom_roundtrip_consistency": round(statistics.mean(custom_rt), 4) if custom_rt else None,
+        "avg_custom_question_groundness": round(statistics.mean(custom_qg), 4) if custom_qg else None,
         "questions_with_meta_reference": sum(1 for r in results if r.get("question_has_meta_reference")),
         "answers_with_meta_reference": sum(1 for r in results if r.get("answer_has_meta_reference")),
     }
@@ -366,64 +427,131 @@ async def evaluate_custom_quality(
     rows: List[Dict[str, Any]],
     model: str,
     timeout_seconds: int,
+    chunk_lookup: Dict[str, str] | None = None,
 ) -> List[Dict[str, Any]]:
-    from openai import AsyncOpenAI
+    # ── provider routing: litellm for multi-provider, OpenAI fallback ──
+    _use_litellm = False
+    try:
+        import litellm  # noqa: F811
+        _use_litellm = True
+    except ImportError:
+        pass
 
-    client = AsyncOpenAI()
+    _oa_client = None
+    if not _use_litellm:
+        from openai import AsyncOpenAI
+        _oa_client = AsyncOpenAI()
+
     results: List[Dict[str, Any]] = []
     total = len(rows)
     for i, row in enumerate(rows, start=1):
         print(f"[CUSTOM] par {i}/{total} -> quality judge...", flush=True)
         try:
-            context = str(row.get("contexto_fuente") or "")
-            roundtrip_response = await asyncio.wait_for(
-                client.chat.completions.create(
+            context = resolve_chunk_text(row, chunk_lookup or {})
+
+            # ── roundtrip generation ──
+            if _use_litellm:
+                rt_resp = await litellm.acompletion(
                     model=model,
                     messages=[
                         {"role": "system", "content": ROUNDTRIP_SYSTEM_PROMPT},
-                        {
-                            "role": "user",
-                            "content": ROUNDTRIP_USER_TEMPLATE.format(
+                        {"role": "user", "content": ROUNDTRIP_USER_TEMPLATE.format(
+                            context=context,
+                            question=row.get("pregunta", ""),
+                        )},
+                    ],
+                    max_tokens=1024,
+                    timeout=timeout_seconds,
+                )
+                roundtrip_answer = (rt_resp.choices[0].message.content or "").strip()
+            else:
+                rt_resp = await asyncio.wait_for(
+                    _oa_client.chat.completions.create(
+                        model=model,
+                        messages=[
+                            {"role": "system", "content": ROUNDTRIP_SYSTEM_PROMPT},
+                            {"role": "user", "content": ROUNDTRIP_USER_TEMPLATE.format(
                                 context=context,
                                 question=row.get("pregunta", ""),
-                            ),
-                        },
-                    ],
-                ),
-                timeout=timeout_seconds,
-            )
-            roundtrip_answer = (roundtrip_response.choices[0].message.content or "").strip()
+                            )},
+                        ],
+                    ),
+                    timeout=timeout_seconds,
+                )
+                roundtrip_answer = (rt_resp.choices[0].message.content or "").strip()
 
-            judge_response = await asyncio.wait_for(
-                client.chat.completions.parse(
+            # ── quality judge ──
+            if _use_litellm:
+                judge_system = (
+                    CUSTOM_JUDGE_SYSTEM_PROMPT
+                    + "\n\nResponde ÚNICAMENTE con un objeto JSON. Usa los campos exactos: "
+                    "faithfulness (float), answer_relevancy (float), "
+                    "roundtrip_consistency (float), question_groundness (float), "
+                    "verdict (string: \"accept\" o \"reject\"), reason (string breve)."
+                )
+                judge_raw = await litellm.acompletion(
                     model=model,
                     messages=[
-                        {"role": "system", "content": CUSTOM_JUDGE_SYSTEM_PROMPT},
-                        {
-                            "role": "user",
-                            "content": CUSTOM_JUDGE_USER_TEMPLATE.format(
+                        {"role": "system", "content": judge_system},
+                        {"role": "user", "content": CUSTOM_JUDGE_USER_TEMPLATE.format(
+                            context=context,
+                            question=row.get("pregunta", ""),
+                            answer=row.get("respuesta", ""),
+                            roundtrip_answer=roundtrip_answer,
+                        )},
+                    ],
+                    response_format={"type": "json_object"},
+                    max_tokens=1024,
+                    timeout=timeout_seconds,
+                )
+                judge_text = (judge_raw.choices[0].message.content or "{}").strip()
+                data = json.loads(judge_text)
+                parsed_data = {
+                    "faithfulness": float(data.get("faithfulness", 0.0)),
+                    "answer_relevancy": float(data.get("answer_relevancy", 0.0)),
+                    "roundtrip_consistency": float(data.get("roundtrip_consistency", 0.0)),
+                    "question_groundness": float(data.get("question_groundness", 0.0)),
+                    "verdict": str(data.get("verdict", "reject")),
+                    "reason": str(data.get("reason", "")),
+                }
+            else:
+                judge_resp = await asyncio.wait_for(
+                    _oa_client.chat.completions.parse(
+                        model=model,
+                        messages=[
+                            {"role": "system", "content": CUSTOM_JUDGE_SYSTEM_PROMPT},
+                            {"role": "user", "content": CUSTOM_JUDGE_USER_TEMPLATE.format(
                                 context=context,
                                 question=row.get("pregunta", ""),
                                 answer=row.get("respuesta", ""),
                                 roundtrip_answer=roundtrip_answer,
-                            ),
-                        },
-                    ],
-                    response_format=CustomQuality,
-                ),
-                timeout=timeout_seconds,
-            )
-            parsed = judge_response.choices[0].message.parsed
-            if parsed is None:
-                raise RuntimeError("custom_judge_parse_none")
+                            )},
+                        ],
+                        response_format=CustomQuality,
+                    ),
+                    timeout=timeout_seconds,
+                )
+                parsed = judge_resp.choices[0].message.parsed
+                if parsed is None:
+                    raise RuntimeError("custom_judge_parse_none")
+                parsed_data = {
+                    "faithfulness": parsed.faithfulness,
+                    "answer_relevancy": parsed.answer_relevancy,
+                    "roundtrip_consistency": parsed.roundtrip_consistency,
+                    "question_groundness": parsed.question_groundness,
+                    "verdict": parsed.verdict,
+                    "reason": parsed.reason,
+                }
+
             results.append(
                 {
                     "qa_id": row.get("qa_id"),
-                    "custom_faithfulness": parsed.faithfulness,
-                    "custom_answer_relevancy": parsed.answer_relevancy,
-                    "custom_roundtrip_consistency": parsed.roundtrip_consistency,
-                    "custom_verdict": parsed.verdict,
-                    "custom_reason": parsed.reason,
+                    "custom_faithfulness": parsed_data["faithfulness"],
+                    "custom_answer_relevancy": parsed_data["answer_relevancy"],
+                    "custom_roundtrip_consistency": parsed_data["roundtrip_consistency"],
+                    "custom_question_groundness": parsed_data["question_groundness"],
+                    "custom_verdict": parsed_data["verdict"],
+                    "custom_reason": parsed_data["reason"],
                 }
             )
         except Exception as exc:
@@ -433,6 +561,7 @@ async def evaluate_custom_quality(
                     "custom_faithfulness": None,
                     "custom_answer_relevancy": None,
                     "custom_roundtrip_consistency": None,
+                    "custom_question_groundness": None,
                     "custom_verdict": None,
                     "custom_reason": "",
                     "custom_error_type": type(exc).__name__,
@@ -453,6 +582,40 @@ async def main_async(args: argparse.Namespace) -> None:
         flush=True,
     )
 
+    # ── methodology guard: prevent self-evaluation bias ──
+    if args.custom_judge_model and args.custom_judge_model == args.llm_model:
+        print(
+            "[EVAL] ⚠  WARNING: --custom-judge-model is the same as --llm-model "
+            f"({args.llm_model}). This means the same model evaluates its own generated "
+            "QA — introducing self-evaluation bias. For honest methodology, use a different model "
+            "(e.g., --custom-judge-model gpt-4o while --llm-model gpt-4o-mini).",
+            flush=True,
+        )
+
+    # Resolve LM chunk paths for honest source-context evaluation.
+    lm_paths: List[Path] = list(args.lm_chunks or [])
+    if not lm_paths:
+        # Auto-derive from input path convention:
+        #   datasets/obstetrics/qa/final/{split}/raw.jsonl
+        #   -> datasets/obstetrics/lm/{split}_lm.jsonl
+        input_str = str(args.input)
+        for split_name in ("train", "validation", "test"):
+            if f"/qa/final/{split_name}/" in input_str:
+                candidate = Path(f"datasets/obstetrics/lm/{split_name}_lm.jsonl")
+                if candidate.exists():
+                    lm_paths.append(candidate)
+                    print(f"[EVAL] Auto-derived LM chunks: {candidate}", flush=True)
+                break
+        if not lm_paths:
+            print(
+                "[EVAL] No --lm-chunks provided and could not auto-derive path. "
+                "Falling back to contexto_fuente (co-generated excerpt). "
+                "Pass --lm-chunks for honest source-context evaluation.",
+                flush=True,
+            )
+
+    chunk_lookup = build_chunk_lookup(lm_paths) if lm_paths else {}
+
     # User-facing behavior: one command.
     # Internal implementation: two metric passes with a final merge.
     print("[RAGAS] Calculando faithfulness...", flush=True)
@@ -462,6 +625,7 @@ async def main_async(args: argparse.Namespace) -> None:
         args.embedding_model,
         args.timeout_seconds,
         metric="faithfulness",
+        chunk_lookup=chunk_lookup or None,
     )
     print("[RAGAS] Calculando answer_relevancy...", flush=True)
     rel_rows = await evaluate_rows(
@@ -470,6 +634,7 @@ async def main_async(args: argparse.Namespace) -> None:
         args.embedding_model,
         args.timeout_seconds,
         metric="answer_relevancy",
+        chunk_lookup=chunk_lookup or None,
     )
 
     faith_by_id = {r.get("qa_id"): r for r in faith_rows}
@@ -478,7 +643,10 @@ async def main_async(args: argparse.Namespace) -> None:
     custom_by_id: Dict[str, Dict[str, Any]] = {}
     if args.custom_judge_model:
         print(f"[CUSTOM] Calculando validación custom con {args.custom_judge_model}...", flush=True)
-        custom_rows = await evaluate_custom_quality(rows, args.custom_judge_model, args.timeout_seconds)
+        custom_rows = await evaluate_custom_quality(
+            rows, args.custom_judge_model, args.timeout_seconds,
+            chunk_lookup=chunk_lookup or None,
+        )
         custom_by_id = {r.get("qa_id"): r for r in custom_rows}
 
     results = []
@@ -502,6 +670,7 @@ async def main_async(args: argparse.Namespace) -> None:
             "custom_faithfulness": c.get("custom_faithfulness"),
             "custom_answer_relevancy": c.get("custom_answer_relevancy"),
             "custom_roundtrip_consistency": c.get("custom_roundtrip_consistency"),
+            "custom_question_groundness": c.get("custom_question_groundness"),
             "custom_verdict": c.get("custom_verdict"),
             "custom_reason": c.get("custom_reason", ""),
             **basic_cleanliness(row),
@@ -524,7 +693,7 @@ async def main_async(args: argparse.Namespace) -> None:
         output = args.input.with_name(f"{prefix}{args.input.stem}.json")
 
     report = {
-        "script_version": "qa_sample_eval_v1",
+        "script_version": "qa_sample_eval_v2",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "input_file": str(args.input),
         "total_pairs_in_input": len(all_rows),
@@ -532,11 +701,17 @@ async def main_async(args: argparse.Namespace) -> None:
         "sample_size_requested": args.sample_size,
         "sample_seed": args.seed if args.sample_size else None,
         "execution": "single_command_two_internal_passes",
+        "source_context": {
+            "method": "full_source_chunk" if chunk_lookup else "contexto_fuente_excerpt",
+            "lm_chunk_files": [str(p) for p in lm_paths],
+            "chunks_loaded": len(chunk_lookup),
+        },
         "ragas_models": {
             "llm_model": args.llm_model,
             "embedding_model": args.embedding_model,
         },
         "custom_judge_model": args.custom_judge_model,
+        "custom_judge_transport": _detect_transport(args.custom_judge_model),
         "summary": summarize(results),
         "per_pair": results,
     }

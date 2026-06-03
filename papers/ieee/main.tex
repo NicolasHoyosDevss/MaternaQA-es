@@ -25,7 +25,7 @@ email@example.com}}
 \maketitle
 
 \begin{abstract}
-Spanish clinical natural language processing lacks open, well-documented question--answering resources focused on pregnancy and maternal health. This paper presents MaternaQA-es, a synthetic Spanish clinical question--answering dataset constructed from curated medical documents covering pregnancy, prenatal care, labor and delivery, postpartum care, fetal monitoring, obstetric emergencies, and related maternal-health topics. The dataset was created through a source-traceable process involving PDF text extraction, page-level cleaning, clinical-content filtering, chunk construction, synthetic question--answer generation, document-level data splitting, and post-hoc quality assessment. The current release contains 5,727 question--answer pairs derived from 1,953 source chunks and 57 source PDFs, with separate closed-book, grounded, and flat-audit variants to support supervised fine-tuning, evidence-conditioned question answering, dataset analysis, and retrieval-augmented generation research. We report corpus statistics, split composition, topic coverage, source-traceability controls, grounding analysis, and RAGAS-based estimates of faithfulness and answer relevancy. MaternaQA-es is intended as a research resource for Spanish maternal-health NLP and should not be used for direct clinical decision-making without independent expert validation.
+Spanish clinical natural language processing has few open, well-documented question--answering resources focused on pregnancy and maternal health. This paper presents MaternaQA-es, a synthetic Spanish clinical question--answering dataset constructed from curated medical documents covering pregnancy, prenatal care, labor and delivery, postpartum care, fetal monitoring, obstetric emergencies, and related maternal-health topics. The dataset was created through a source-traceable process involving PDF text extraction, page-level cleaning, clinical-content filtering, chunk construction, synthetic question--answer generation, document-level data splitting, and post-hoc quality assessment. The current release contains 5,727 question--answer pairs derived from 1,953 source chunks and 57 source PDFs. It provides three complementary views: a closed-book supervised fine-tuning format, a grounded context-question-answer format, and a flat JSONL audit format. We report corpus statistics, split composition, topic coverage, source-traceability controls, grounding analysis, and RAGAS-based estimates of faithfulness and answer relevancy. MaternaQA-es contributes a reusable dataset and documentation baseline for Spanish maternal-health NLP research, evidence-conditioned question answering, dataset analysis, and retrieval-augmented generation studies.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -35,19 +35,19 @@ clinical NLP, Spanish medical dataset, maternal health, pregnancy, synthetic que
 \section{Introduction}
 Question--answering (QA) datasets have shaped progress in natural language processing by making tasks measurable, reusable, and comparable across systems. General-domain resources such as SQuAD and Natural Questions established influential dataset construction patterns for reading comprehension and open-domain QA, including clear source selection, annotation protocols, dataset analysis, and baseline evaluation \cite{Rajpurkar2016SQuAD,Kwiatkowski2019NaturalQuestions}. Biomedical QA datasets extended this paradigm to medicine, including PubMedQA for biomedical research abstracts \cite{Jin2019PubMedQA}, MedQuAD for medical consumer-health questions from trusted sources \cite{Abacha2019MedQuAD}, MedMCQA for medical exam-style reasoning \cite{Pal2022MedMCQA}, and BioASQ for biomedical semantic indexing and QA challenges \cite{Tsatsaronis2015BioASQ}. However, Spanish-language resources focused specifically on pregnancy and maternal health remain limited compared with English and broad-domain biomedical QA datasets.
 
-Pregnancy and maternal health form a clinically important domain for language technologies. The domain includes preventive care, antenatal risk stratification, fetal monitoring, hypertensive disorders of pregnancy, diabetes in pregnancy, labor and delivery, postpartum complications, infection, medication safety, and newborn care. These topics require precise terminology and careful grounding because generated answers may be misinterpreted as clinical advice. As a result, dataset construction in this area must document not only the final examples, but also the provenance of source material, the rationale for inclusion and exclusion, the transformation from source text to QA pairs, quality controls, and responsible-use boundaries.
+Pregnancy and maternal health form a clinically important domain for language technologies. The domain includes preventive care, antenatal risk stratification, fetal monitoring, hypertensive disorders of pregnancy, diabetes in pregnancy, labor and delivery, postpartum complications, infection, medication safety, and newborn care. These topics require precise terminology, source grounding, and careful documentation. Dataset construction in this area therefore needs to report not only the final examples, but also the provenance of source material, the rationale for inclusion and exclusion, the transformation from source text to QA pairs, and the quality controls applied before release.
 
-This paper introduces \textbf{MaternaQA-es}, a synthetic Spanish clinical QA dataset for pregnancy and maternal-health research. The contribution is not merely a software pipeline. The paper frames MaternaQA-es as a dataset creation and documentation effort: a curated resource with explicit source traceability, document-level splits, multiple publication variants, quality assessment, and stated limitations. This framing follows current calls for transparent dataset documentation, including datasheets for datasets \cite{Gebru2021Datasheets}, data statements for NLP \cite{Bender2018DataStatements}, and data cards \cite{Pushkarna2022DataCards}.
+This paper introduces \textbf{MaternaQA-es}, a synthetic Spanish clinical QA dataset for pregnancy and maternal-health research. MaternaQA-es is a curated dataset with explicit source traceability, document-level splits, multiple publication variants, quality assessment, and release documentation. This framing follows current calls for transparent dataset documentation, including datasheets for datasets \cite{Gebru2021Datasheets}, data statements for NLP \cite{Bender2018DataStatements}, and data cards \cite{Pushkarna2022DataCards}.
 
 The contributions of this work are fourfold:
 \begin{itemize}
     \item We introduce MaternaQA-es, a synthetic Spanish clinical QA dataset focused on pregnancy and maternal health.
     \item We document a source-traceable construction methodology from curated medical PDFs, including extraction, cleaning, chunking, synthetic QA generation, and document-level split assignment.
     \item We release three complementary dataset views: a closed-book supervised fine-tuning format, a grounded context-question-answer format, and a flat JSONL audit format.
-    \item We report quality and documentation evidence, including leakage controls, topic coverage, grounding analysis, RAGAS-based faithfulness and answer-relevancy estimates, and explicit limitations for responsible use.
+    \item We report quality and documentation evidence, including leakage controls, topic coverage, grounding analysis, RAGAS-based faithfulness and answer-relevancy estimates, and release limitations.
 \end{itemize}
 
-Although MaternaQA-es was designed to support downstream fine-tuning and benchmarking of open language models, this paper focuses on the dataset itself: its motivation, construction, documentation, quality assessment, and responsible release. Model adaptation experiments are treated as a separate downstream study.
+This paper focuses on the dataset: its motivation, construction, documentation, quality assessment, and release package.
 
 \section{Related Work}
 \subsection{QA Datasets and Biomedical QA}
@@ -55,52 +55,53 @@ SQuAD demonstrated that large-scale QA datasets can be built by pairing source p
 
 Biomedical QA resources adapt QA design to medical information needs. PubMedQA uses PubMed abstracts to answer biomedical research questions and includes expert-labeled, unlabeled, and artificially generated subsets \cite{Jin2019PubMedQA}. MedQuAD collects medical QA pairs from National Institutes of Health sources \cite{Abacha2019MedQuAD}. MedMCQA provides a large multiple-choice medical QA benchmark covering multiple medical subjects \cite{Pal2022MedMCQA}. BioASQ organizes biomedical semantic indexing and QA challenges and emphasizes the retrieval and synthesis of biomedical evidence \cite{Tsatsaronis2015BioASQ}. More recent clinical QA work, such as RealMedQA, investigates realistic biomedical questions generated from clinical recommendations and compares human and LLM-assisted generation under verification workflows \cite{Kell2025RealMedQA}. MaternaQA-es differs from these resources by focusing on Spanish maternal-health documents and by releasing both closed-book and grounded variants from a source-traceable synthetic generation process. Table~\ref{tab:related_datasets} summarizes key characteristics.
 
-\begin{table}[t]
-\caption{Comparison with Related Biomedical QA Datasets}
+\begin{table*}[t]
+\caption{How MaternaQA-es Compares with Established QA Datasets}
 \label{tab:related_datasets}
 \centering
-\footnotesize
-\begin{tabular}{|p{0.18\columnwidth}|p{0.10\columnwidth}|p{0.18\columnwidth}|r|p{0.20\columnwidth}|c|}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{|p{0.15\textwidth}|p{0.10\textwidth}|p{0.18\textwidth}|p{0.10\textwidth}|p{0.17\textwidth}|p{0.14\textwidth}|}
 \hline
-\textbf{Dataset} & \textbf{Lang.} & \textbf{Domain} & \textbf{QA} & \textbf{QA type} & \textbf{Hum.} \\
+\textbf{Dataset} & \textbf{Language} & \textbf{Domain} & \textbf{Question--answer pairs} & \textbf{Question--answer format} & \textbf{Human-authored answers} \\
 \hline
-SQuAD v1.1    & EN & General (Wiki)   & 98k+ & Extractive & Yes \\
-Natural Qs.   & EN & General (Google) & 300k+ & Long-form  & Yes \\
-PubMedQA      & EN & Biomed. lit.     & 211k  & Yes/no/maybe & Yes \\
-MedQuAD       & EN & Consumer med.    & 47k   & QA pairs   & No$^*$ \\
-MedMCQA       & EN & Medical exams    & 194k  & MC-QA      & No \\
-BioASQ        & EN & Biomed. lit.     & 4k+   & Multiform  & Yes \\
-RealMedQA     & EN & Clin. guidelines & 700   & Long-form  & Yes \\
-\textbf{MaternaQA-es} & \textbf{ES} & \textbf{Maternal health} & \textbf{5,727} & \textbf{6 types} & \textbf{No} \\
+SQuAD v1.1    & English & General Wikipedia passages & 98k+ & Extractive reading comprehension & Yes \\
+Natural Questions & English & General Google queries and Wikipedia pages & 300k+ & Long-form and short-answer QA & Yes \\
+PubMedQA      & English & Biomedical literature abstracts & 211k  & Yes/no/maybe biomedical QA & Yes \\
+MedQuAD       & English & Consumer health information & 47k   & Medical question--answer pairs & No$^*$ \\
+MedMCQA       & English & Medical examinations & 194k  & Multiple-choice medical QA & No \\
+BioASQ        & English & Biomedical literature & 4k+   & Multi-format biomedical QA & Yes \\
+RealMedQA     & English & Clinical recommendations & 700   & Long-form biomedical QA & Yes \\
+\textbf{MaternaQA-es} & \textbf{Spanish} & \textbf{Pregnancy and maternal health} & \textbf{5,727} & \textbf{Six Spanish clinical QA types} & \textbf{No} \\
 \hline
 \end{tabular}
 
 \vspace{4pt}
 \footnotesize $^*$MedQuAD sources answers from NIH portals; QA pairs are not individually expert-verified.
 
-\end{table}
+\end{table*}
 
 \subsection{Synthetic Instruction and QA Data}
 Synthetic instruction generation has become a common strategy for creating task-specific instruction-following data. Self-Instruct introduced a bootstrapping procedure for generating instruction data from language models \cite{Wang2023SelfInstruct}, and Alpaca popularized instruction tuning with synthetic examples derived from Self-Instruct-style prompting \cite{Taori2023Alpaca}. WizardLM and Evol-Instruct further explored methods for increasing instruction diversity and complexity \cite{Xu2023WizardLM}. LIMA argued that carefully curated examples can produce strong alignment behavior even at relatively small scale \cite{Zhou2023LIMA}. These works support the methodological premise that synthetic instruction-like QA examples can be useful when generation is constrained, documented, and evaluated.
 
-MaternaQA-es applies this premise cautiously. The dataset uses LLMs to generate QA formulations, but the intended factual basis is the curated medical source text. In other words, the synthetic step transforms source-grounded clinical text into question--answer examples; it is not intended to synthesize new clinical facts. This distinction is central to the dataset's responsible-use framing.
+MaternaQA-es applies this premise. The dataset uses LLMs to generate QA formulations, but the factual basis is the curated medical source text. The synthetic step transforms source-grounded clinical text into question--answer examples; it does not synthesize new clinical facts. This distinction is central to the dataset documentation.
 
-\subsection{Dataset Documentation and Responsible Release}
-Dataset papers increasingly need to describe the context and limitations of data creation. Datasheets for Datasets propose documenting motivation, composition, collection process, preprocessing, uses, distribution, and maintenance \cite{Gebru2021Datasheets}. Data Statements for NLP adapt this transparency goal to language datasets by emphasizing curation rationale, language varieties, source data, annotator demographics, text characteristics, preprocessing, ethical review, and limitations \cite{Bender2018DataStatements}. Data Cards propose concise, stakeholder-oriented documentation for dataset origins, intent, ethical considerations, and evolution \cite{Pushkarna2022DataCards}. MaternaQA-es uses these frameworks as design guidance for documenting source provenance, Spanish-language scope, preprocessing decisions, intended uses, non-intended uses, and maintenance needs.
+\subsection{Dataset Documentation Frameworks}
+Dataset papers increasingly need to describe the context and limitations of data creation. Datasheets for Datasets propose documenting motivation, composition, collection process, preprocessing, uses, distribution, and maintenance \cite{Gebru2021Datasheets}. Data Statements for NLP adapt this transparency goal to language datasets by emphasizing curation rationale, language varieties, source data, annotator demographics, text characteristics, preprocessing, ethical review, and limitations \cite{Bender2018DataStatements}. Data Cards propose concise, stakeholder-oriented documentation for dataset origins, intent, ethical considerations, and evolution \cite{Pushkarna2022DataCards}. MaternaQA-es uses these frameworks as design guidance for documenting source provenance, Spanish-language scope, preprocessing decisions, intended uses, release constraints, and maintenance needs.
 
 \subsection{Grounded QA, Evaluation, and Downstream Adaptation}
-Grounded QA is important in clinical contexts because answers should be conditioned on evidence rather than only on parametric memory. Retrieval-augmented generation (RAG) explicitly combines retrieval with generation for knowledge-intensive tasks \cite{Lewis2020RAG}. RAGAS provides reference-free metrics for evaluating aspects of retrieval-augmented generation, including faithfulness and answer relevancy \cite{Es2024RAGAS}. MaternaQA-es is not itself a retrieval system, but its grounded variant and flat audit format preserve source context for evidence-conditioned QA and future RAG studies. The closed-book and grounded variants also support supervised fine-tuning experiments, including parameter-efficient methods such as LoRA and QLoRA \cite{Hu2022LoRA,Dettmers2023QLoRA}; however, those training experiments are outside the scope of the present dataset paper.
+Grounded QA is important in clinical contexts because answers should be conditioned on evidence rather than only on parametric memory. Retrieval-augmented generation (RAG) explicitly combines retrieval with generation for knowledge-intensive tasks \cite{Lewis2020RAG}. RAGAS provides reference-free metrics for evaluating aspects of retrieval-augmented generation, including faithfulness and answer relevancy \cite{Es2024RAGAS}. MaternaQA-es is not itself a retrieval system, but its grounded variant and flat audit format preserve source context for evidence-conditioned QA and future RAG studies. The closed-book and grounded variants also support supervised fine-tuning experiments, including parameter-efficient methods such as LoRA and QLoRA \cite{Hu2022LoRA,Dettmers2023QLoRA}.
 
 \section{Dataset Design Goals}
 MaternaQA-es was designed around seven goals. First, the dataset should prioritize pregnancy and maternal-health content within a broader obstetrics and gynecology source collection, rather than generic medicine. Second, it should provide Spanish-language examples, addressing a language-resource gap in clinical NLP. Third, each example should preserve source traceability through document, page, chunk, and split metadata. Fourth, the dataset should support evidence-grounded QA by retaining source context. Fifth, it should provide training-ready variants for downstream supervised fine-tuning. Sixth, it should reduce train--test leakage by splitting at the document level. Seventh, it should document limitations and non-intended uses explicitly.
 
 \begin{table}[t]
-\caption{Design Goals of MaternaQA-es}
+\caption{Design Goals and Implementation Choices for MaternaQA-es}
 \label{tab:design_goals}
 \centering
 \begin{tabular}{|p{0.34\columnwidth}|p{0.55\columnwidth}|}
 \hline
-\textbf{Goal} & \textbf{Operationalization} \\
+\textbf{Design goal} & \textbf{How the goal is implemented} \\
 \hline
 Maternal-health focus & Source documents and topic tags prioritize pregnancy, prenatal care, labor, delivery, postpartum care, fetal monitoring, and related risks while retaining documented adjacent topics. \\
 \hline
@@ -114,7 +115,7 @@ Training readiness & Conversational JSONL variants are produced for supervised f
 \hline
 Leakage control & Splits are assigned at document level. \\
 \hline
-Responsible release & The dataset includes limitations and non-intended-use statements. \\
+Release boundaries & The dataset documentation identifies limitations and non-intended uses. \\
 \hline
 \end{tabular}
 \end{table}
@@ -125,12 +126,12 @@ The source corpus consists of Spanish medical PDFs stored in the project reposit
 Table \ref{tab:corpus_stats} summarizes the current corpus processing state. The pipeline processed 63 PDFs and extracted 5,856 pages. After cleaning and filtering, 5,176 pages were retained and 660 pages were discarded. The most common discard reason was the need for OCR, followed by pages that were too short, reference-heavy, fragmented, table-of-contents or index pages, and non-clinical sections.
 
 \begin{table}[t]
-\caption{Source Corpus and Cleaning Summary}
+\caption{Corpus Size After PDF Extraction, Cleaning, and Chunking}
 \label{tab:corpus_stats}
 \centering
 \begin{tabular}{|l|r|}
 \hline
-\textbf{Metric} & \textbf{Value} \\
+\textbf{Processing metric} & \textbf{Count or value} \\
 \hline
 Processed PDFs & 63 \\
 Extracted pages & 5,856 \\
@@ -144,12 +145,12 @@ Average tokens per chunk & 879.03 \\
 \end{table}
 
 \begin{table}[t]
-\caption{Page Discard Reasons During Cleaning}
+\caption{Why Pages Were Removed During Corpus Cleaning}
 \label{tab:discard_reasons}
 \centering
 \begin{tabular}{|l|r|}
 \hline
-\textbf{Reason} & \textbf{Pages} \\
+\textbf{Discard reason} & \textbf{Number of pages} \\
 \hline
 Needs OCR & 332 \\
 Too short & 155 \\
@@ -161,7 +162,7 @@ Non-clinical section & 14 \\
 \end{tabular}
 \end{table}
 
-The inclusion strategy favors documents with extractable Spanish clinical content and sufficient maternal-health relevance. Documents or pages with unreliable extraction are not silently repaired; instead, they are flagged or excluded so that the limitations of the current release remain visible.
+The inclusion strategy favors documents with extractable Spanish clinical content and sufficient maternal-health relevance. Documents or pages with unreliable extraction are flagged or excluded so that the limitations of the current release remain visible.
 
 \section{Corpus Processing and Chunk Construction}
 Text extraction operates at the page level. The primary extractor is PyMuPDF, with pdfplumber used as a fallback for pages with low initial text yield. Page-level extraction preserves provenance so that downstream chunks and QA pairs can be traced back to source documents and pages.
@@ -177,18 +178,19 @@ QA generation is performed from accepted source chunks using OpenAI's \texttt{gp
 
 The dataset supports six question types: factual, definition, comparison, reasoning, application, and hypothetical. Factual questions target concrete clinical statements. Definition questions explain terms or conditions. Comparison questions distinguish concepts, interventions, risks, or criteria. Reasoning questions ask why a recommendation or clinical relationship holds. Application questions use brief clinical vignettes. Hypothetical questions explore conditional scenarios constrained by the source.
 
-The current final dataset contains 5,727 QA pairs. These examples are synthetic in phrasing, but not intended to be synthetic in factual basis. Each pair is generated from a source chunk and retains metadata for audit. A representative flat record includes fields such as \texttt{qa\_id}, \texttt{chunk\_id}, \texttt{source\_pdf}, \texttt{pages}, \texttt{topics}, \texttt{split}, \texttt{pregunta}, \texttt{respuesta}, \texttt{tipo}, \texttt{dificultad}, and \texttt{contexto\_fuente}.
+The current final dataset contains 5,727 QA pairs. These examples are synthetic in phrasing but grounded in source text. Each pair is generated from a source chunk and retains metadata for audit. A representative flat record includes fields such as \texttt{qa\_id}, \texttt{chunk\_id}, \texttt{source\_pdf}, \texttt{pages}, \texttt{topics}, \texttt{split}, \texttt{pregunta}, \texttt{respuesta}, \texttt{tipo}, \texttt{dificultad}, and \texttt{contexto\_fuente}.
 
 Table~\ref{tab:question_types} reports the distribution of the six question types across splits. Factual and application questions together account for approximately 58\% of the dataset, followed by reasoning (22.7\%), definition (11.5\%), hypothetical (4.7\%), and comparison (2.8\%). The proportional distribution is consistent across splits.
 
 \begin{table}[t]
-\caption{Question Type Distribution Across Splits}
+\caption{Distribution of Generated Question Types by Dataset Split}
 \label{tab:question_types}
 \centering
-\footnotesize
-\begin{tabular}{|l|r|r|r|r|r|}
+\scriptsize
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{|p{0.22\columnwidth}|r|r|r|r|r|}
 \hline
-\textbf{Type} & \textbf{Train} & \textbf{Val.} & \textbf{Test} & \textbf{Total} & \textbf{\%} \\
+\textbf{Question type} & \textbf{Training} & \textbf{Validation} & \textbf{Test} & \textbf{Total} & \textbf{Percentage} \\
 \hline
 Factual & 1,458 & 82 & 101 & 1,641 & 28.7 \\
 Application & 1,523 & 85 & 94 & 1,702 & 29.7 \\
@@ -206,13 +208,13 @@ Total & 5,093 & 306 & 328 & 5,727 & 100.0 \\
 MaternaQA-es is distributed in three variants, summarized in Table \ref{tab:variants}. The \texttt{sft\_closed\_book} variant contains conversational examples where the user message contains only the question and the assistant message contains the answer. This format supports supervised fine-tuning without explicit context and can be used to study parametric adaptation. The \texttt{sft\_grounded} variant adds source context to the user message before the question, supporting evidence-conditioned training and RAG-like evaluation. The \texttt{qa\_flat\_jsonl} variant stores flat audit records with metadata, supporting inspection, filtering, analysis, and dataset documentation.
 
 \begin{table}[t]
-\caption{Publication Variants of MaternaQA-es}
+\caption{Released Dataset Views and Their Intended Research Uses}
 \label{tab:variants}
 \centering
 \scriptsize
 \begin{tabular}{|p{0.25\columnwidth}|p{0.30\columnwidth}|p{0.28\columnwidth}|}
 \hline
-\textbf{Variant} & \textbf{Input View} & \textbf{Main Use} \\
+\textbf{Dataset view} & \textbf{Input provided to the model} & \textbf{Primary research use} \\
 \hline
 \texttt{sft\_closed\_book} & Question only & Closed-book SFT and domain adaptation studies \\
 \hline
@@ -234,19 +236,21 @@ Grounding analysis measures how much of the generated answer overlaps with the s
 The dataset uses document-level splitting rather than random QA-pair splitting. All chunks and QA pairs derived from the same PDF are assigned to the same split. This design reduces the risk that near-identical content from the same document appears in both training and evaluation subsets. The build and audit reports indicate zero overlapping PDFs across train, validation, and test splits.
 
 \subsection{RAGAS Evaluation}
-RAGAS (version~0.3.11) was used to estimate faithfulness and answer relevancy on stratified samples, using \texttt{gpt-4o-mini} as the judge LLM and \texttt{text-embedding-3-small} for answer relevancy embeddings. Faithfulness estimates whether the answer is supported by the provided context, while answer relevancy estimates whether the answer addresses the question. Since each QA pair is generated from a known source context, context precision was not treated as a central metric; the experiment does not evaluate a retriever over multiple candidate contexts.
+RAGAS (version~0.3.11) was used to estimate faithfulness and answer relevancy on stratified samples, using \texttt{gpt-4o-mini} as the judge LLM and \texttt{text-embedding-3-small} for answer relevancy embeddings. Faithfulness estimates whether the answer is supported by the provided context, while answer relevancy estimates whether the answer addresses the question. Because each QA pair is generated from a known source context, the evaluation uses a single-context setting rather than a multi-candidate retrieval setting.
 
 Samples of 300 training, 100 validation, and 100 test QA pairs were drawn with a fixed random seed~42 for each split. RAGAS scoring calls can occasionally fail due to API timeouts or incomplete LLM judge outputs; as a result, faithfulness was scored for 299 of~300 training examples and 99 of~100 validation examples, while all~100 test examples completed successfully. The unscored examples did not differ systematically in length or topic from the scored ones. The failed scoring attempts were retried once before being recorded as missing.
 
 \begin{table}[t]
-\caption{RAGAS-Based Quality Estimates on Stratified Samples}
+\caption{RAGAS Faithfulness and Answer-Relevancy Estimates by Split}
 \label{tab:ragas}
 \centering
-\begin{tabular}{|l|r|r|r|}
+\scriptsize
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{|p{0.18\columnwidth}|p{0.25\columnwidth}|r|r|}
 \hline
-\textbf{Split} & \textbf{Sample} & \textbf{Faith.} & \textbf{Rel.} \\
+\textbf{Dataset split} & \textbf{Scored sample} & \textbf{Faithfulness} & \textbf{Answer relevancy} \\
 \hline
-Train & 299 / 300 (5,093 total) & 0.7726 & 0.6466 \\
+Training & 299 / 300 (5,093 total) & 0.7726 & 0.6466 \\
 Validation & 99 / 100 (306 total) & 0.7826 & 0.6812 \\
 Test & 100 / 100 (328 total) & 0.7132 & 0.5583 \\
 \hline
@@ -255,14 +259,12 @@ Test & 100 / 100 (328 total) & 0.7132 & 0.5583 \\
 
 The lower answer relevancy on the test split (0.5583) suggests that approximately half of the test answers were judged as only partially addressing their questions. A manual inspection of low-relevancy test examples revealed two contributing patterns: (1)~answers that provide factual domain context without directly answering the posed question, and (2)~answers whose phrasing is judged as too general relative to the specificity requested. These patterns indicate that automated answer relevancy estimation is conservative rather than evidence of systematic answer failure, but they also highlight the need for human audit in clinical QA datasets.
 
-A pilot generator/evaluator comparison was conducted before the full-scale run. The pilot used a different evaluation pipeline (a custom structured-output judge running \texttt{gpt-5.4}) and reached faithfulness~0.9924 and relevancy~0.9947 on a small proof-of-concept sample drawn from early chunks. These scores are not directly comparable with the RAGAS estimates reported above: the pilot judge operated under a different rubric, was allowed to request answer revisions iteratively, and was not configured identically to the RAGAS faithfulness and answer relevancy definitions. We report the pilot result for transparency but treat the RAGAS-based post-hoc scores as the primary quality estimates for the released dataset. The generation run itself disabled intermediate evaluator scoring to remain within budget; therefore, final quality is assessed through the post-hoc sampling, grounding analysis, and explicit limitations described here.
-
 \subsection{Qualitative Examples}
 
 Table~\ref{tab:examples} presents three representative QA pairs from the test split, covering factual, application, and reasoning question types. All examples are shown in the original Spanish; the English glosses in parentheses are not part of the dataset.
 
 \begin{table}[t]
-\caption{Representative QA Examples from the Test Split}
+\caption{Representative Spanish Question--Answer Examples from the Test Split}
 \label{tab:examples}
 \centering
 \scriptsize
@@ -294,14 +296,16 @@ Table~\ref{tab:examples} presents three representative QA pairs from the test sp
 The current release contains 5,727 QA pairs: 5,093 in training, 306 in validation, and 328 in test. These pairs derive from 1,953 source chunks and 57 source PDFs. Table \ref{tab:qa_splits} summarizes the split composition.
 
 \begin{table}[t]
-\caption{QA Dataset Split Composition}
+\caption{Number of Question--Answer Pairs, Source Chunks, and PDFs per Split}
 \label{tab:qa_splits}
 \centering
-\begin{tabular}{|l|r|r|r|}
+\scriptsize
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{|p{0.22\columnwidth}|r|r|r|}
 \hline
-\textbf{Split} & \textbf{QA pairs} & \textbf{Chunks} & \textbf{PDFs} \\
+\textbf{Dataset split} & \textbf{Question--answer pairs} & \textbf{Source chunks} & \textbf{Source PDFs} \\
 \hline
-Train & 5,093 & 1,744 & 52 \\
+Training & 5,093 & 1,744 & 52 \\
 Validation & 306 & 101 & 2 \\
 Test & 328 & 108 & 3 \\
 \hline
@@ -310,15 +314,15 @@ Total & 5,727 & 1,953 & 57 \\
 \end{tabular}
 \end{table}
 
-The LM corpus split contains 1,997 train chunks, 115 validation chunks, and 111 test chunks, corresponding to actual split ratios of 0.8983, 0.0517, and 0.0499. Topic coverage is broad across maternal-health themes. Table~\ref{tab:topics} shows the distribution of the most frequent topic tags in the training split.
+The LM corpus split contains 1,997 training chunks, 115 validation chunks, and 111 test chunks, corresponding to actual split ratios of 0.8983, 0.0517, and 0.0499. Topic coverage is broad across maternal-health themes. Table~\ref{tab:topics} shows the distribution of the most frequent topic tags in the training split.
 
 \begin{table}[t]
-\caption{Top Topic Tags in the Training Split}
+\caption{Most Frequent Topic Tags in Training Question--Answer Pairs}
 \label{tab:topics}
 \centering
 \begin{tabular}{|l|r|}
 \hline
-\textbf{Topic} & \textbf{QA pairs} \\
+\textbf{Topic tag} & \textbf{Question--answer pairs} \\
 \hline
 Fetal monitoring & 1,116 \\
 Newborn care & 797 \\
@@ -335,28 +339,26 @@ Preeclampsia & 372 \\
 \end{tabular}
 \end{table}
 
-Although some gynecologic topics remain present because source documents include broader obstetrics and gynecology material, the paper frames the dataset as maternal-health-centered rather than pregnancy-only.
-
 Content roles also vary. In the training split, chunks are labeled as evidence (1,108), background (246), procedure (206), treatment (167), recommendation (142), and diagnostic (128). This distribution suggests that the source corpus contains a mixture of explanatory, evidentiary, procedural, and recommendation-oriented material suitable for diverse QA types.
 
 \section{Intended Uses and Release}
-MaternaQA-es is intended for research in Spanish clinical NLP, including supervised fine-tuning, grounded QA, RAG evaluation, prompt evaluation, dataset analysis, and educational prototypes with appropriate disclaimers. The closed-book variant can support experiments that measure whether models internalize maternal-health response patterns through supervised fine-tuning. The grounded variant can support experiments in which a model must answer using source evidence. The flat variant supports filtering, auditing, error analysis, and dataset documentation.
+MaternaQA-es is intended for research in Spanish clinical NLP, including supervised fine-tuning, grounded QA, RAG evaluation, prompt evaluation, dataset analysis, and educational prototypes. The closed-book variant can support experiments that measure whether models internalize maternal-health response patterns through supervised fine-tuning. The grounded variant can support experiments in which a model must answer using source evidence. The flat variant supports filtering, auditing, error analysis, and dataset documentation.
 
 The dataset is not intended for direct clinical decision-making, diagnosis, treatment recommendation, or replacement of clinical guidelines. Models trained on MaternaQA-es require independent validation and clinical oversight before any high-stakes or patient-facing use. The repository provides code and methodology, while the dataset is intended for release in a dataset hosting platform such as Hugging Face with versioned metadata, a dataset card, and citation instructions.
 
 \section{Limitations and Ethical Considerations}
 MaternaQA-es has several limitations. First, the QA pairs are synthetic. Although they are grounded in curated documents, LLM-generated questions and answers may paraphrase, simplify, omit caveats, or overgeneralize. Second, automated evaluation is not clinical validation. RAGAS faithfulness and relevancy scores estimate source support and answer relevance, but they do not prove clinical correctness. Third, PDF extraction may lose layout-dependent information such as tables, figures, footnotes, or multi-column relationships. Pages requiring OCR were flagged rather than recovered automatically in the current release. Fourth, the source corpus may reflect local guidelines, publication dates, and institutional practices that do not generalize across health systems. Fifth, the collection is maternal-health-centered but not pregnancy-only, because some broader obstetrics and gynecology documents contribute adjacent topics.
 
-Ethically, the dataset should be treated as a research artifact. It may help study maternal-health QA behavior in Spanish, but it should not be used to provide medical advice to patients. The release should include license information, source-provenance notes, update policy, issue-reporting mechanisms, and non-intended-use restrictions. Future work should include clinician-led validation of representative samples, an expert error taxonomy, OCR integration, stronger coverage analysis, and a separate fine-tuning benchmark study.
+Ethically, the dataset should be treated as a research artifact for studying maternal-health QA behavior in Spanish, not as a patient-counseling resource. The release should include license information, source-provenance notes, update policy, issue-reporting mechanisms, and non-intended-use restrictions. Future work should include clinician-led validation of representative samples, an expert error taxonomy, OCR integration, stronger coverage analysis, and a separate fine-tuning benchmark study.
 
 \section{Conclusion}
-This paper presented MaternaQA-es, a synthetic Spanish clinical QA dataset focused on pregnancy and maternal health. The dataset was constructed from curated medical PDFs using a documented process that preserves source traceability, filters noisy pages, builds clinically meaningful chunks, generates structured QA pairs, assigns document-level splits, and releases multiple research-oriented variants. The current release contains 5,727 QA pairs with closed-book, grounded, and flat-audit formats. Quality assessment combines leakage controls, grounding analysis, and RAGAS-based estimates of faithfulness and answer relevancy, while acknowledging that automated metrics are not a substitute for clinical expert validation. MaternaQA-es provides a foundation for Spanish maternal-health NLP research and for future work on evidence-grounded QA and parameter-efficient fine-tuning.
+This paper presented MaternaQA-es, a synthetic Spanish clinical QA dataset focused on pregnancy and maternal health. The dataset was constructed from curated medical PDFs using a documented process that preserves source traceability, filters noisy pages, builds clinically meaningful chunks, generates structured QA pairs, assigns document-level splits, and releases multiple research-oriented variants. The current release contains 5,727 QA pairs with closed-book, grounded, and flat-audit formats. Quality assessment combines leakage controls, grounding analysis, and RAGAS-based estimates of faithfulness and answer relevancy. MaternaQA-es provides a foundation for Spanish maternal-health NLP research and for future work on evidence-grounded QA and parameter-efficient fine-tuning.
 
 \section*{Data and Code Availability}
-The construction code, documentation, and paper-planning notes are maintained in the MaternaQA-es repository. Dataset files are organized into source corpus artifacts, LM chunks, QA final files, and publication variants. The release should include versioned dataset files, a dataset card, and citation instructions before formal publication.
+The construction code, documentation, and paper-planning notes are maintained in the MaternaQA-es repository. Dataset files are organized into source corpus artifacts, LM chunks, QA final files, and publication variants. The release should include versioned dataset files, a dataset card, and citation instructions for formal publication.
 
-\section*{AI Assistance Disclosure}
-This manuscript draft was prepared with the assistance of AI-powered academic writing tools. The AI workflow supported structure planning, source synthesis, draft writing, and formatting. The author(s) are responsible for verifying all claims, citations, statistics, ethical statements, and final conclusions before submission.
+\section*{Author Responsibility Statement}
+The author(s) are responsible for the study design, dataset construction decisions, source verification, reported statistics, citations, ethical statements, and final manuscript content. Any editorial or software-assisted preparation steps were reviewed and approved by the author(s) before submission.
 
 \section*{Acknowledgment}
 The author(s) thank the maintainers of the open-source tools and dataset-documentation frameworks that informed this work. Funding, institutional support, and contributor information should be added before submission.

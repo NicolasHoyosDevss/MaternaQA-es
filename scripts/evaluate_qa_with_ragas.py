@@ -100,6 +100,28 @@ Respuesta independiente (roundtrip):
 {roundtrip_answer}
 """
 
+
+def parse_json_object(text: str) -> Dict[str, Any]:
+    """Parse a JSON object, accepting common markdown fenced responses."""
+    candidate = text.strip()
+    if candidate.startswith("```"):
+        lines = candidate.splitlines()
+        if lines and lines[0].startswith("```"):
+            lines = lines[1:]
+        if lines and lines[-1].strip() == "```":
+            lines = lines[:-1]
+        candidate = "\n".join(lines).strip()
+
+    try:
+        return json.loads(candidate)
+    except json.JSONDecodeError:
+        start = candidate.find("{")
+        end = candidate.rfind("}")
+        if start != -1 and end != -1 and end > start:
+            return json.loads(candidate[start : end + 1])
+        raise
+
+
 META_REFERENCE_PATTERNS = [
     "según el texto",
     "según el fragmento",
@@ -120,6 +142,10 @@ def read_jsonl(path: Path) -> List[Dict[str, Any]]:
         for line in path.read_text(encoding="utf-8").splitlines()
         if line.strip()
     ]
+
+
+def read_eval_report(path: Path) -> Dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def build_chunk_lookup(lm_paths: List[Path]) -> Dict[str, str]:
@@ -203,6 +229,31 @@ def parse_args() -> argparse.Namespace:
         help=(
             "Opcional. Si se define, además de Ragas calcula la validación custom "
             "sobre la misma muestra usando este modelo."
+        ),
+    )
+    parser.add_argument(
+        "--custom-only",
+        action="store_true",
+        help=(
+            "Ejecuta solo la validación custom y omite las pasadas de Ragas. "
+            "Requiere --custom-judge-model."
+        ),
+    )
+    parser.add_argument(
+        "--custom-debug-raw",
+        action="store_true",
+        help=(
+            "En errores del custom judge, incluye la respuesta cruda del judge "
+            "y la respuesta roundtrip para diagnosticar parseos fallidos."
+        ),
+    )
+    parser.add_argument(
+        "--existing-report",
+        type=Path,
+        default=None,
+        help=(
+            "Reporte eval_*.json existente con `per_pair`. Útil para recalcular "
+            "solo custom sobre exactamente los mismos pares, preservando RAGAS."
         ),
     )
     parser.add_argument(
@@ -433,6 +484,7 @@ async def evaluate_custom_quality(
     model: str,
     timeout_seconds: int,
     chunk_lookup: Dict[str, str] | None = None,
+    debug_raw: bool = False,
 ) -> List[Dict[str, Any]]:
     # ── provider routing: litellm for multi-provider, OpenAI fallback ──
     _use_litellm = False
@@ -451,6 +503,8 @@ async def evaluate_custom_quality(
     total = len(rows)
     for i, row in enumerate(rows, start=1):
         print(f"[CUSTOM] par {i}/{total} -> quality judge...", flush=True)
+        roundtrip_answer = ""
+        judge_text = ""
         try:
             context = resolve_chunk_text(row, chunk_lookup or {})
 
@@ -510,7 +564,7 @@ async def evaluate_custom_quality(
                     timeout=timeout_seconds,
                 )
                 judge_text = (judge_raw.choices[0].message.content or "{}").strip()
-                data = json.loads(judge_text)
+                data = parse_json_object(judge_text)
                 parsed_data = {
                     "faithfulness": float(data.get("faithfulness", 0.0)),
                     "answer_relevancy": float(data.get("answer_relevancy", 0.0)),
@@ -560,27 +614,40 @@ async def evaluate_custom_quality(
                 }
             )
         except Exception as exc:
-            results.append(
-                {
-                    "qa_id": row.get("qa_id"),
-                    "custom_faithfulness": None,
-                    "custom_answer_relevancy": None,
-                    "custom_roundtrip_consistency": None,
-                    "custom_question_groundness": None,
-                    "custom_verdict": None,
-                    "custom_reason": "",
-                    "custom_error_type": type(exc).__name__,
-                    "custom_error": repr(exc),
-                }
-            )
+            error_row = {
+                "qa_id": row.get("qa_id"),
+                "custom_faithfulness": None,
+                "custom_answer_relevancy": None,
+                "custom_roundtrip_consistency": None,
+                "custom_question_groundness": None,
+                "custom_verdict": None,
+                "custom_reason": "",
+                "custom_error_type": type(exc).__name__,
+                "custom_error": repr(exc),
+            }
+            if debug_raw:
+                error_row["custom_roundtrip_answer"] = roundtrip_answer
+                error_row["custom_judge_raw"] = judge_text
+            results.append(error_row)
     return results
 
 
 async def main_async(args: argparse.Namespace) -> None:
-    all_rows = read_jsonl(args.input)
-    rows = stratified_sample(all_rows, args.sample_size, args.seed)
-    if args.limit is not None:
-        rows = rows[: args.limit]
+    if args.custom_only and not args.custom_judge_model:
+        raise ValueError("--custom-only requiere --custom-judge-model")
+
+    existing_report: Dict[str, Any] | None = None
+    if args.existing_report is not None:
+        existing_report = read_eval_report(args.existing_report)
+        all_rows = list(existing_report.get("per_pair") or [])
+        rows = all_rows
+        if args.limit is not None:
+            rows = rows[: args.limit]
+    else:
+        all_rows = read_jsonl(args.input)
+        rows = stratified_sample(all_rows, args.sample_size, args.seed)
+        if args.limit is not None:
+            rows = rows[: args.limit]
     print(
         f"[EVAL] Iniciando evaluación de {len(rows)} pares "
         f"(dataset completo: {len(all_rows)})",
@@ -623,24 +690,29 @@ async def main_async(args: argparse.Namespace) -> None:
 
     # User-facing behavior: one command.
     # Internal implementation: two metric passes with a final merge.
-    print("[RAGAS] Calculando faithfulness...", flush=True)
-    faith_rows = await evaluate_rows(
-        rows,
-        args.llm_model,
-        args.embedding_model,
-        args.timeout_seconds,
-        metric="faithfulness",
-        chunk_lookup=chunk_lookup or None,
-    )
-    print("[RAGAS] Calculando answer_relevancy...", flush=True)
-    rel_rows = await evaluate_rows(
-        rows,
-        args.llm_model,
-        args.embedding_model,
-        args.timeout_seconds,
-        metric="answer_relevancy",
-        chunk_lookup=chunk_lookup or None,
-    )
+    if args.custom_only:
+        print("[CUSTOM] Modo custom-only: omitiendo métricas Ragas.", flush=True)
+        faith_rows = []
+        rel_rows = []
+    else:
+        print("[RAGAS] Calculando faithfulness...", flush=True)
+        faith_rows = await evaluate_rows(
+            rows,
+            args.llm_model,
+            args.embedding_model,
+            args.timeout_seconds,
+            metric="faithfulness",
+            chunk_lookup=chunk_lookup or None,
+        )
+        print("[RAGAS] Calculando answer_relevancy...", flush=True)
+        rel_rows = await evaluate_rows(
+            rows,
+            args.llm_model,
+            args.embedding_model,
+            args.timeout_seconds,
+            metric="answer_relevancy",
+            chunk_lookup=chunk_lookup or None,
+        )
 
     faith_by_id = {r.get("qa_id"): r for r in faith_rows}
     rel_by_id = {r.get("qa_id"): r for r in rel_rows}
@@ -651,6 +723,7 @@ async def main_async(args: argparse.Namespace) -> None:
         custom_rows = await evaluate_custom_quality(
             rows, args.custom_judge_model, args.timeout_seconds,
             chunk_lookup=chunk_lookup or None,
+            debug_raw=args.custom_debug_raw,
         )
         custom_by_id = {r.get("qa_id"): r for r in custom_rows}
 
@@ -668,10 +741,10 @@ async def main_async(args: argparse.Namespace) -> None:
             "dificultad": row.get("dificultad"),
             "pregunta": row.get("pregunta"),
             "respuesta": row.get("respuesta"),
-            "ragas_faithfulness": f.get("ragas_faithfulness"),
-            "ragas_answer_relevancy": r.get("ragas_answer_relevancy"),
-            "ragas_faithfulness_reason": f.get("ragas_faithfulness_reason", ""),
-            "ragas_answer_relevancy_reason": r.get("ragas_answer_relevancy_reason", ""),
+            "ragas_faithfulness": f.get("ragas_faithfulness", row.get("ragas_faithfulness")),
+            "ragas_answer_relevancy": r.get("ragas_answer_relevancy", row.get("ragas_answer_relevancy")),
+            "ragas_faithfulness_reason": f.get("ragas_faithfulness_reason", row.get("ragas_faithfulness_reason", "")),
+            "ragas_answer_relevancy_reason": r.get("ragas_answer_relevancy_reason", row.get("ragas_answer_relevancy_reason", "")),
             "custom_faithfulness": c.get("custom_faithfulness"),
             "custom_answer_relevancy": c.get("custom_answer_relevancy"),
             "custom_roundtrip_consistency": c.get("custom_roundtrip_consistency"),
@@ -680,6 +753,11 @@ async def main_async(args: argparse.Namespace) -> None:
             "custom_reason": c.get("custom_reason", ""),
             **basic_cleanliness(row),
         }
+        if args.custom_debug_raw:
+            if "custom_roundtrip_answer" in c:
+                merged["custom_roundtrip_answer"] = c.get("custom_roundtrip_answer")
+            if "custom_judge_raw" in c:
+                merged["custom_judge_raw"] = c.get("custom_judge_raw")
         errs = []
         if f.get("error"):
             errs.append(f"faithfulness: {f.get('error_type','Error')} {f.get('error')}")
@@ -694,8 +772,11 @@ async def main_async(args: argparse.Namespace) -> None:
 
     output = args.output
     if output is None:
-        prefix = f"eval_sample{len(rows)}_" if args.sample_size else "eval_"
-        output = args.input.with_name(f"{prefix}{args.input.stem}.json")
+        if args.existing_report is not None:
+            output = args.existing_report.with_name(f"{args.existing_report.stem}_custom.json")
+        else:
+            prefix = f"eval_sample{len(rows)}_" if args.sample_size else "eval_"
+            output = args.input.with_name(f"{prefix}{args.input.stem}.json")
 
     report = {
         "script_version": "qa_sample_eval_v2",
@@ -720,6 +801,12 @@ async def main_async(args: argparse.Namespace) -> None:
         "summary": summarize(results),
         "per_pair": results,
     }
+    if existing_report is not None:
+        report["input_file"] = existing_report.get("input_file", str(args.input))
+        report["sample_size_requested"] = existing_report.get("sample_size_requested")
+        report["sample_seed"] = existing_report.get("sample_seed")
+        report["source_context"] = existing_report.get("source_context", report["source_context"])
+        report["ragas_models"] = existing_report.get("ragas_models", report["ragas_models"])
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n",

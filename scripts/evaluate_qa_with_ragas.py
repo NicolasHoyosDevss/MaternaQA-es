@@ -45,6 +45,12 @@ class CustomQuality(BaseModel):
         score = float(value)
         return max(0.0, min(1.0, score))
 
+    @field_validator("verdict", mode="before")
+    @classmethod
+    def normalize_verdict(cls, value: Any) -> str:
+        verdict = str(value).strip().lower()
+        return verdict if verdict in {"accept", "reject"} else "reject"
+
 
 def _detect_transport(custom_judge_model: str | None) -> str:
     """Return which transport will be used for the custom judge."""
@@ -565,13 +571,23 @@ async def evaluate_custom_quality(
                 )
                 judge_text = (judge_raw.choices[0].message.content or "{}").strip()
                 data = parse_json_object(judge_text)
+                parsed = CustomQuality.model_validate(
+                    {
+                        "faithfulness": data.get("faithfulness", 0.0),
+                        "answer_relevancy": data.get("answer_relevancy", 0.0),
+                        "roundtrip_consistency": data.get("roundtrip_consistency", 0.0),
+                        "question_groundness": data.get("question_groundness", 0.0),
+                        "verdict": data.get("verdict", "reject"),
+                        "reason": data.get("reason", ""),
+                    }
+                )
                 parsed_data = {
-                    "faithfulness": float(data.get("faithfulness", 0.0)),
-                    "answer_relevancy": float(data.get("answer_relevancy", 0.0)),
-                    "roundtrip_consistency": float(data.get("roundtrip_consistency", 0.0)),
-                    "question_groundness": float(data.get("question_groundness", 0.0)),
-                    "verdict": str(data.get("verdict", "reject")),
-                    "reason": str(data.get("reason", "")),
+                    "faithfulness": parsed.faithfulness,
+                    "answer_relevancy": parsed.answer_relevancy,
+                    "roundtrip_consistency": parsed.roundtrip_consistency,
+                    "question_groundness": parsed.question_groundness,
+                    "verdict": parsed.verdict,
+                    "reason": parsed.reason,
                 }
             else:
                 judge_resp = await asyncio.wait_for(
